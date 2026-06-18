@@ -1,26 +1,3 @@
-# Prof - Django Project
-
-A clean and professional Django project named "Prof".
-
-## Project Structure
-
-```
-Prof/
-├── venv/                # Python virtual environment
-├── prof/               # Project configuration
-├── apps/               # Custom Django apps
-│   └── core/          # Core application
-├── static/            # Static files (CSS, JS, images)
-│   ├── css/
-│   ├── js/
-│   └── images/
-├── media/             # User-uploaded files
-│   └── uploads/
-├── requirements.txt
-├── .gitignore
-└── manage.py
-```
-
 ## Installation
 
 ### Prerequisites
@@ -31,9 +8,7 @@ Prof/
 ### Setup Instructions
 
 1. **Clone or navigate to the project directory**
-   ```bash
-   cd d:/Aria/Prof
-   ```
+
 
 2. **Create virtual environment**
    ```bash
