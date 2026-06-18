@@ -1,0 +1,56 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Profile - Prof{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <aside class="dashboard-sidebar">
+        <nav class="dashboard-nav">
+            <ul>
+                <li><a href="{% url 'dashboard:index' %}">Overview</a></li>
+                <li><a href="{% url 'dashboard:profile' %}">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="{% url 'authentication:logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <header class="dashboard-header">
+            <h1>User Profile</h1>
+            <p>Manage your account information</p>
+        </header>
+        <section class="dashboard-content">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h2>{{ request.user.username }}</h2>
+                    <p class="profile-email">{{ request.user.email }}</p>
+                    <p class="profile-joined">Joined: {{ request.user.date_joined|date:"F d, Y" }}</p>
+                </div>
+            </div>
+            
+            <div class="profile-form">
+                <h3>Edit Profile</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_username">Username</label>
+                        <input type="text" name="username" id="id_username" value="{{ request.user.username }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_email">Email</label>
+                        <input type="email" name="email" id="id_email" value="{{ request.user.email }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}

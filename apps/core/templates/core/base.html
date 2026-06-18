@@ -1,0 +1,41 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Prof - Your Professional Platform{% endblock %}</title>
+    
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+    {% if landing_page %}
+    <link rel="stylesheet" href="{% static 'css/landing-page.css' %}">
+    {% endif %}
+    
+    <!-- Font Awesome (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="base-body {% if landing_page %}landing-page-body{% endif %}">
+    {% if not landing_page %}
+    <!-- Navbar -->
+    {% include 'core/partials/_navbar.html' %}
+    {% endif %}
+    
+    <!-- Messages -->
+    {% include 'core/partials/_messages.html' %}
+    
+    <!-- Main Content -->
+    <main class="base-main">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    {% include 'core/partials/_footer.html' %}
+    
+    <!-- JavaScript -->
+    <script src="{% static 'js/base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

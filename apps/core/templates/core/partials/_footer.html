@@ -1,0 +1,21 @@
+<!-- Footer -->
+<footer class="base-footer">
+    <div class="footer-container">
+        <div class="footer-logo">
+            <i class="fa-solid fa-layer-group"></i> Prof
+        </div>
+        <div class="footer-links">
+            <a href="{% url 'landing_page:home' %}">Home</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'dashboard:index' %}">Dashboard</a>
+            <a href="{% url 'authentication:logout' %}">Logout</a>
+            {% else %}
+            <a href="{% url 'authentication:login' %}">Login</a>
+            <a href="{% url 'authentication:register' %}">Register</a>
+            {% endif %}
+        </div>
+        <div class="footer-copyright">
+            <p>&copy; 2024 Prof. All rights reserved.</p>
+        </div>
+    </div>
+</footer>

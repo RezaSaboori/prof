@@ -1,0 +1,21 @@
+<!-- Navigation -->
+<nav class="base-nav">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <a href="{% url 'landing_page:home' %}"><i class="fa-solid fa-layer-group"></i> Prof</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'landing_page:home' %}">Home</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'dashboard:index' %}">Dashboard</a></li>
+            <li><a href="{% url 'authentication:logout' %}">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'authentication:login' %}">Login</a></li>
+            <li><a href="{% url 'authentication:register' %}">Register</a></li>
+            {% endif %}
+        </ul>
+        <div class="nav-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </div>
+</nav>

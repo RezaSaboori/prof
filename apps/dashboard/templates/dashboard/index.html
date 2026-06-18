@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard - Prof{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <aside class="dashboard-sidebar">
+        <nav class="dashboard-nav">
+            <ul>
+                <li><a href="{% url 'dashboard:index' %}">Overview</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="{% url 'authentication:logout' %}">Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="dashboard-main">
+        <header class="dashboard-header">
+            <h1>Dashboard</h1>
+            <p>Welcome back, {{ request.user.username }}!</p>
+        </header>
+        <section class="dashboard-content">
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>Stats 1</h3>
+                    <p class="stat-value">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Stats 2</h3>
+                    <p class="stat-value">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Stats 3</h3>
+                    <p class="stat-value">0</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}

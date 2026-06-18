@@ -1,0 +1,11 @@
+<!-- Messages -->
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+    <div class="message message-{{ message.tags }}">
+        <i class="fa-solid {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-times-circle{% elif message.tags == 'info' %}fa-info-circle{% endif %}"></i>
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

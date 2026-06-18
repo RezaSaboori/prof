@@ -1,0 +1,333 @@
+/* Base Styles - Global Theme Variables */
+:root {
+    /* Color Palette */
+    --color-red: rgb(173, 29, 30);
+    --color-orange: rgb(255, 141, 40);
+    --color-yellow: rgb(255, 204, 0);
+    --color-green: rgb(52, 199, 89);
+    --color-mint: rgb(0, 200, 179);
+    --color-teal: rgb(0, 195, 208);
+    --color-cyan: rgb(0, 192, 232);
+    --color-blue: rgb(0, 136, 255);
+    --color-indigo: rgb(97, 85, 245);
+    --color-purple: rgb(203, 48, 224);
+    --color-pink: rgb(255, 45, 85);
+    --color-brown: rgb(172, 127, 94);
+
+    /* Gray Scale */
+    --color-gray1: rgb(248, 248, 248);
+    --color-gray2: rgb(228, 228, 228);
+    --color-gray3: rgb(210, 210, 210);
+    --color-gray4: rgb(190, 190, 190);
+    --color-gray5: rgb(170, 170, 170);
+    --color-gray6: rgb(142, 142, 142);
+    --color-gray7: rgb(107, 107, 107);
+    --color-gray8: rgb(87, 87, 87);
+    --color-gray9: rgb(67, 67, 67);
+    --color-gray10: rgb(47, 47, 47);
+    --color-gray11: rgb(27, 27, 27);
+    --color-gray12: rgb(7, 7, 7);
+
+    /* Surface Colors */
+    --surface-header: var(--color-gray3);
+
+    /* RGB Values for Color Mix */
+    --rgb-black: 0, 0, 0;
+    --rgb-white: 255, 255, 255;
+    --rgb-primary-blue: 0, 136, 255;
+    --rgb-primary-blue-dark: 0, 85, 245;
+    --rgb-primary-blue-light: 0, 192, 232;
+    --rgb-danger-dark: 255, 56, 60;
+    --rgb-toggle-end: 142, 142, 142;
+    --rgb-toggle-shadow-dark: 27, 27, 27;
+
+    /* Spacing System */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 40px;
+    --spacing-3xl: 48px;
+    --spacing-4xl: 56px;
+    --spacing-5xl: 64px;
+
+    /* Border Radius */
+    --border-radius-none: 0px;
+    --border-radius-item-xs: 4px;
+    --border-radius-item-sm: 8px;
+    --border-radius-item-md: 12px;
+    --border-radius-item-lg: 16px;
+    --border-radius-item-xl: 20px;
+    --border-radius-container-xs: 24px;
+    --border-radius-container-sm: 32px;
+    --border-radius-container-md: 40px;
+    --border-radius-container-lg: 48px;
+    --border-radius-container-xl: 56px;
+    --border-radius-pill: 9999px;
+
+    /* Shortcuts */
+    --radius-lg: var(--border-radius-container-xs);
+    --radius-md: var(--border-radius-item-md);
+
+    /* Border Widths */
+    --border-width-none: 0px;
+    --border-width-hairline: 0.5px;
+    --border-width-thin: 1px;
+    --border-width-normal: 2px;
+    --border-width-thick: 4px;
+
+    /* Elevation / Shadows */
+    --elevation-0: 0 0 0 0 rgba(var(--rgb-black), 0);
+    --elevation-1: 0 1px 3px 0 rgba(var(--rgb-black), 0.08);
+    --elevation-2: 0 3px 6px 0 rgba(var(--rgb-black), 0.12);
+    --elevation-3: 0 6px 12px 0 rgba(var(--rgb-black), 0.16);
+    --elevation-4: 0 10px 20px 0 rgba(var(--rgb-black), 0.2);
+
+    /* Typography */
+    --font-family-base: 'IRANSansX', 'Segoe UI', Tahoma, sans-serif;
+    --font-family-variable: 'IRANSansXV', 'Segoe UI', Tahoma, sans-serif;
+}
+
+@font-face {
+    font-family: 'IRANSansX';
+    src: url('../fonts/IRANSansX-Regular.woff') format('woff'),
+         url('../fonts/IRANSansX-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANSansX';
+    src: url('../fonts/IRANSansX-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IRANSansXV';
+    src: url('../fonts/IRANSansXV.woff') format('woff');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family-base);
+    color: var(--color-gray11);
+    background:
+        radial-gradient(circle at top left, rgba(var(--rgb-primary-blue-light), 0.08), transparent 30%),
+        radial-gradient(circle at top right, rgba(203, 48, 224, 0.08), transparent 30%),
+        linear-gradient(180deg, var(--color-gray1), #f1f3f6);
+    line-height: 1.65;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+/* Navigation (for non-landing pages) */
+.base-nav {
+    background-color: var(--bg-white);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.nav-logo a {
+    text-decoration: none;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: var(--spacing-lg);
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-links li a:hover {
+    color: var(--primary-color);
+}
+
+.nav-toggle {
+    display: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+/* Main Content */
+.base-main {
+    min-height: calc(100vh - 200px);
+    padding: var(--spacing-lg);
+}
+
+/* Footer */
+.base-footer {
+    background-color: var(--bg-white);
+    border-top: 1px solid var(--border-color);
+    padding: var(--spacing-lg) 0;
+    margin-top: auto;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--bg-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--bg-white);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-hover);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: var(--primary-color);
+    color: var(--bg-white);
+}
+
+/* Messages */
+.messages-container {
+    max-width: 800px;
+    margin: 0 auto var(--spacing-lg);
+}
+
+.message {
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: 500;
+}
+
+.message-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.message-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.message-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background-color: var(--bg-white);
+        border-bottom: 1px solid var(--border-color);
+        padding: var(--spacing-md);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+}
