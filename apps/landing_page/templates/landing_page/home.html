@@ -5,28 +5,8 @@
 
 {% block meta_description %}Upload your resume. Prof handles the rest. AI-powered job sourcing, ATS-crushing documents, and precision outreach to decision-makers.{% endblock %}
 
-{% block navbar %}{% endblock %}
-
-{% block footer %}{% endblock %}
-
 {% block content %}
 <div class="page-shell">
-  <header class="site-header">
-    <div class="header-container">
-      <a href="#hero" class="logo" aria-label="Prof home">
-        <span class="logo-text">Prof</span>
-      </a>
-
-      <nav class="main-nav" aria-label="Main navigation">
-        <a href="#solution" class="nav-link">How It Works</a>
-        <a href="#features" class="nav-link">Features</a>
-        <a href="#pricing" class="nav-link">Pricing</a>
-        <a href="#who" class="nav-link">Who It's For</a>
-      </nav>
-
-      <a href="{% url 'social:begin' 'google-oauth2' %}" class="header-cta">Sign In</a>
-    </div>
-  </header>
 
   <main>
     <section class="section hero-section" id="hero">
@@ -456,22 +436,6 @@
 
   </main>
 
-  <footer class="site-footer glass-dark">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <a href="#hero" class="logo" aria-label="Prof home">
-          <img src="{% static 'img/prof.svg' %}" alt="Prof logo" class="logo-mark" />
-          <span class="logo-text">Prof</span>
-        </a>
-        <p class="footer-tagline">Career Intelligence. Delivered Autonomously.</p>
-      </div>
-      <p class="footer-trust">
-        Prof is not a job board. It is not a resume builder. It is an autonomous agent that works
-        while you don't.
-      </p>
-      <p class="footer-copy">&copy; 2026 Prof. All rights reserved.</p>
-    </div>
-  </footer>
 </div>
 
 <script>

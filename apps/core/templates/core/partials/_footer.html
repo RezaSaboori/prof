@@ -1,21 +1,17 @@
-<!-- Footer -->
-<footer class="base-footer">
-    <div class="footer-container">
-        <div class="footer-logo">
-            <i class="fa-solid fa-layer-group"></i> Prof
+{% load static %}
+<footer class="site-footer glass-dark">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="{% url 'landing_page:home' %}" class="logo" aria-label="Prof home">
+                <img src="{% static 'img/prof.svg' %}" alt="" class="logo-mark" aria-hidden="true" />
+                <span class="logo-text">Prof</span>
+            </a>
+            <p class="footer-tagline">Career Intelligence. Delivered Autonomously.</p>
         </div>
-        <ul class="footer-links">
-            <li><a href="{% url 'landing_page:home' %}">Home</a></li>
-            {% if user.is_authenticated %}
-            <li><a href="{% url 'dashboard:index' %}">Dashboard</a></li>
-            <li><a href="{% url 'authentication:logout' %}">Logout</a></li>
-            {% else %}
-            <li><a href="{% url 'authentication:login' %}">Login</a></li>
-            <li><a href="{% url 'authentication:register' %}">Register</a></li>
-            {% endif %}
-        </ul>
-        <div class="footer-copyright">
-            <p>&copy; 2024 Prof. All rights reserved.</p>
-        </div>
+        <p class="footer-trust">
+            Prof is not a job board. It is not a resume builder. It is an autonomous agent that works
+            while you don't.
+        </p>
+        <p class="footer-copy">&copy; 2026 Prof. All rights reserved.</p>
     </div>
 </footer>

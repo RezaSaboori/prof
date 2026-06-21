@@ -5,38 +5,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Prof - Your Professional Platform{% endblock %}</title>
-    
+    <title>{% block title %}Prof - Your Autonomous Career Agent{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+
     <!-- CSS Styles -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    {% block extra_css %}{% endblock %}
-    {% if landing_page %}
     <link rel="stylesheet" href="{% static 'css/landing-page.css' %}">
-    {% endif %}
-    
-    <!-- Font Awesome (CDN) -->
+    {% block extra_css %}{% endblock %}
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="base-body {% if landing_page %}landing-page-body{% endif %}">
-    {% block navbar %}
-    <!-- Navbar -->
+<body class="base-body">
+
+    <!-- Global Header (main-nav is visible only when show_main_nav=True is passed from view) -->
     {% include 'core/partials/_navbar.html' %}
-    {% endblock %}
-    
+
     <!-- Messages -->
     {% include 'core/partials/_messages.html' %}
-    
+
     <!-- Main Content -->
     <main class="base-main">
         {% block content %}{% endblock %}
     </main>
-    
-    {% block footer %}
-    <!-- Footer -->
+
+    <!-- Global Footer -->
     {% include 'core/partials/_footer.html' %}
-    {% endblock %}
-    
+
     <!-- JavaScript -->
     <script src="{% static 'js/base.js' %}"></script>
     {% block extra_js %}{% endblock %}
