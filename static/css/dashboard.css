@@ -16,7 +16,7 @@
    DASHBOARD ISLAND (sticky left sidebar)
    ============================================ */
 .dashboard-island {
-    width: 240px;
+    width: 320px;
     height: 50vh;
     flex-shrink: 0;
     position: sticky;
@@ -29,7 +29,7 @@
 
     display: flex;
     flex-direction: column;
-    border-radius: var(--border-radius-container-xs);
+    border-radius: var(--border-radius-container-lg);
     overflow: hidden;
 }
 
@@ -39,7 +39,7 @@
    align-self: flex-start is required for sticky to work inside a flex container. */
 
 .dashboard-island__brand {
-    padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+    padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-md) var(--spacing-xl);
     flex-shrink: 0;
 }
 
@@ -56,7 +56,7 @@
 .dashboard-island__nav {
     flex: 1;
     overflow-y: auto;
-    padding: var(--spacing-sm) var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-md);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
@@ -70,15 +70,16 @@
     border-radius: var(--border-radius-pill);
     text-decoration: none;
     color: var(--color-gray8);
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     transition: background 0.15s, color 0.15s;
 }
 
 .dashboard-island__nav a svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     flex-shrink: 0;
+    padding-bottom: 2px;
 }
 
 .dashboard-island__nav a:hover {
@@ -103,7 +104,7 @@
         );
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
-    color: #ffffff;
+    color: var(--color-gray1);
     box-shadow:
         inset 0 0 0 1px color-mix(in srgb, var(--color-cyan) 20%, transparent),
         inset 2px 1px 0px -1px color-mix(in srgb, var(--color-cyan) 90%, transparent),
@@ -117,11 +118,11 @@
 }
 
 .dashboard-island__nav a.active svg {
-    color: #ffffff;
+    color: var(--color-gray1);
 }
 
 .dashboard-island__signout {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-lg);
     flex-shrink: 0;
 }
 
@@ -133,15 +134,16 @@
     border-radius: var(--border-radius-pill);
     text-decoration: none;
     color: var(--color-red);
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     transition: background 0.15s, color 0.15s;
 }
 
 .dashboard-island__signout a svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     flex-shrink: 0;
+    padding-bottom: 2px;
 }
 
 .dashboard-island__signout a:hover {
@@ -157,7 +159,8 @@
 }
 
 .dashboard-header {
-    margin-bottom: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
 }
 
 .dashboard-header h1 {
@@ -181,7 +184,7 @@
 }
 
 .stat-card {
-    border-radius: var(--border-radius-item-lg);
+    border-radius: var(--border-radius-container-md);
     padding: var(--spacing-lg);
     box-shadow: var(--elevation-1);
 }
