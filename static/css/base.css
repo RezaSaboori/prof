@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap');
+
 :root {
     --color-red: rgb(173, 29, 30);
     --color-orange: rgb(255, 141, 40);
@@ -59,9 +61,20 @@
     --elevation-3: 0 6px 12px 0 color-mix(in srgb, var(--color-gray12) 16%, transparent);
     --elevation-4: 0 10px 20px 0 color-mix(in srgb, var(--color-gray12) 20%, transparent);
 
-    --font-family-base: 'IRANSansX', 'Inter', 'Segoe UI', Tahoma, sans-serif;
-    --font-family-variable: 'IRANSansXV', 'Inter', 'Segoe UI', Tahoma, sans-serif;
+    --font-family-inter: 'Inter', sans-serif;
+    --font-family-nunito: 'Nunito', sans-serif;
+    --font-family-base: var(--font-family-nunito);
+    --font-family-variable: var(--font-family-inter);
 
     --accent-dark: rgb(0, 100, 210);
     --accent-glow: color-mix(in srgb, var(--color-blue) 15%, transparent);
+}
+
+/* Font definitions */
+h1, h2 {
+    font-family: var(--font-family-inter), sans-serif;
+}
+
+h3, h4, h5, h6, p, span, div, li, a, button, input, textarea, select {
+    font-family: var(--font-family-nunito), sans-serif;
 }
