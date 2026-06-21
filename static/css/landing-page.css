@@ -49,7 +49,7 @@
 
 
 .hero-title {
-    font-family: var(--font-family-variable);
+    font-family: var(--font-family-inter);
     font-size: clamp(48px, 5vw, 64px);
     font-weight: 800;
     line-height: 1.12;
