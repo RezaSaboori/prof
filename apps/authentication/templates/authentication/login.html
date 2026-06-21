@@ -1,44 +1,102 @@
-{% extends 'core/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In – Prof</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh; display: flex;
+      align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .modal {
+      width: 100%; max-width: 420px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px; padding: 48px 40px 40px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+      color: #fff; text-align: center;
+    }
+    .modal__logo {
+      font-size: 2rem; font-weight: 800; letter-spacing: -1px;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .modal__subtitle {
+      font-size: 0.9rem; color: rgba(255,255,255,0.55); margin-bottom: 36px;
+    }
+    .btn-google {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%; padding: 14px 20px;
+      background: #fff; color: #3c3c3c;
+      font-size: 0.95rem; font-weight: 600;
+      border: none; border-radius: 12px; cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.1s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .btn-google:hover  { box-shadow: 0 4px 18px rgba(0,0,0,0.35); transform: translateY(-1px); }
+    .btn-google svg    { width: 20px; height: 20px; flex-shrink: 0; }
+    .stay-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 24px; justify-content: center;
+      font-size: 0.85rem; color: rgba(255,255,255,0.7);
+      cursor: pointer; user-select: none;
+    }
+    .stay-row input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: #a78bfa; cursor: pointer;
+    }
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 28px 0 0; color: rgba(255,255,255,0.3); font-size: 0.78rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.15);
+    }
+  </style>
+</head>
+<body>
+<div class="modal">
+  <div class="modal__logo">Prof</div>
+  <p class="modal__subtitle">Sign in to access your dashboard</p>
 
-{% block title %}Login - Prof{% endblock %}
+  {% if messages %}
+    {% for msg in messages %}
+      <p style="background:rgba(239,68,68,.2);border-radius:8px;padding:10px;font-size:.85rem;margin-bottom:12px;">{{ msg }}</p>
+    {% endfor %}
+  {% endif %}
 
-{% block content %}
-<div class="auth-container">
-    <div class="auth-box">
-        <h1>Login</h1>
-        <p class="auth-subtitle">Welcome back! Please login to your account.</p>
-        
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="message {% if message.tags %}message-{{ message.tags }}{% endif %}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-        <form method="post" class="auth-form">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="id_username">Username</label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                <span class="error">{{ form.username.errors }}</span>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <label for="id_password">Password</label>
-                {{ form.password }}
-                {% if form.password.errors %}
-                <span class="error">{{ form.password.errors }}</span>
-                {% endif %}
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-        <p class="auth-footer">
-            Don't have an account? <a href="{% url 'authentication:register' %}">Register</a>
-        </p>
-    </div>
+  <a id="googleBtn" href="{% url 'social:begin' 'google-oauth2' %}" class="btn-google">
+    <!-- Inline Google G SVG — no external request -->
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+    </svg>
+    Continue with Google
+  </a>
+
+  <label class="stay-row">
+    <input type="checkbox" id="staySignedIn" checked />
+    Keep me signed in for 30 days
+  </label>
+
+  <div class="divider">secure sign-in via Google</div>
 </div>
-{% endblock %}
+
+<script>
+  // Store stay-signed-in preference before redirect
+  document.getElementById('googleBtn').addEventListener('click', function() {
+    sessionStorage.setItem('staySignedIn',
+      document.getElementById('staySignedIn').checked ? '1' : '0');
+  });
+</script>
+</body>
+</html>

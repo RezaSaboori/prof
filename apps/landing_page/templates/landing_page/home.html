@@ -20,7 +20,7 @@
         <a href="#who" class="nav-link">Who It's For</a>
       </nav>
 
-      <a href="#cta" class="header-cta">Get Started</a>
+      <a href="{% url 'social:begin' 'google-oauth2' %}" class="header-cta">Sign In</a>
     </div>
   </header>
 
@@ -53,7 +53,7 @@
           hiring manager — while you focus on your actual work.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-xl blue-glass hero-cta-primary">
+          <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-xl blue-glass hero-cta-primary">
             <span>Get Your First Match Free</span>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -84,7 +84,7 @@
                   <span class="score-label">Match</span>
                 </div>
               </div>
-              <a href="#" class="check-position-btn">Check the Position</a>
+              <a href="{% url 'social:begin' 'google-oauth2' %}" class="check-position-btn">Check the Position</a>
             </div>
 
             <div class="outreach-preview">
@@ -435,7 +435,7 @@
         <span>Whether Prof Finds It First.</span>
       </h2>
 
-      <a class="btn btn-primary btn-xl">
+      <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-primary btn-xl">
         <span>Upload Your Resume - It's Free to Start</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path

@@ -1,40 +1,43 @@
-{% extends 'core/base.html' %}
+{% extends 'dashboard/base.html' %}
+{% block title %}Home – Prof Dashboard{% endblock %}
 
-{% block title %}Dashboard - Prof{% endblock %}
+{% block extra_head %}
+<style>
+  .greeting { font-size: 2.2rem; font-weight: 800; margin: 48px 0 8px;
+    background: linear-gradient(90deg,#a78bfa,#60a5fa);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .greeting-sub { color: rgba(255,255,255,0.5); font-size: 1rem; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+           gap:20px; margin-top:40px; }
+  .card { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09);
+          border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:10px;
+          transition: border-color .2s; }
+  .card:hover { border-color:rgba(167,139,250,.4); }
+  .card-icon  { font-size:1.6rem; }
+  .card-title { font-weight:700; }
+  .card-desc  { font-size:.82rem; color:rgba(255,255,255,.45); line-height:1.5; }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <aside class="dashboard-sidebar">
-        <nav class="dashboard-nav">
-            <ul>
-                <li><a href="{% url 'dashboard:index' %}">Overview</a></li>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="{% url 'authentication:logout' %}">Logout</a></li>
-            </ul>
-        </nav>
-    </aside>
-    <main class="dashboard-main">
-        <header class="dashboard-header">
-            <h1>Dashboard</h1>
-            <p>Welcome back, {{ request.user.username }}!</p>
-        </header>
-        <section class="dashboard-content">
-            <div class="dashboard-stats">
-                <div class="stat-card">
-                    <h3>Stats 1</h3>
-                    <p class="stat-value">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Stats 2</h3>
-                    <p class="stat-value">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Stats 3</h3>
-                    <p class="stat-value">0</p>
-                </div>
-            </div>
-        </section>
-    </main>
+<h1 class="greeting">Hi {{ display_name }} 👋</h1>
+<p class="greeting-sub">Welcome to your Prof dashboard.</p>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-icon">👤</div>
+    <div class="card-title">Your Info</div>
+    <div class="card-desc">Update your profile, resume, and contact details.</div>
+  </div>
+  <div class="card">
+    <div class="card-icon">💼</div>
+    <div class="card-title">Your Jobs</div>
+    <div class="card-desc">Browse matched positions and track applications.</div>
+  </div>
+  <div class="card">
+    <div class="card-icon">📊</div>
+    <div class="card-title">Insights</div>
+    <div class="card-desc">Coming soon — AI-powered career insights.</div>
+  </div>
 </div>
 {% endblock %}

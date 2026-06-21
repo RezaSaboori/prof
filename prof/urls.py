@@ -21,11 +21,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.landing_page.urls', namespace='landing_page')),
+    path('',        include('apps.landing_page.urls', namespace='landing_page')),
+    path('auth/',   include('apps.authentication.urls', namespace='authentication')),
     path('dashboard/', include('apps.dashboard.urls', namespace='dashboard')),
-    path('auth/', include('apps.authentication.urls', namespace='authentication')),
-]
+    path('social-auth/', include('social_django.urls', namespace='social')),  # ← new
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
