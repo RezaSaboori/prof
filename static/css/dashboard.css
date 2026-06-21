@@ -9,27 +9,38 @@
     padding: var(--spacing-lg);
     gap: var(--spacing-lg);
     align-items: flex-start;
+    position: relative;
 }
 
 /* ============================================
    DASHBOARD ISLAND (sticky left sidebar)
-   Glass-styled, fixed-position island
    ============================================ */
 .dashboard-island {
     width: 240px;
+    height: 50vh;
     flex-shrink: 0;
     position: sticky;
-    top: var(--spacing-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    align-self: flex-start;
+
+    /* Offset the sticky from the left viewport edge */
+    margin-left: var(--spacing-md);
+
     display: flex;
     flex-direction: column;
     border-radius: var(--border-radius-container-xs);
     overflow: hidden;
 }
 
+/* Sticky + vertical centering trick:
+   "top: 50%; transform: translateY(-50%)" centers the element
+   relative to the viewport while it is sticky.
+   align-self: flex-start is required for sticky to work inside a flex container. */
+
 .dashboard-island__brand {
     padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
-    border-bottom: var(--border-width-hairline) solid
-        color-mix(in srgb, var(--color-gray12) 8%, transparent);
+    flex-shrink: 0;
 }
 
 .dashboard-island__logo-text {
@@ -40,23 +51,15 @@
     color: var(--color-gray11);
 }
 
-.dashboard-island__user {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    font-size: 13px;
-    color: var(--color-gray6);
-    border-bottom: var(--border-width-hairline) solid
-        color-mix(in srgb, var(--color-gray12) 8%, transparent);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+/* dashboard-island__user is REMOVED from HTML — no rule needed */
 
 .dashboard-island__nav {
     flex: 1;
+    overflow-y: auto;
     padding: var(--spacing-sm) var(--spacing-sm);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
 }
 
 .dashboard-island__nav a {
@@ -64,7 +67,7 @@
     align-items: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius-item-md);
+    border-radius: var(--border-radius-pill);
     text-decoration: none;
     color: var(--color-gray8);
     font-size: 14px;
@@ -83,17 +86,43 @@
     color: var(--color-gray11);
 }
 
+/* Active item — blue-glass style */
 .dashboard-island__nav a.active {
-    background: color-mix(in srgb, var(--color-blue) 10%, transparent);
-    color: var(--color-blue);
-    box-shadow: inset 0 0 0 var(--border-width-thin)
-        color-mix(in srgb, var(--color-blue) 20%, transparent);
+    /* Reuse the .blue-glass visual from style.css as an inline recreation */
+    background-image:
+        radial-gradient(
+            circle at 30% 18%,
+            color-mix(in srgb, var(--color-cyan) 40%, transparent) 0%,
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-cyan) 72%, var(--color-blue)) 0%,
+            color-mix(in srgb, var(--color-blue) 88%, var(--color-indigo)) 58%,
+            color-mix(in srgb, var(--accent-dark) 92%, var(--color-gray12)) 100%
+        );
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    color: #ffffff;
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--color-cyan) 20%, transparent),
+        inset 2px 1px 0px -1px color-mix(in srgb, var(--color-cyan) 90%, transparent),
+        inset -1.5px -1px 0px -1px color-mix(in srgb, var(--color-cyan) 80%, transparent),
+        inset -2px -6px 1px -5px color-mix(in srgb, var(--color-cyan) 60%, transparent),
+        inset -1px 2px 3px -1px color-mix(in srgb, var(--accent-dark) 25%, transparent),
+        inset 0px -4px 1px -2px color-mix(in srgb, var(--color-gray12) 15%, transparent),
+        inset 0px 3px 6px 0px color-mix(in srgb, var(--color-gray12) 10%, transparent),
+        0px 1px 5px 0px color-mix(in srgb, var(--color-blue) 14%, transparent),
+        0px 8px 20px 0px color-mix(in srgb, var(--color-blue) 24%, transparent);
+}
+
+.dashboard-island__nav a.active svg {
+    color: #ffffff;
 }
 
 .dashboard-island__signout {
     padding: var(--spacing-sm);
-    border-top: var(--border-width-hairline) solid
-        color-mix(in srgb, var(--color-gray12) 8%, transparent);
+    flex-shrink: 0;
 }
 
 .dashboard-island__signout a {
@@ -101,7 +130,7 @@
     align-items: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius-item-md);
+    border-radius: var(--border-radius-pill);
     text-decoration: none;
     color: var(--color-red);
     font-size: 14px;
@@ -182,14 +211,16 @@
 
     .dashboard-island {
         width: 100%;
+        height: auto;
         position: static;
+        transform: none;
+        margin-left: 0;
         flex-direction: row;
         flex-wrap: wrap;
         border-radius: var(--border-radius-item-xl);
     }
 
-    .dashboard-island__brand,
-    .dashboard-island__user {
+    .dashboard-island__brand {
         border-bottom: none;
         border-right: var(--border-width-hairline) solid
             color-mix(in srgb, var(--color-gray12) 8%, transparent);
@@ -199,6 +230,7 @@
         flex-direction: row;
         flex-wrap: wrap;
         padding: var(--spacing-xs);
+        overflow-y: visible;
     }
 
     .dashboard-island__signout {
