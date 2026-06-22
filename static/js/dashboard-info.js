@@ -288,73 +288,73 @@
 
     function collectFormData() {
         function getAll(name) {
-            return Array.from(document.querySelectorAll('[name="' + name + '"]')).map(el => el.value);
+            return Array.from(document.querySelectorAll('[name="' + name + '"]')).map(function (el) { return el.value; });
         }
         function getTagsFrom(wrapper) { return wrapper ? wrapper._getTags() : []; }
 
-        const education = getAll('edu_degree[]').map(function (_, i) {
-            const actWrappers = document.querySelectorAll('.edu-activities-wrapper');
+        var education = getAll('edu_degree[]').map(function (_, i) {
+            var actWrappers = document.querySelectorAll('.edu-activities-wrapper');
             return {
-                degree: getAll('edu_degree[]')[i] || '',
-                major: getAll('edu_major[]')[i] || '',
+                degree:      getAll('edu_degree[]')[i] || '',
+                major:       getAll('edu_major[]')[i] || '',
                 institution: getAll('edu_institution[]')[i] || '',
-                start_year: getAll('edu_start_year[]')[i] || null,
-                end_year: getAll('edu_end_year[]')[i] || null,
-                gpa: getAll('edu_gpa[]')[i] || '',
-                honors: getAll('edu_honors[]')[i] || '',
-                activities: actWrappers[i] ? actWrappers[i]._getTags() : [],
+                start_year:  getAll('edu_start_year[]')[i] || null,
+                end_year:    getAll('edu_end_year[]')[i] || null,
+                gpa:         getAll('edu_gpa[]')[i] || '',
+                honors:      getAll('edu_honors[]')[i] || '',
+                activities:  actWrappers[i] ? actWrappers[i]._getTags() : [],
             };
         });
 
-        const certifications = getAll('cert_name[]').map(function (_, i) {
+        var certifications = getAll('cert_name[]').map(function (_, i) {
             return {
-                name: getAll('cert_name[]')[i] || '',
-                issuer: getAll('cert_issuer[]')[i] || '',
-                issue_date: getAll('cert_issue_date[]')[i] || null,
-                expiry_date: getAll('cert_expiry_date[]')[i] || null,
+                name:          getAll('cert_name[]')[i] || '',
+                issuer:        getAll('cert_issuer[]')[i] || '',
+                issue_date:    getAll('cert_issue_date[]')[i] || null,
+                expiry_date:   getAll('cert_expiry_date[]')[i] || null,
                 credential_id: getAll('cert_credential_id[]')[i] || '',
             };
         });
 
-        const experience = getAll('exp_title[]').map(function (_, i) {
+        var experience = getAll('exp_title[]').map(function (_, i) {
             return {
-                title: getAll('exp_title[]')[i] || '',
-                company: getAll('exp_company[]')[i] || '',
-                location: getAll('exp_location[]')[i] || '',
-                type: getAll('exp_type[]')[i] || '',
-                start_date: getAll('exp_start_date[]')[i] || null,
-                end_date: getAll('exp_end_date[]')[i] || null,
+                title:       getAll('exp_title[]')[i] || '',
+                company:     getAll('exp_company[]')[i] || '',
+                location:    getAll('exp_location[]')[i] || '',
+                type:        getAll('exp_type[]')[i] || '',
+                start_date:  getAll('exp_start_date[]')[i] || null,
+                end_date:    getAll('exp_end_date[]')[i] || null,
                 description: getAll('exp_description[]')[i] || '',
             };
         });
 
+        // Flat structure matching real table columns
         return {
-            name: document.getElementById('field-name')?.value || '',
-            phone: document.getElementById('field-phone')?.value || '',
-            linkedin: document.getElementById('field-linkedin')?.value || '',
-            website: document.getElementById('field-website')?.value || '',
-            location: document.getElementById('field-location')?.value || '',
-            skills: getTagsFrom(skillsWrapper),
-            education: education,
-            certifications: certifications,
-            experience: experience,
-            blocked: {
-                blocked_industries: getTagsFrom(blockedIndustriesWrapper),
-                work_style: getTagsFrom(workStyleWrapper),
-                blocked_companies: getTagsFrom(blockedCompaniesWrapper),
-                blocked_titles: getTagsFrom(blockedTitlesWrapper),
-                blocked_details: getTagsFrom(blockedDetailsWrapper),
-            },
+            name:               document.getElementById('field-name')?.value || '',
+            phone:              document.getElementById('field-phone')?.value || '',
+            linkedin:           document.getElementById('field-linkedin')?.value || '',
+            website:            document.getElementById('field-website')?.value || '',
+            location:           document.getElementById('field-location')?.value || '',
+            skills:             getTagsFrom(skillsWrapper),
+            education:          education,
+            certifications:     certifications,
+            experience:         experience,
+            // Blocked fields as flat top-level keys
+            blocked_industries: getTagsFrom(blockedIndustriesWrapper),
+            work_style:         getTagsFrom(workStyleWrapper),
+            blocked_companies:  getTagsFrom(blockedCompaniesWrapper),
+            blocked_titles:     getTagsFrom(blockedTitlesWrapper),
+            blocked_details:    getTagsFrom(blockedDetailsWrapper),
         };
     }
 
     document.getElementById('infoForm')?.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const saveBtn = document.getElementById('saveInfoBtn');
-        const originalHTML = saveBtn.innerHTML;
+        var saveBtn = document.getElementById('saveInfoBtn');
+        var originalHTML = saveBtn.innerHTML;
 
         saveBtn.disabled = true;
-        saveBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving…';
+        saveBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving\u2026';
 
         try {
             await apiFetch('/dashboard/api/user-info/save/', 'POST', collectFormData());
@@ -362,7 +362,7 @@
             setTimeout(function () { saveBtn.innerHTML = originalHTML; saveBtn.disabled = false; }, 2000);
         } catch (err) {
             console.error('Save failed:', err);
-            saveBtn.innerHTML = 'Save failed — retry';
+            saveBtn.innerHTML = 'Save failed \u2014 retry';
             saveBtn.disabled = false;
             setTimeout(function () { saveBtn.innerHTML = originalHTML; }, 3000);
         }
