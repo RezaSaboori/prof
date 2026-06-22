@@ -173,7 +173,7 @@
 }
 
 .dashboard-page .site-footer {
-    margin-left: var(--dashboard-sidebar-offset);
+    padding-left: var(--dashboard-sidebar-offset);
 }
 
 /* ============================================
@@ -228,6 +228,6 @@
     }
     .dashboard-page .site-header .header-container,
     .dashboard-page .site-footer {
-        margin-left: var(--spacing-xl);
+        padding-left: var(--spacing-xl);
     }
 }

@@ -580,14 +580,7 @@ body {
 
 
 .site-footer {
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    margin: 0 auto var(--spacing-xl) auto;
-    padding: var(--spacing-3xl) var(--spacing-xl);
-    transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
-    border-radius: var(--border-radius-container-lg);
+    padding-bottom: var(--spacing-xl);
 }
 
 .site-footer a {
@@ -601,7 +594,11 @@ body {
 }
 
 .footer-inner {
+    max-width: 1200px;
     margin: 0 auto;
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    border-radius: var(--border-radius-container-lg);
+    transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
