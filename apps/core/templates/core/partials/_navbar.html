@@ -33,8 +33,8 @@
 
         <div class="auth-modal-header">
             <span class="auth-modal-logo-text">Prof</span>
-            <h2 class="auth-modal-title" id="authModalTitle">Welcome back</h2>
-            <p class="auth-modal-subtitle">Sign in to access your dashboard</p>
+            <h2 class="auth-modal-title" id="authModalTitle">Welcome</h2>
+            <p class="auth-modal-subtitle">Sign in or create your account with Google</p>
         </div>
 
         <a id="authModalGoogleBtn" href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-primary auth-modal-google-btn" target="_blank" rel="noopener noreferrer">
@@ -51,10 +51,6 @@
             <input type="checkbox" id="authModalStaySignedIn" checked />
             Keep me signed in for 30 days
         </label>
-
-        <p class="auth-modal-footer">
-            Don't have an account? <a href="{% url 'authentication:login' %}">Register</a>
-        </p>
     </div>
 </div>
 {% endif %}

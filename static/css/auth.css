@@ -129,11 +129,10 @@
 .auth-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 2000;
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-lg);
     background: color-mix(in srgb, var(--color-gray12) 30%, transparent);
     backdrop-filter: blur(6px) saturate(140%);
     -webkit-backdrop-filter: blur(6px) saturate(140%);
@@ -146,8 +145,7 @@
 
 .auth-modal-panel {
     position: relative;
-    width: 100%;
-    max-width: 400px;
+    width: 400px;
     border-radius: var(--border-radius-container-xs);
     padding: var(--spacing-3xl) var(--spacing-xl) var(--spacing-xl);
     display: flex;
@@ -234,18 +232,3 @@
     flex-shrink: 0;
 }
 
-.auth-modal-footer {
-    font-size: 14px;
-    color: var(--color-gray6);
-    text-align: center;
-    margin-top: var(--spacing-xs);
-}
-
-.auth-modal-footer a {
-    color: var(--color-blue);
-    text-decoration: none;
-}
-
-.auth-modal-footer a:hover {
-    text-decoration: underline;
-}
