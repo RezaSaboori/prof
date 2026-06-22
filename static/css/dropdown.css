@@ -186,7 +186,7 @@
     color: var(--color-gray5);
     background: color-mix(in srgb, var(--color-gray12) 6%, transparent);
     padding: 1px 6px;
-    border-radius: var(--border-radius-item-xs);
+    border-radius: var(--border-radius-item-lg);
 }
 
 .dropdown-menu__item.is-selected .dropdown-menu__abbr {
