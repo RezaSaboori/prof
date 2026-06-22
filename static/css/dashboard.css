@@ -7,25 +7,26 @@
     max-width: 1280px;
     margin: 0 auto;
     padding: var(--spacing-lg);
+    padding-left: calc(320px + var(--spacing-md) + var(--spacing-lg)); /* sidebar-width + left-offset + gap */
     gap: var(--spacing-lg);
     align-items: flex-start;
     position: relative;
 }
 
 /* ============================================
-   DASHBOARD ISLAND (sticky left sidebar)
+   DASHBOARD ISLAND (fixed left sidebar)
    ============================================ */
 .dashboard-island {
     width: 320px;
-    height: 50vh;
+    height: 80vh;
     flex-shrink: 0;
-    position: sticky;
+
+    /* Fixed to viewport left edge */
+    position: fixed;
+    left: var(--spacing-md);        
     top: 50%;
     transform: translateY(-50%);
-    align-self: flex-start;
-
-    /* Offset the sticky from the left viewport edge */
-    margin-left: var(--spacing-md);
+    z-index: 100;
 
     display: flex;
     flex-direction: column;
@@ -33,10 +34,14 @@
     overflow: hidden;
 }
 
-/* Sticky + vertical centering trick:
-   "top: 50%; transform: translateY(-50%)" centers the element
-   relative to the viewport while it is sticky.
-   align-self: flex-start is required for sticky to work inside a flex container. */
+/* When footer is visible, un-fix the sidebar so it scrolls away naturally */
+.dashboard-island--docked {
+    position: absolute;
+    left: var(--spacing-md);
+    top: auto;
+    bottom: 0;
+    transform: none;
+}
 
 .dashboard-island__brand {
     padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-md) var(--spacing-xl);
@@ -99,8 +104,7 @@
         linear-gradient(
             135deg,
             color-mix(in srgb, var(--color-cyan) 72%, var(--color-blue)) 0%,
-            color-mix(in srgb, var(--color-blue) 88%, var(--color-indigo)) 58%,
-            color-mix(in srgb, var(--accent-dark) 92%, var(--color-gray12)) 100%
+            color-mix(in srgb, var(--color-blue) 88%, var(--color-indigo)) 100%
         );
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -210,17 +214,25 @@
     .dashboard-layout {
         flex-direction: column;
         padding: var(--spacing-sm);
+        padding-left: var(--spacing-sm); /* reset the fixed-sidebar offset */
     }
 
     .dashboard-island {
         width: 100%;
         height: auto;
-        position: static;
+        position: static;              /* back in flow on mobile */
+        left: auto;
+        top: auto;
         transform: none;
-        margin-left: 0;
+        z-index: auto;
         flex-direction: row;
         flex-wrap: wrap;
         border-radius: var(--border-radius-item-xl);
+    }
+
+    .dashboard-island--docked {
+        position: static;
+        bottom: auto;
     }
 
     .dashboard-island__brand {
