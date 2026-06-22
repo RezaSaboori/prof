@@ -4,7 +4,7 @@
 
 /* CSS custom property for sidebar total width — single source of truth */
 :root {
-    --dashboard-sidebar-width: 300px;
+    --dashboard-sidebar-width: 320px;
     --dashboard-sidebar-offset: calc(var(--dashboard-sidebar-width) + var(--spacing-md) + var(--spacing-md));
 }
 
@@ -21,8 +21,8 @@
    DASHBOARD ISLAND (fixed left sidebar)
    ============================================ */
 .dashboard-island {
-    width: 300px;
-    height: 80vh;
+    width: var(--dashboard-sidebar-width);
+    height: calc(100vh - var(--spacing-lg));
     flex-shrink: 0;
 
     /* Fixed to viewport left edge */
@@ -161,20 +161,22 @@
 .dashboard-main {
     flex: 1;
     min-width: 0;
-    max-width: 900px;
+    max-width: 1200px;
     margin-inline: auto;
 }
 
 /* ============================================
    HEADER & FOOTER — offset right of the sidebar
    ============================================ */
-.dashboard-page .site-header .header-container {
-    padding-left: calc(var(--dashboard-sidebar-offset) + var(--spacing-lg));
+.dashboard-page .site-header {
+    padding-left: var(--dashboard-sidebar-offset);
 }
 
-.dashboard-page .site-footer .footer-inner {
-    padding-left: calc(var(--dashboard-sidebar-offset) + var(--spacing-lg));
+.dashboard-page .site-footer {
+    margin-left: var(--dashboard-sidebar-offset);
 }
+
+
 
 /* ============================================
    RESPONSIVE
