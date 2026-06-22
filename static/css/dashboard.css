@@ -181,7 +181,7 @@
 .dashboard-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-md);
+    gap: var(--spacing-xl);
     margin-bottom: var(--spacing-lg);
 }
 
@@ -191,7 +191,6 @@
     align-items: flex-start;
     border-radius: var(--border-radius-container-md);
     padding: var(--spacing-lg);
-    box-shadow: var(--elevation-1);
 }
 
 .stat-card h3 {

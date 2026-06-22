@@ -15,11 +15,6 @@
     }
 }
 
-@keyframes auth-overlay-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
 .auth-modal-overlay {
     position: fixed;
     inset: 0;
@@ -27,10 +22,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: color-mix(in srgb, var(--color-gray12) 30%, transparent);
-    backdrop-filter: blur(6px) saturate(140%);
-    -webkit-backdrop-filter: blur(6px) saturate(140%);
-    animation: auth-overlay-in 220ms ease both;
+    background: color-mix(in srgb, var(--color-gray12) 40%, transparent);
 }
 
 .auth-modal-overlay[hidden] {
@@ -41,34 +33,88 @@
     position: relative;
     width: 400px;
     max-width: calc(100vw - (var(--spacing-lg) * 2));
-    border-radius: var(--border-radius-container-xs);
-    padding: var(--spacing-3xl) var(--spacing-xl) var(--spacing-xl);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-container-lg);
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: var(--spacing-md);
+    overflow: hidden;
     animation: auth-modal-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+    background-image: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-gray1) 50%, transparent) 0%,
+        color-mix(in srgb, var(--color-gray6) 35%, transparent) 100%
+    );
+    backdrop-filter: saturate(200%) blur(4px) brightness(1.2);
+    -webkit-backdrop-filter: saturate(200%) blur(4px) brightness(1.2);
+    box-shadow:
+        inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray1) 18%, transparent),
+        inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-gray1) 90%, transparent),
+        inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray1) 30%, transparent),
+        inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray1) 10%, transparent),
+        inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
+        inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+        inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+        inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
+        0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
+        0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
+}
+
+.auth-modal-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--border-width-thin);
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-gray1) 100%, transparent) 0%,
+        color-mix(in srgb, var(--color-gray1) 0%, transparent) 42%
+    );
+    -webkit-mask:
+        linear-gradient(var(--color-gray12) 0 0) content-box,
+        linear-gradient(var(--color-gray12) 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.auth-modal-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    position: relative;
+    z-index: 1;
+}
+
+.auth-modal-logo-text {
+    font-family: var(--font-family-variable);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--color-gray11);
 }
 
 .auth-modal-close {
-    position: absolute;
-    top: var(--spacing-md);
-    right: var(--spacing-md);
     width: 32px;
     height: 32px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--border-radius-item-sm);
+    border-radius: var(--border-radius-pill);
     color: var(--color-gray7);
-    background: color-mix(in srgb, var(--color-gray12) 6%, transparent);
-    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray12) 8%, transparent);
+    background: color-mix(in srgb, var(--color-gray1) 35%, transparent);
+    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray1) 20%, transparent);
     transition: background 0.2s ease, color 0.2s ease;
     cursor: pointer;
+    position: relative;
+    z-index: 1;
 }
 
 .auth-modal-close:hover {
-    background: color-mix(in srgb, var(--color-gray12) 12%, transparent);
+    background: color-mix(in srgb, var(--color-gray1) 55%, transparent);
     color: var(--color-gray11);
 }
 
@@ -78,16 +124,9 @@
     align-items: center;
     gap: var(--spacing-xs);
     text-align: center;
-    margin-bottom: var(--spacing-sm);
-}
-
-.auth-modal-logo-text {
-    font-family: var(--font-family-variable);
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    color: var(--color-gray11);
-    margin-bottom: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+    position: relative;
+    z-index: 1;
 }
 
 .auth-modal-title {
@@ -100,24 +139,30 @@
 
 .auth-modal-subtitle {
     font-size: 14px;
-    color: var(--color-gray6);
+    color: var(--color-gray8);
     margin: 0;
 }
 
 .auth-modal-google-btn {
-    width: 100%;
+    width: 90%;
     justify-content: center;
-    margin-top: var(--spacing-xs);
+    margin: auto;
+    margin-top: var(--spacing-lg) ;
+    position: relative;
+    z-index: 1;
 }
 
 .auth-modal-stay-row {
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: var(--spacing-sm);
     font-size: 14px;
-    color: var(--color-gray7);
+    color: var(--color-gray8);
     cursor: pointer;
     user-select: none;
+    position: relative;
+    z-index: 1;
 }
 
 .auth-modal-stay-row input[type="checkbox"] {
@@ -125,4 +170,5 @@
     height: 16px;
     cursor: pointer;
     flex-shrink: 0;
+    margin-bottom: 1px;
 }
