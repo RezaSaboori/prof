@@ -181,47 +181,42 @@
         addEntryCard('experienceEntries', 'experience-entry-template', 'Experience');
     });
 
-    // ── SUPABASE HELPERS ───────────────────────────────
+    // ── DJANGO API HELPERS ─────────────────────────────
 
-    async function supabaseFetch(path, method, body) {
-        const resp = await fetch(SUPABASE_URL + path, {
+    function getCsrfToken() {
+        const el = document.querySelector('[name=csrfmiddlewaretoken]');
+        return el ? el.value : '';
+    }
+
+    async function apiFetch(url, method, body) {
+        const opts = {
             method: method || 'GET',
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_KEY,
-                'Content-Type': 'application/json',
-                'Prefer': method === 'POST' ? 'resolution=merge-duplicates' : '',
-            },
-            body: body ? JSON.stringify(body) : undefined,
-        });
-        if (!resp.ok) throw new Error('Supabase error ' + resp.status);
+            headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+        };
+        if (body) opts.body = JSON.stringify(body);
+        const resp = await fetch(url, opts);
+        if (!resp.ok) throw new Error('API error ' + resp.status);
         return resp.status === 204 ? null : resp.json();
     }
 
-    // ── LOAD DATA FROM SUPABASE ────────────────────────
+    // ── LOAD DATA ──────────────────────────────────────
 
     async function loadUserInfo() {
-        if (!SUPABASE_URL || !USER_ID) return;
         try {
-            const rows = await supabaseFetch(
-                '/rest/v1/user_info?user_id=eq.' + encodeURIComponent(USER_ID) + '&limit=1'
-            );
-            if (!rows || rows.length === 0) return;
-            const data = rows[0];
+            const data = await apiFetch('/dashboard/api/user-info/');
+            if (!data || Object.keys(data).length === 0) return;
 
-            // Personal
             setValue('field-name', data.name);
             setValue('field-phone', data.phone);
             setValue('field-linkedin', data.linkedin);
             setValue('field-website', data.website);
             setValue('field-location', data.location);
 
-            // Skills
             if (skillsWrapper && Array.isArray(data.skills)) {
                 skillsWrapper._setTags(data.skills);
             }
 
-            // Education
             if (Array.isArray(data.education)) {
                 data.education.forEach(function (edu) {
                     addEntryCard('educationEntries', 'education-entry-template', 'Degree');
@@ -235,13 +230,10 @@
                     setCardField(card, 'edu_gpa[]', edu.gpa);
                     setCardField(card, 'edu_honors[]', edu.honors);
                     const actWrapper = card.querySelector('.edu-activities-wrapper');
-                    if (actWrapper && Array.isArray(edu.activities)) {
-                        actWrapper._setTags(edu.activities);
-                    }
+                    if (actWrapper && Array.isArray(edu.activities)) actWrapper._setTags(edu.activities);
                 });
             }
 
-            // Certifications
             if (Array.isArray(data.certifications)) {
                 data.certifications.forEach(function (cert) {
                     addEntryCard('certificationEntries', 'certification-entry-template', 'Certification');
@@ -255,7 +247,6 @@
                 });
             }
 
-            // Experience
             if (Array.isArray(data.experience)) {
                 data.experience.forEach(function (exp) {
                     addEntryCard('experienceEntries', 'experience-entry-template', 'Experience');
@@ -271,7 +262,6 @@
                 });
             }
 
-            // Blocked
             const blocked = data.blocked || {};
             if (blockedIndustriesWrapper && Array.isArray(blocked.blocked_industries)) blockedIndustriesWrapper._setTags(blocked.blocked_industries);
             if (workStyleWrapper && Array.isArray(blocked.work_style)) workStyleWrapper._setTags(blocked.work_style);
@@ -300,10 +290,7 @@
         function getAll(name) {
             return Array.from(document.querySelectorAll('[name="' + name + '"]')).map(el => el.value);
         }
-
-        function getTagsFrom(wrapper) {
-            return wrapper ? wrapper._getTags() : [];
-        }
+        function getTagsFrom(wrapper) { return wrapper ? wrapper._getTags() : []; }
 
         const education = getAll('edu_degree[]').map(function (_, i) {
             const actWrappers = document.querySelectorAll('.edu-activities-wrapper');
@@ -342,7 +329,6 @@
         });
 
         return {
-            user_id: USER_ID,
             name: document.getElementById('field-name')?.value || '',
             phone: document.getElementById('field-phone')?.value || '',
             linkedin: document.getElementById('field-linkedin')?.value || '',
@@ -365,26 +351,20 @@
     document.getElementById('infoForm')?.addEventListener('submit', async function (e) {
         e.preventDefault();
         const saveBtn = document.getElementById('saveInfoBtn');
-        const originalText = saveBtn.innerHTML;
+        const originalHTML = saveBtn.innerHTML;
 
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving…';
 
         try {
-            const payload = collectFormData();
-            await supabaseFetch('/rest/v1/user_info', 'POST', payload);
+            await apiFetch('/dashboard/api/user-info/save/', 'POST', collectFormData());
             saveBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Saved!';
-            setTimeout(function () {
-                saveBtn.innerHTML = originalText;
-                saveBtn.disabled = false;
-            }, 2000);
+            setTimeout(function () { saveBtn.innerHTML = originalHTML; saveBtn.disabled = false; }, 2000);
         } catch (err) {
             console.error('Save failed:', err);
             saveBtn.innerHTML = 'Save failed — retry';
             saveBtn.disabled = false;
-            setTimeout(function () {
-                saveBtn.innerHTML = originalText;
-            }, 3000);
+            setTimeout(function () { saveBtn.innerHTML = originalHTML; }, 3000);
         }
     });
 
