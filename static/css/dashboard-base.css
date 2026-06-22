@@ -54,8 +54,6 @@
     color: var(--color-gray11);
 }
 
-/* dashboard-island__user is REMOVED from HTML — no rule needed */
-
 .dashboard-island__nav {
     flex: 1;
     overflow-y: auto;
@@ -92,7 +90,6 @@
 
 /* Active item — blue-glass style */
 .dashboard-island__nav a.active {
-    /* Reuse the .blue-glass visual from style.css as an inline recreation */
     background-image:
         radial-gradient(
             circle at 30% 18%,
@@ -158,53 +155,6 @@
 .dashboard-main {
     flex: 1;
     min-width: 0;
-}
-
-.dashboard-header {
-    margin-top: var(--spacing-xl);
-    margin-bottom: var(--spacing-xl);
-}
-
-.dashboard-header h1 {
-    font-family: var(--font-family-variable);
-    color: var(--color-gray11);
-    margin-bottom: var(--spacing-xs);
-}
-
-.dashboard-header p {
-    color: var(--color-gray6);
-}
-
-/* ============================================
-   DASHBOARD STAT CARDS
-   ============================================ */
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-xl);
-    margin-bottom: var(--spacing-lg);
-}
-
-.stat-card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border-radius: var(--border-radius-container-md);
-    padding: var(--spacing-lg);
-}
-
-.stat-card h3 {
-    color: var(--color-gray6);
-    font-size: 14px;
-    font-family: var(--font-family-base);
-    font-weight: 500;
-    margin-bottom: var(--spacing-sm);
-}
-
-.stat-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--color-blue);
 }
 
 /* ============================================
