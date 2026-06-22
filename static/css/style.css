@@ -878,6 +878,192 @@ body {
     min-height: 100vh;
 }
 
+/* ============================================
+   DJANGO MESSAGES — Glass Card Notifications
+   ============================================ */
+
+@keyframes msg-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(16px) scale(0.92);
+        filter: blur(16px);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-2px) scale(1.04);
+        filter: blur(2px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0px);
+    }
+}
+
+@keyframes msg-exit {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(4px) scale(1.1);
+        filter: blur(16px);
+    }
+}
+
+.messages-container {
+    position: fixed;
+    top: var(--spacing-xl);
+    right: var(--spacing-xl);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-width: 420px;
+    width: calc(100vw - var(--spacing-xl) * 2);
+    pointer-events: none;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-item-lg);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-gray1);
+    pointer-events: auto;
+    overflow: hidden;
+    animation: msg-enter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.message.msg-hiding {
+    animation: msg-exit 0.45s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* message / info → green glass */
+.message-info,
+.message-success {
+    position: relative;
+    background-image:
+        radial-gradient(
+            circle at 30% 18%,
+            color-mix(in srgb, var(--color-mint) 40%, transparent) 0%,
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-mint) 72%, var(--color-green)) 0%,
+            color-mix(in srgb, var(--color-green) 88%, var(--color-teal)) 58%,
+            color-mix(in srgb, var(--color-green) 70%, var(--color-gray12)) 100%
+        );
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--color-mint) 20%, transparent),
+        inset 2px 1px 0px -1px color-mix(in srgb, var(--color-mint) 90%, transparent),
+        inset -1.5px -1px 0px -1px color-mix(in srgb, var(--color-mint) 80%, transparent),
+        inset -2px -6px 1px -5px color-mix(in srgb, var(--color-mint) 60%, transparent),
+        inset -1px 2px 3px -1px color-mix(in srgb, var(--color-teal) 25%, transparent),
+        inset 0px -4px 1px -2px color-mix(in srgb, var(--color-gray12) 15%, transparent),
+        inset 0px 3px 6px 0px color-mix(in srgb, var(--color-gray12) 10%, transparent),
+        0px 1px 5px 0px color-mix(in srgb, var(--color-green) 14%, transparent),
+        0px 8px 20px 0px color-mix(in srgb, var(--color-green) 24%, transparent);
+}
+
+/* warning → yellow/orange glass */
+.message-warning {
+    position: relative;
+    background-image:
+        radial-gradient(
+            circle at 30% 18%,
+            color-mix(in srgb, var(--color-yellow) 45%, transparent) 0%,
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-yellow) 60%, var(--color-orange)) 0%,
+            color-mix(in srgb, var(--color-orange) 90%, var(--color-red)) 58%,
+            color-mix(in srgb, var(--color-orange) 70%, var(--color-gray12)) 100%
+        );
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--color-yellow) 22%, transparent),
+        inset 2px 1px 0px -1px color-mix(in srgb, var(--color-yellow) 90%, transparent),
+        inset -1.5px -1px 0px -1px color-mix(in srgb, var(--color-yellow) 80%, transparent),
+        inset -2px -6px 1px -5px color-mix(in srgb, var(--color-yellow) 60%, transparent),
+        inset -1px 2px 3px -1px color-mix(in srgb, var(--color-orange) 25%, transparent),
+        inset 0px -4px 1px -2px color-mix(in srgb, var(--color-gray12) 15%, transparent),
+        inset 0px 3px 6px 0px color-mix(in srgb, var(--color-gray12) 10%, transparent),
+        0px 1px 5px 0px color-mix(in srgb, var(--color-orange) 14%, transparent),
+        0px 8px 20px 0px color-mix(in srgb, var(--color-orange) 24%, transparent);
+}
+
+/* alarm / error → red glass */
+.message-error,
+.message-danger {
+    position: relative;
+    background-image:
+        radial-gradient(
+            circle at 30% 18%,
+            color-mix(in srgb, var(--color-orange) 40%, transparent) 0%,
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-orange) 60%, var(--color-red)) 0%,
+            color-mix(in srgb, var(--color-red) 90%, var(--color-pink)) 58%,
+            color-mix(in srgb, var(--color-red) 70%, var(--color-gray12)) 100%
+        );
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--color-orange) 20%, transparent),
+        inset 2px 1px 0px -1px color-mix(in srgb, var(--color-orange) 90%, transparent),
+        inset -1.5px -1px 0px -1px color-mix(in srgb, var(--color-orange) 80%, transparent),
+        inset -2px -6px 1px -5px color-mix(in srgb, var(--color-orange) 60%, transparent),
+        inset -1px 2px 3px -1px color-mix(in srgb, var(--color-red) 25%, transparent),
+        inset 0px -4px 1px -2px color-mix(in srgb, var(--color-gray12) 15%, transparent),
+        inset 0px 3px 6px 0px color-mix(in srgb, var(--color-gray12) 10%, transparent),
+        0px 1px 5px 0px color-mix(in srgb, var(--color-red) 14%, transparent),
+        0px 8px 20px 0px color-mix(in srgb, var(--color-red) 24%, transparent);
+}
+
+/* Specular top-edge highlight on all message variants */
+.message-info::before,
+.message-success::before,
+.message-warning::before,
+.message-error::before,
+.message-danger::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.65) 0%,
+        rgba(255, 255, 255, 0) 35%
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .message,
+    .message.msg-hiding {
+        animation: none;
+    }
+}
+
 .base-main {
     min-height: calc(100vh - 200px);
 }

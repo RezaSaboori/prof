@@ -95,6 +95,10 @@ SUPABASE_URL              = os.getenv('SUPABASE_URL', '')
 SUPABASE_ANON_KEY         = os.getenv('SUPABASE_ANON_KEY', '')
 SUPABASE_SERVICE_ROLE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY', '')
 
+# ── Social Auth: Increase timeout for slow connections ──────────────
+REQUESTS_TIMEOUT = 15.0
+SOCIAL_AUTH_REQUESTS_TIMEOUT = 15.0
+
 # ── Session: "stay signed in" = 30-day cookie ─────────────────────
 SESSION_COOKIE_AGE           = 60 * 60 * 24 * 30  # 30 days
 SESSION_SAVE_EVERY_REQUEST   = False

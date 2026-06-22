@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
     initScrollTop();
     initSmoothActionButtons();
+    initMessages();
 });
 
 function initMobileNav() {
@@ -47,6 +48,27 @@ function initScrollTop() {
             behavior: 'smooth'
         });
     });
+}
+
+function initMessages() {
+    const messages = document.querySelectorAll('.messages-container .message');
+    const AUTO_DISMISS_MS = 5000;
+    const EXIT_DURATION_MS = 450;
+
+    messages.forEach((msg) => {
+        const timer = setTimeout(() => dismissMessage(msg), AUTO_DISMISS_MS);
+
+        msg.addEventListener('click', () => {
+            clearTimeout(timer);
+            dismissMessage(msg);
+        });
+    });
+
+    function dismissMessage(msg) {
+        if (msg.classList.contains('msg-hiding')) return;
+        msg.classList.add('msg-hiding');
+        setTimeout(() => msg.remove(), EXIT_DURATION_MS);
+    }
 }
 
 function initSmoothActionButtons() {
