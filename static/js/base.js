@@ -1,10 +1,10 @@
 // Base JavaScript for Prof Landing Page
-// Mobile navigation toggle
 document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
     initScrollTop();
     initSmoothActionButtons();
     initMessages();
+    initAuthModal();
 });
 
 function initMobileNav() {
@@ -43,10 +43,7 @@ function initScrollTop() {
     handleScroll();
 
     scrollTopButton.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
 
@@ -57,7 +54,6 @@ function initMessages() {
 
     messages.forEach((msg) => {
         const timer = setTimeout(() => dismissMessage(msg), AUTO_DISMISS_MS);
-
         msg.addEventListener('click', () => {
             clearTimeout(timer);
             dismissMessage(msg);
@@ -77,9 +73,49 @@ function initSmoothActionButtons() {
     uploadButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
             event.preventDefault();
-
-            // TODO: Connect to your resume upload endpoint
             console.log('Upload trigger clicked - connect to upload flow');
         });
     });
+}
+
+function initAuthModal() {
+    const trigger  = document.getElementById('signInTrigger');
+    const overlay  = document.getElementById('authModalOverlay');
+    const closeBtn = document.getElementById('authModalClose');
+    const googleBtn = document.getElementById('authModalGoogleBtn');
+    const stayCheckbox = document.getElementById('authModalStaySignedIn');
+
+    if (!trigger || !overlay) return;
+
+    function openModal() {
+        overlay.hidden = false;
+        trigger.setAttribute('aria-expanded', 'true');
+        closeBtn.focus();
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        overlay.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.focus();
+        document.body.style.overflow = '';
+    }
+
+    trigger.addEventListener('click', openModal);
+
+    closeBtn.addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !overlay.hidden) closeModal();
+    });
+
+    if (googleBtn && stayCheckbox) {
+        googleBtn.addEventListener('click', () => {
+            sessionStorage.setItem('staySignedIn', stayCheckbox.checked ? '1' : '0');
+        });
+    }
 }

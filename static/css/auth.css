@@ -103,3 +103,149 @@
     margin-bottom: var(--spacing-sm);
     color: var(--color-red);
 }
+
+/* ============================================
+   AUTH MODAL — Glass sign-in dialog
+   ============================================ */
+
+@keyframes auth-modal-in {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+        filter: blur(8px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0px);
+    }
+}
+
+@keyframes auth-overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.auth-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    background: color-mix(in srgb, var(--color-gray12) 30%, transparent);
+    backdrop-filter: blur(6px) saturate(140%);
+    -webkit-backdrop-filter: blur(6px) saturate(140%);
+    animation: auth-overlay-in 220ms ease both;
+}
+
+.auth-modal-overlay[hidden] {
+    display: none;
+}
+
+.auth-modal-panel {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    border-radius: var(--border-radius-container-xs);
+    padding: var(--spacing-3xl) var(--spacing-xl) var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    animation: auth-modal-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.auth-modal-close {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-item-sm);
+    color: var(--color-gray7);
+    background: color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray12) 8%, transparent);
+    transition: background 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+}
+
+.auth-modal-close:hover {
+    background: color-mix(in srgb, var(--color-gray12) 12%, transparent);
+    color: var(--color-gray11);
+}
+
+.auth-modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.auth-modal-logo-text {
+    font-family: var(--font-family-variable);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--color-gray11);
+    margin-bottom: var(--spacing-sm);
+}
+
+.auth-modal-title {
+    font-family: var(--font-family-variable);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-gray11);
+    margin: 0;
+}
+
+.auth-modal-subtitle {
+    font-size: 14px;
+    color: var(--color-gray6);
+    margin: 0;
+}
+
+.auth-modal-google-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--spacing-xs);
+}
+
+.auth-modal-stay-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 14px;
+    color: var(--color-gray7);
+    cursor: pointer;
+    user-select: none;
+}
+
+.auth-modal-stay-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.auth-modal-footer {
+    font-size: 14px;
+    color: var(--color-gray6);
+    text-align: center;
+    margin-top: var(--spacing-xs);
+}
+
+.auth-modal-footer a {
+    color: var(--color-blue);
+    text-decoration: none;
+}
+
+.auth-modal-footer a:hover {
+    text-decoration: underline;
+}
