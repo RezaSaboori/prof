@@ -21,7 +21,7 @@
    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="base-body">
+<body class="base-body {% block body_class %}{% endblock %}">
 
     <!-- Global Header (main-nav is visible only when show_main_nav=True is passed from view) -->
     {% include 'core/partials/_navbar.html' %}

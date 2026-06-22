@@ -7,8 +7,10 @@
 <link rel="stylesheet" href="{% static 'css/dashboard-base.css' %}">
 {% endblock %}
 
+{% block body_class %}dashboard-page{% endblock %}
+
 {% block content %}
-<div class="dashboard-layout">
+<div class="dashboard-layout dashboard-page-content">
 
     <aside class="dashboard-island glass" aria-label="Dashboard navigation">
         <div class="dashboard-island__brand">
