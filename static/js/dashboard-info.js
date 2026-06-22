@@ -5,6 +5,8 @@
 
 (function () {
     'use strict';
+    if (window.__dashboardInfoInit) return;
+    window.__dashboardInfoInit = true;
 
     // ── Supabase config (injected by Django template) ──
     const SUPABASE_URL = window.SUPABASE_URL || '';
@@ -150,6 +152,14 @@
             initTagInput(actWrapper, actInput, actHidden);
         }
 
+        // Wire bullets tag inputs inside experience cards
+        const bulletsWrapper = card.querySelector('.exp-bullets-wrapper');
+        if (bulletsWrapper) {
+            const bulletsInput = bulletsWrapper.querySelector('.tag-input');
+            const bulletsHidden = bulletsWrapper.querySelector('input[type="hidden"]');
+            initTagInput(bulletsWrapper, bulletsInput, bulletsHidden);
+        }
+
         container.appendChild(card);
 
         // Animate in
@@ -242,8 +252,6 @@
                     setCardField(card, 'cert_name[]', cert.name);
                     setCardField(card, 'cert_issuer[]', cert.issuer);
                     setCardField(card, 'cert_issue_date[]', cert.issue_date);
-                    setCardField(card, 'cert_expiry_date[]', cert.expiry_date);
-                    setCardField(card, 'cert_credential_id[]', cert.credential_id);
                 });
             }
 
@@ -252,13 +260,12 @@
                     addEntryCard('experienceEntries', 'experience-entry-template', 'Experience');
                     const cards = document.querySelectorAll('#experienceEntries .entry-card');
                     const card = cards[cards.length - 1];
-                    setCardField(card, 'exp_title[]', exp.title);
+                    setCardField(card, 'exp_job_title[]', exp.job_title);
                     setCardField(card, 'exp_company[]', exp.company);
-                    setCardField(card, 'exp_location[]', exp.location);
-                    setCardField(card, 'exp_type[]', exp.type);
                     setCardField(card, 'exp_start_date[]', exp.start_date);
                     setCardField(card, 'exp_end_date[]', exp.end_date);
-                    setCardField(card, 'exp_description[]', exp.description);
+                    const bulletsWrapper = card.querySelector('.exp-bullets-wrapper');
+                    if (bulletsWrapper && Array.isArray(exp.bullets)) bulletsWrapper._setTags(exp.bullets);
                 });
             }
 
@@ -308,23 +315,20 @@
 
         var certifications = getAll('cert_name[]').map(function (_, i) {
             return {
-                name:          getAll('cert_name[]')[i] || '',
-                issuer:        getAll('cert_issuer[]')[i] || '',
-                issue_date:    getAll('cert_issue_date[]')[i] || null,
-                expiry_date:   getAll('cert_expiry_date[]')[i] || null,
-                credential_id: getAll('cert_credential_id[]')[i] || '',
+                name:       getAll('cert_name[]')[i] || '',
+                issuer:     getAll('cert_issuer[]')[i] || '',
+                issue_date: getAll('cert_issue_date[]')[i] || null,
             };
         });
 
-        var experience = getAll('exp_title[]').map(function (_, i) {
+        var bulletsWrappers = document.querySelectorAll('.exp-bullets-wrapper');
+        var experience = getAll('exp_job_title[]').map(function (_, i) {
             return {
-                title:       getAll('exp_title[]')[i] || '',
-                company:     getAll('exp_company[]')[i] || '',
-                location:    getAll('exp_location[]')[i] || '',
-                type:        getAll('exp_type[]')[i] || '',
-                start_date:  getAll('exp_start_date[]')[i] || null,
-                end_date:    getAll('exp_end_date[]')[i] || null,
-                description: getAll('exp_description[]')[i] || '',
+                job_title:  getAll('exp_job_title[]')[i] || '',
+                company:    getAll('exp_company[]')[i] || '',
+                start_date: getAll('exp_start_date[]')[i] || null,
+                end_date:   getAll('exp_end_date[]')[i] || null,
+                bullets:    bulletsWrappers[i] ? bulletsWrappers[i]._getTags() : [],
             };
         });
 

@@ -261,14 +261,6 @@
                 <label class="form-label">Issue Date</label>
                 <input class="form-input" type="month" name="cert_issue_date[]">
             </div>
-            <div class="form-field">
-                <label class="form-label">Expiry Date</label>
-                <input class="form-input" type="month" name="cert_expiry_date[]">
-            </div>
-            <div class="form-field">
-                <label class="form-label">Credential ID</label>
-                <input class="form-input" type="text" name="cert_credential_id[]" placeholder="e.g. ABC-123456">
-            </div>
         </div>
     </div>
 </template>
@@ -285,26 +277,11 @@
         <div class="info-field-grid">
             <div class="form-field">
                 <label class="form-label">Job Title</label>
-                <input class="form-input" type="text" name="exp_title[]" placeholder="e.g. Senior Engineer">
+                <input class="form-input" type="text" name="exp_job_title[]" placeholder="e.g. Senior Engineer">
             </div>
             <div class="form-field">
                 <label class="form-label">Company</label>
                 <input class="form-input" type="text" name="exp_company[]" placeholder="e.g. Acme Corp">
-            </div>
-            <div class="form-field">
-                <label class="form-label">Location</label>
-                <input class="form-input" type="text" name="exp_location[]" placeholder="e.g. Remote / New York">
-            </div>
-            <div class="form-field">
-                <label class="form-label">Employment Type</label>
-                <select class="form-input form-select" name="exp_type[]">
-                    <option value="">Select type</option>
-                    <option value="full-time">Full-time</option>
-                    <option value="part-time">Part-time</option>
-                    <option value="contract">Contract</option>
-                    <option value="freelance">Freelance</option>
-                    <option value="internship">Internship</option>
-                </select>
             </div>
             <div class="form-field">
                 <label class="form-label">Start Date</label>
@@ -315,8 +292,12 @@
                 <input class="form-input" type="month" name="exp_end_date[]" placeholder="Leave blank if current">
             </div>
             <div class="form-field form-field--full">
-                <label class="form-label">Description</label>
-                <textarea class="form-input form-textarea" name="exp_description[]" rows="3" placeholder="Briefly describe your responsibilities and achievements"></textarea>
+                <label class="form-label">Bullets</label>
+                <div class="tag-input-wrapper exp-bullets-wrapper">
+                    <div class="tag-list exp-bullets-list" role="list" aria-label="Bullet points"></div>
+                    <input class="tag-input" type="text" placeholder="Add a bullet point and press Enter …" autocomplete="off" aria-label="Add a bullet point">
+                    <input type="hidden" name="exp_bullets[]">
+                </div>
             </div>
         </div>
     </div>
@@ -325,5 +306,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/dashboard-info.js' %}" defer></script>
+<script src="{% static 'js/dashboard-info.js' %}"></script>
 {% endblock %}
