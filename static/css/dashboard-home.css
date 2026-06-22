@@ -2,7 +2,6 @@
    DASHBOARD HOME — HEADER
    ============================================ */
 .dashboard-header {
-    margin-top: var(--spacing-xl);
     margin-bottom: var(--spacing-xl);
 }
 

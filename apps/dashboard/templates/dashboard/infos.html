@@ -1,0 +1,334 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard-info.css' %}">
+{% endblock %}
+
+{% block dashboard_title %}Info's{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Your Information</h1>
+    <p>Manage your professional profile data</p>
+</div>
+
+<form class="info-form" id="infoForm" novalidate>
+    {% csrf_token %}
+
+    <!-- ── PERSONAL INFORMATION ── -->
+    <section class="info-section glass" aria-labelledby="section-personal">
+        <div class="info-section__header">
+            <h2 class="info-section__title" id="section-personal">Personal Information</h2>
+            <p class="info-section__desc">Your basic contact and online presence details</p>
+        </div>
+        <div class="info-section__body">
+            <div class="info-field-grid">
+                <div class="form-field">
+                    <label class="form-label" for="field-name">Full Name</label>
+                    <input class="form-input" type="text" id="field-name" name="name" placeholder="e.g. Jane Doe" autocomplete="name">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="field-phone">Phone</label>
+                    <input class="form-input" type="tel" id="field-phone" name="phone" placeholder="e.g. +1 555 000 0000" autocomplete="tel">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="field-linkedin">LinkedIn URL</label>
+                    <input class="form-input" type="url" id="field-linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="field-website">Website</label>
+                    <input class="form-input" type="url" id="field-website" name="website" placeholder="https://yourwebsite.com">
+                </div>
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="field-location">Location</label>
+                    <input class="form-input" type="text" id="field-location" name="location" placeholder="e.g. San Francisco, CA" autocomplete="address-level2">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── EDUCATION ── -->
+    <section class="info-section glass" aria-labelledby="section-education">
+        <div class="info-section__header">
+            <h2 class="info-section__title" id="section-education">Education</h2>
+            <p class="info-section__desc">Add all your academic degrees (BSc, MSc, PhD, …)</p>
+        </div>
+        <div class="info-section__body">
+            <div class="education-entries" id="educationEntries"></div>
+            <button type="button" class="btn-add-entry" id="addEducationBtn" aria-label="Add another education entry">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Degree
+            </button>
+        </div>
+    </section>
+
+    <!-- ── CERTIFICATIONS ── -->
+    <section class="info-section glass" aria-labelledby="section-certifications">
+        <div class="info-section__header">
+            <h2 class="info-section__title" id="section-certifications">Certifications</h2>
+            <p class="info-section__desc">Professional certifications and licenses</p>
+        </div>
+        <div class="info-section__body">
+            <div class="certification-entries" id="certificationEntries"></div>
+            <button type="button" class="btn-add-entry" id="addCertificationBtn" aria-label="Add another certification">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Certification
+            </button>
+        </div>
+    </section>
+
+    <!-- ── EXPERIENCE ── -->
+    <section class="info-section glass" aria-labelledby="section-experience">
+        <div class="info-section__header">
+            <h2 class="info-section__title" id="section-experience">Experience</h2>
+            <p class="info-section__desc">Your work history and professional roles</p>
+        </div>
+        <div class="info-section__body">
+            <div class="experience-entries" id="experienceEntries"></div>
+            <button type="button" class="btn-add-entry" id="addExperienceBtn" aria-label="Add another experience entry">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Experience
+            </button>
+        </div>
+    </section>
+
+    <!-- ── SKILLS ── -->
+    <section class="info-section glass" aria-labelledby="section-skills">
+        <div class="info-section__header">
+            <h2 class="info-section__title" id="section-skills">Skills</h2>
+            <p class="info-section__desc">Technical and soft skills — press Enter or comma to add</p>
+        </div>
+        <div class="info-section__body">
+            <div class="form-field">
+                <label class="form-label" for="skills-input">Skills</label>
+                <div class="tag-input-wrapper" id="skills-tag-wrapper">
+                    <div class="tag-list" id="skills-tags" role="list" aria-label="Skills tags"></div>
+                    <input class="tag-input" type="text" id="skills-input" placeholder="e.g. Python, SQL …" autocomplete="off" aria-label="Add a skill">
+                    <input type="hidden" name="skills" id="skills-hidden">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── BLOCKED (INFERENCE GUARD) ── -->
+    <section class="info-section glass" aria-labelledby="section-blocked">
+        <div class="info-section__header">
+            <h2 class="info-section__title" id="section-blocked">Blocked</h2>
+            <p class="info-section__desc">Items excluded from AI inference and job matching. Press Enter or comma to add each tag.</p>
+        </div>
+        <div class="info-section__body">
+            <div class="info-field-grid">
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="blocked-industries-input">Blocked Industries</label>
+                    <div class="tag-input-wrapper" id="blocked-industries-tag-wrapper">
+                        <div class="tag-list" id="blocked-industries-tags" role="list" aria-label="Blocked industries tags"></div>
+                        <input class="tag-input" type="text" id="blocked-industries-input" placeholder="e.g. Medical, Batteries …" autocomplete="off" aria-label="Add a blocked industry">
+                        <input type="hidden" name="blocked_industries" id="blocked-industries-hidden">
+                    </div>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="work-style-input">Work Style</label>
+                    <div class="tag-input-wrapper" id="work-style-tag-wrapper">
+                        <div class="tag-list" id="work-style-tags" role="list" aria-label="Work style tags"></div>
+                        <input class="tag-input" type="text" id="work-style-input" placeholder="e.g. On-site, Night shifts …" autocomplete="off" aria-label="Add a work style preference">
+                        <input type="hidden" name="work_style" id="work-style-hidden">
+                    </div>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="blocked-companies-input">Blocked Companies</label>
+                    <div class="tag-input-wrapper" id="blocked-companies-tag-wrapper">
+                        <div class="tag-list" id="blocked-companies-tags" role="list" aria-label="Blocked companies tags"></div>
+                        <input class="tag-input" type="text" id="blocked-companies-input" placeholder="e.g. Acme Corp …" autocomplete="off" aria-label="Add a blocked company">
+                        <input type="hidden" name="blocked_companies" id="blocked-companies-hidden">
+                    </div>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="blocked-titles-input">Blocked Titles</label>
+                    <div class="tag-input-wrapper" id="blocked-titles-tag-wrapper">
+                        <div class="tag-list" id="blocked-titles-tags" role="list" aria-label="Blocked titles tags"></div>
+                        <input class="tag-input" type="text" id="blocked-titles-input" placeholder="e.g. Sales Manager …" autocomplete="off" aria-label="Add a blocked job title">
+                        <input type="hidden" name="blocked_titles" id="blocked-titles-hidden">
+                    </div>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="blocked-details-input">Blocked Details</label>
+                    <div class="tag-input-wrapper" id="blocked-details-tag-wrapper">
+                        <div class="tag-list" id="blocked-details-tags" role="list" aria-label="Blocked details tags"></div>
+                        <input class="tag-input" type="text" id="blocked-details-input" placeholder="e.g. Relocation required …" autocomplete="off" aria-label="Add a blocked detail">
+                        <input type="hidden" name="blocked_details" id="blocked-details-hidden">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ── SAVE BUTTON ── -->
+    <div class="info-form__actions">
+        <button type="submit" class="btn btn-primary" id="saveInfoBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Changes
+        </button>
+    </div>
+
+</form>
+
+<!-- Education entry template (hidden, cloned by JS) -->
+<template id="education-entry-template">
+    <div class="entry-card glass" data-entry="education">
+        <div class="entry-card__header">
+            <span class="entry-card__label">Degree</span>
+            <button type="button" class="entry-card__remove" aria-label="Remove this education entry">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="info-field-grid">
+            <div class="form-field">
+                <label class="form-label">Degree</label>
+                <select class="form-input form-select" name="edu_degree[]">
+                    <option value="">Select degree</option>
+                    <option value="associate">Associate</option>
+                    <option value="bachelor">Bachelor's (BSc / BA)</option>
+                    <option value="master">Master's (MSc / MA / MBA)</option>
+                    <option value="phd">PhD / Doctorate</option>
+                    <option value="postdoc">Postdoc</option>
+                    <option value="diploma">Diploma / Certificate</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label class="form-label">Major / Field of Study</label>
+                <input class="form-input" type="text" name="edu_major[]" placeholder="e.g. Computer Science">
+            </div>
+            <div class="form-field form-field--full">
+                <label class="form-label">Institution</label>
+                <input class="form-input" type="text" name="edu_institution[]" placeholder="e.g. MIT">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Start Year</label>
+                <input class="form-input" type="number" name="edu_start_year[]" min="1950" max="2099" placeholder="e.g. 2018">
+            </div>
+            <div class="form-field">
+                <label class="form-label">End Year</label>
+                <input class="form-input" type="number" name="edu_end_year[]" min="1950" max="2099" placeholder="e.g. 2022 (or blank if ongoing)">
+            </div>
+            <div class="form-field">
+                <label class="form-label">GPA</label>
+                <input class="form-input" type="text" name="edu_gpa[]" placeholder="e.g. 3.8 / 4.0">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Honors</label>
+                <input class="form-input" type="text" name="edu_honors[]" placeholder="e.g. Magna Cum Laude">
+            </div>
+            <div class="form-field form-field--full">
+                <label class="form-label">Activities</label>
+                <div class="tag-input-wrapper edu-activities-wrapper">
+                    <div class="tag-list" role="list" aria-label="Activities tags"></div>
+                    <input class="tag-input" type="text" placeholder="e.g. Chess Club, Debate Society …" autocomplete="off" aria-label="Add an activity">
+                    <input type="hidden" name="edu_activities[]">
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Certification entry template -->
+<template id="certification-entry-template">
+    <div class="entry-card glass" data-entry="certification">
+        <div class="entry-card__header">
+            <span class="entry-card__label">Certification</span>
+            <button type="button" class="entry-card__remove" aria-label="Remove this certification">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="info-field-grid">
+            <div class="form-field form-field--full">
+                <label class="form-label">Certification Name</label>
+                <input class="form-input" type="text" name="cert_name[]" placeholder="e.g. AWS Solutions Architect">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Issuing Organization</label>
+                <input class="form-input" type="text" name="cert_issuer[]" placeholder="e.g. Amazon Web Services">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Issue Date</label>
+                <input class="form-input" type="month" name="cert_issue_date[]">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Expiry Date</label>
+                <input class="form-input" type="month" name="cert_expiry_date[]">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Credential ID</label>
+                <input class="form-input" type="text" name="cert_credential_id[]" placeholder="e.g. ABC-123456">
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Experience entry template -->
+<template id="experience-entry-template">
+    <div class="entry-card glass" data-entry="experience">
+        <div class="entry-card__header">
+            <span class="entry-card__label">Experience</span>
+            <button type="button" class="entry-card__remove" aria-label="Remove this experience entry">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="info-field-grid">
+            <div class="form-field">
+                <label class="form-label">Job Title</label>
+                <input class="form-input" type="text" name="exp_title[]" placeholder="e.g. Senior Engineer">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Company</label>
+                <input class="form-input" type="text" name="exp_company[]" placeholder="e.g. Acme Corp">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Location</label>
+                <input class="form-input" type="text" name="exp_location[]" placeholder="e.g. Remote / New York">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Employment Type</label>
+                <select class="form-input form-select" name="exp_type[]">
+                    <option value="">Select type</option>
+                    <option value="full-time">Full-time</option>
+                    <option value="part-time">Part-time</option>
+                    <option value="contract">Contract</option>
+                    <option value="freelance">Freelance</option>
+                    <option value="internship">Internship</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label class="form-label">Start Date</label>
+                <input class="form-input" type="month" name="exp_start_date[]">
+            </div>
+            <div class="form-field">
+                <label class="form-label">End Date</label>
+                <input class="form-input" type="month" name="exp_end_date[]" placeholder="Leave blank if current">
+            </div>
+            <div class="form-field form-field--full">
+                <label class="form-label">Description</label>
+                <textarea class="form-input form-textarea" name="exp_description[]" rows="3" placeholder="Briefly describe your responsibilities and achievements"></textarea>
+            </div>
+        </div>
+    </div>
+</template>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.SUPABASE_URL = "{{ SUPABASE_URL }}";
+    window.SUPABASE_KEY = "{{ SUPABASE_KEY }}";
+    window.USER_ID = "{{ request.user.id }}";
+</script>
+<script src="{% static 'js/dashboard-info.js' %}" defer></script>
+{% endblock %}
