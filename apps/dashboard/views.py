@@ -1,6 +1,8 @@
 import requests
 import logging
 import json
+from urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -8,6 +10,28 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+# ── Module-level Session with retry + connection pooling ──────────────────────
+# One session is reused across all requests (keep-alive, connection pool).
+# Retry only on transient errors: connection resets, timeouts, 502/503/504.
+# backoff_factor=0.5 means: 0.5s, 1s, 2s between attempts (exponential).
+_retry_strategy = Retry(
+    total=3,
+    connect=3,
+    read=3,
+    backoff_factor=0.5,
+    status_forcelist=[502, 503, 504],
+    allowed_methods=["GET", "POST", "HEAD"],
+    raise_on_status=False,
+)
+_http_adapter = HTTPAdapter(
+    max_retries=_retry_strategy,
+    pool_connections=10,
+    pool_maxsize=20,
+)
+_session = requests.Session()
+_session.mount("https://", _http_adapter)
+_session.mount("http://",  _http_adapter)
 
 
 def _supabase_headers():
@@ -42,13 +66,12 @@ def api_user_info_get(request):
     """Proxy GET — fetch user_info row for the logged-in user."""
     email = request.user.email
     try:
-        resp = requests.get(
+        resp = _session.get(
             f'{settings.SUPABASE_URL}/rest/v1/user_info',
             params={'email': f'eq.{email}', 'limit': 1},
             headers=_supabase_headers(),
-            timeout=10,
+            timeout=(5, 15),  # (connect timeout, read timeout)
         )
-        # Surface the real Supabase error body instead of hiding it
         if not resp.ok:
             logger.error(f'Supabase GET error {resp.status_code}: {resp.text}')
             return JsonResponse(
@@ -61,8 +84,7 @@ def api_user_info_get(request):
 
         row = rows[0]
 
-        # These columns are stored as JSON strings — parse them into real objects
-        # so the frontend receives proper arrays/objects, not raw strings.
+        # Parse JSON-string columns into real Python objects
         JSON_COLUMNS = [
             'education', 'certifications', 'experiences', 'skills',
             'blocked_industries', 'work_style', 'blocked_companies',
@@ -76,32 +98,33 @@ def api_user_info_get(request):
                 except (json.JSONDecodeError, ValueError):
                     row[col] = []
 
-        # Expose 'experiences' under the key 'experience' that the JS expects
+        # Rename 'experiences' → 'experience' to match what the JS expects
         row['experience'] = row.pop('experiences', [])
 
         return JsonResponse(row, safe=False)
+
+    except requests.exceptions.Timeout:
+        logger.error('Supabase GET timed out for %s', email)
+        return JsonResponse({'error': 'timeout'}, status=504)
+    except requests.exceptions.ConnectionError as e:
+        logger.error('Supabase GET connection error for %s: %s', email, e)
+        return JsonResponse({'error': 'connection_error'}, status=502)
     except requests.RequestException as e:
-        logger.error(f'user_info GET failed: {e}')
+        logger.error('user_info GET failed: %s', e)
         return JsonResponse({'error': str(e)}, status=502)
 
 
 @login_required
 @require_http_methods(['POST'])
 def api_user_info_save(request):
-    """Proxy POST — upsert user_info row for the logged-in user.
-    Expects flat fields matching the user_info table schema.
-    """
+    """Proxy POST — upsert user_info row for the logged-in user."""
     try:
         body = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    # Enforce email from session — never trust client
     email = request.user.email
 
-    # Map to the real flat table columns.
-    # education / certifications / experiences / skills are stored as JSON strings.
-    # blocked fields are separate text columns.
     def to_json_str(val):
         if val is None:
             return None
@@ -125,20 +148,19 @@ def api_user_info_save(request):
         'blocked_companies':  to_json_str(body.get('blocked_companies')),
         'blocked_titles':     to_json_str(body.get('blocked_titles')),
         'blocked_details':    to_json_str(body.get('blocked_details')),
-        # required NOT NULL columns — preserve existing values via merge
         'summary':            False,
         'original_resume':    '',
     }
 
     try:
-        resp = requests.post(
+        resp = _session.post(
             f'{settings.SUPABASE_URL}/rest/v1/user_info',
             json=payload,
             headers={
                 **_supabase_headers(),
                 'Prefer': 'resolution=merge-duplicates,return=minimal',
             },
-            timeout=10,
+            timeout=(5, 15),
         )
         if not resp.ok:
             logger.error(f'Supabase POST error {resp.status_code}: {resp.text}')
@@ -147,8 +169,15 @@ def api_user_info_save(request):
                 status=502,
             )
         return JsonResponse({'ok': True})
+
+    except requests.exceptions.Timeout:
+        logger.error('Supabase POST timed out for %s', email)
+        return JsonResponse({'error': 'timeout'}, status=504)
+    except requests.exceptions.ConnectionError as e:
+        logger.error('Supabase POST connection error for %s: %s', email, e)
+        return JsonResponse({'error': 'connection_error'}, status=502)
     except requests.RequestException as e:
-        logger.error(f'user_info POST failed: {e}')
+        logger.error('user_info POST failed: %s', e)
         return JsonResponse({'error': str(e)}, status=502)
 
 
