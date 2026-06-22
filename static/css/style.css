@@ -373,7 +373,7 @@ body {
 
 .header-container {
     position: relative;
-    max-width: 1080px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) var(--spacing-lg);
     display: flex;
@@ -585,7 +585,7 @@ body {
     box-sizing: border-box;
     padding: var(--spacing-3xl) var(--spacing-xl);
     margin: 0 auto var(--spacing-xl) auto;
-    max-width: 1280px;
+    max-width: 1200px;
     transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
     border-radius: var(--border-radius-container-lg);
 }
