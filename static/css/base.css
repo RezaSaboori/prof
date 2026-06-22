@@ -78,3 +78,32 @@ h1, h2 {
 h3, h4, h5, h6, p, span, div, li, a, button, input, textarea, select {
     font-family: var(--font-family-nunito), sans-serif;
 }
+
+/* ── Custom scrollbar ── */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-gray4) var(--color-gray2);
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-gray2);
+    border-radius: var(--border-radius-pill);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-gray4);
+    border-radius: var(--border-radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gray6);
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}

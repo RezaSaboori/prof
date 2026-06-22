@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dropdown.css' %}">
 <link rel="stylesheet" href="{% static 'css/dashboard-info.css' %}">
 {% endblock %}
 
@@ -192,66 +193,66 @@
         <div class="info-field-grid">
             <div class="form-field">
                 <label class="form-label">Degree</label>
-                <div class="deg-dropdown" data-name="edu_degree[]">
-                    <button type="button" class="deg-dropdown__trigger" aria-haspopup="listbox" aria-expanded="false">
-                        <span class="deg-dropdown__text deg-dropdown__text--placeholder">Select degree</span>
-                        <svg class="deg-dropdown__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                <div class="dropdown-menu allow-search allow-custom" data-name="edu_degree[]">
+                    <button type="button" class="dropdown-menu__trigger" aria-haspopup="listbox" aria-expanded="false">
+                        <span class="dropdown-menu__text dropdown-menu__text--placeholder">Select degree</span>
+                        <svg class="dropdown-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
-                    <div class="deg-dropdown__menu" role="listbox">
-                        <div class="deg-dropdown__search-wrap">
-                            <input class="deg-dropdown__search" type="text" placeholder="Search or type a degree…" autocomplete="off" aria-label="Search degrees">
+                    <div class="dropdown-menu__panel" role="listbox">
+                        <div class="dropdown-menu__search-wrap">
+                            <input class="dropdown-menu__search" type="text" placeholder="Search or type a degree…" autocomplete="off" aria-label="Search degrees">
                         </div>
-                        <div class="deg-dropdown__list">
-                            <div class="deg-dropdown__group-label">Undergraduate</div>
-                            <div class="deg-dropdown__item" data-value="Associate of Arts" role="option">Associate of Arts <span class="deg-dropdown__abbr">AA</span></div>
-                            <div class="deg-dropdown__item" data-value="Associate of Science" role="option">Associate of Science <span class="deg-dropdown__abbr">AS</span></div>
-                            <div class="deg-dropdown__item" data-value="Associate of Applied Science" role="option">Associate of Applied Science <span class="deg-dropdown__abbr">AAS</span></div>
-                            <div class="deg-dropdown__item" data-value="Bachelor of Arts" role="option">Bachelor of Arts <span class="deg-dropdown__abbr">BA</span></div>
-                            <div class="deg-dropdown__item" data-value="Bachelor of Science" role="option">Bachelor of Science <span class="deg-dropdown__abbr">BSc</span></div>
-                            <div class="deg-dropdown__item" data-value="Bachelor of Engineering" role="option">Bachelor of Engineering <span class="deg-dropdown__abbr">BEng</span></div>
-                            <div class="deg-dropdown__item" data-value="Bachelor of Business Administration" role="option">Bachelor of Business Administration <span class="deg-dropdown__abbr">BBA</span></div>
-                            <div class="deg-dropdown__item" data-value="Bachelor of Fine Arts" role="option">Bachelor of Fine Arts <span class="deg-dropdown__abbr">BFA</span></div>
-                            <div class="deg-dropdown__item" data-value="Bachelor of Laws" role="option">Bachelor of Laws <span class="deg-dropdown__abbr">LLB</span></div>
-                            <div class="deg-dropdown__item" data-value="Bachelor of Education" role="option">Bachelor of Education <span class="deg-dropdown__abbr">BEd</span></div>
-                            <div class="deg-dropdown__item" data-value="Bachelor of Technology" role="option">Bachelor of Technology <span class="deg-dropdown__abbr">BTech</span></div>
-                            <div class="deg-dropdown__group-label">Graduate</div>
-                            <div class="deg-dropdown__item" data-value="Master of Arts" role="option">Master of Arts <span class="deg-dropdown__abbr">MA</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Science" role="option">Master of Science <span class="deg-dropdown__abbr">MSc</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Business Administration" role="option">Master of Business Administration <span class="deg-dropdown__abbr">MBA</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Science in Electrochemistry" role="option">Master of Science in Electrochemistry <span class="deg-dropdown__abbr">MSc</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Engineering" role="option">Master of Engineering <span class="deg-dropdown__abbr">MEng</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Laws" role="option">Master of Laws <span class="deg-dropdown__abbr">LLM</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Education" role="option">Master of Education <span class="deg-dropdown__abbr">MEd</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Fine Arts" role="option">Master of Fine Arts <span class="deg-dropdown__abbr">MFA</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Public Health" role="option">Master of Public Health <span class="deg-dropdown__abbr">MPH</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Public Administration" role="option">Master of Public Administration <span class="deg-dropdown__abbr">MPA</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Social Work" role="option">Master of Social Work <span class="deg-dropdown__abbr">MSW</span></div>
-                            <div class="deg-dropdown__item" data-value="Master of Architecture" role="option">Master of Architecture <span class="deg-dropdown__abbr">MArch</span></div>
-                            <div class="deg-dropdown__item" data-value="Executive MBA" role="option">Executive MBA <span class="deg-dropdown__abbr">EMBA</span></div>
-                            <div class="deg-dropdown__group-label">Doctorate</div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Philosophy" role="option">Doctor of Philosophy <span class="deg-dropdown__abbr">PhD</span></div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Medicine" role="option">Doctor of Medicine <span class="deg-dropdown__abbr">MD</span></div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Dental Surgery" role="option">Doctor of Dental Surgery <span class="deg-dropdown__abbr">DDS</span></div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Veterinary Medicine" role="option">Doctor of Veterinary Medicine <span class="deg-dropdown__abbr">DVM</span></div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Pharmacy" role="option">Doctor of Pharmacy <span class="deg-dropdown__abbr">PharmD</span></div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Jurisprudence" role="option">Doctor of Jurisprudence <span class="deg-dropdown__abbr">JD</span></div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Education" role="option">Doctor of Education <span class="deg-dropdown__abbr">EdD</span></div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Business Administration" role="option">Doctor of Business Administration <span class="deg-dropdown__abbr">DBA</span></div>
-                            <div class="deg-dropdown__item" data-value="Doctor of Engineering" role="option">Doctor of Engineering <span class="deg-dropdown__abbr">DEng</span></div>
-                            <div class="deg-dropdown__item" data-value="Postdoctoral Researcher" role="option">Postdoctoral Researcher</div>
-                            <div class="deg-dropdown__group-label">Other</div>
-                            <div class="deg-dropdown__item" data-value="Diploma" role="option">Diploma</div>
-                            <div class="deg-dropdown__item" data-value="Higher National Diploma" role="option">Higher National Diploma <span class="deg-dropdown__abbr">HND</span></div>
-                            <div class="deg-dropdown__item" data-value="Professional Certificate" role="option">Professional Certificate</div>
-                            <div class="deg-dropdown__item" data-value="High School Diploma" role="option">High School Diploma / GED</div>
+                        <div class="dropdown-menu__list">
+                            <div class="dropdown-menu__group-label">Undergraduate</div>
+                            <div class="dropdown-menu__item" data-value="Associate of Arts" role="option">Associate of Arts <span class="dropdown-menu__abbr">AA</span></div>
+                            <div class="dropdown-menu__item" data-value="Associate of Science" role="option">Associate of Science <span class="dropdown-menu__abbr">AS</span></div>
+                            <div class="dropdown-menu__item" data-value="Associate of Applied Science" role="option">Associate of Applied Science <span class="dropdown-menu__abbr">AAS</span></div>
+                            <div class="dropdown-menu__item" data-value="Bachelor of Arts" role="option">Bachelor of Arts <span class="dropdown-menu__abbr">BA</span></div>
+                            <div class="dropdown-menu__item" data-value="Bachelor of Science" role="option">Bachelor of Science <span class="dropdown-menu__abbr">BSc</span></div>
+                            <div class="dropdown-menu__item" data-value="Bachelor of Engineering" role="option">Bachelor of Engineering <span class="dropdown-menu__abbr">BEng</span></div>
+                            <div class="dropdown-menu__item" data-value="Bachelor of Business Administration" role="option">Bachelor of Business Administration <span class="dropdown-menu__abbr">BBA</span></div>
+                            <div class="dropdown-menu__item" data-value="Bachelor of Fine Arts" role="option">Bachelor of Fine Arts <span class="dropdown-menu__abbr">BFA</span></div>
+                            <div class="dropdown-menu__item" data-value="Bachelor of Laws" role="option">Bachelor of Laws <span class="dropdown-menu__abbr">LLB</span></div>
+                            <div class="dropdown-menu__item" data-value="Bachelor of Education" role="option">Bachelor of Education <span class="dropdown-menu__abbr">BEd</span></div>
+                            <div class="dropdown-menu__item" data-value="Bachelor of Technology" role="option">Bachelor of Technology <span class="dropdown-menu__abbr">BTech</span></div>
+                            <div class="dropdown-menu__group-label">Graduate</div>
+                            <div class="dropdown-menu__item" data-value="Master of Arts" role="option">Master of Arts <span class="dropdown-menu__abbr">MA</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Science" role="option">Master of Science <span class="dropdown-menu__abbr">MSc</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Business Administration" role="option">Master of Business Administration <span class="dropdown-menu__abbr">MBA</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Science in Electrochemistry" role="option">Master of Science in Electrochemistry <span class="dropdown-menu__abbr">MSc</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Engineering" role="option">Master of Engineering <span class="dropdown-menu__abbr">MEng</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Laws" role="option">Master of Laws <span class="dropdown-menu__abbr">LLM</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Education" role="option">Master of Education <span class="dropdown-menu__abbr">MEd</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Fine Arts" role="option">Master of Fine Arts <span class="dropdown-menu__abbr">MFA</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Public Health" role="option">Master of Public Health <span class="dropdown-menu__abbr">MPH</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Public Administration" role="option">Master of Public Administration <span class="dropdown-menu__abbr">MPA</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Social Work" role="option">Master of Social Work <span class="dropdown-menu__abbr">MSW</span></div>
+                            <div class="dropdown-menu__item" data-value="Master of Architecture" role="option">Master of Architecture <span class="dropdown-menu__abbr">MArch</span></div>
+                            <div class="dropdown-menu__item" data-value="Executive MBA" role="option">Executive MBA <span class="dropdown-menu__abbr">EMBA</span></div>
+                            <div class="dropdown-menu__group-label">Doctorate</div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Philosophy" role="option">Doctor of Philosophy <span class="dropdown-menu__abbr">PhD</span></div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Medicine" role="option">Doctor of Medicine <span class="dropdown-menu__abbr">MD</span></div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Dental Surgery" role="option">Doctor of Dental Surgery <span class="dropdown-menu__abbr">DDS</span></div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Veterinary Medicine" role="option">Doctor of Veterinary Medicine <span class="dropdown-menu__abbr">DVM</span></div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Pharmacy" role="option">Doctor of Pharmacy <span class="dropdown-menu__abbr">PharmD</span></div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Jurisprudence" role="option">Doctor of Jurisprudence <span class="dropdown-menu__abbr">JD</span></div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Education" role="option">Doctor of Education <span class="dropdown-menu__abbr">EdD</span></div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Business Administration" role="option">Doctor of Business Administration <span class="dropdown-menu__abbr">DBA</span></div>
+                            <div class="dropdown-menu__item" data-value="Doctor of Engineering" role="option">Doctor of Engineering <span class="dropdown-menu__abbr">DEng</span></div>
+                            <div class="dropdown-menu__item" data-value="Postdoctoral Researcher" role="option">Postdoctoral Researcher</div>
+                            <div class="dropdown-menu__group-label">Other</div>
+                            <div class="dropdown-menu__item" data-value="Diploma" role="option">Diploma</div>
+                            <div class="dropdown-menu__item" data-value="Higher National Diploma" role="option">Higher National Diploma <span class="dropdown-menu__abbr">HND</span></div>
+                            <div class="dropdown-menu__item" data-value="Professional Certificate" role="option">Professional Certificate</div>
+                            <div class="dropdown-menu__item" data-value="High School Diploma" role="option">High School Diploma / GED</div>
                         </div>
-                        <div class="deg-dropdown__empty" aria-live="polite">No match — press Enter to add as custom</div>
-                        <button type="button" class="deg-dropdown__custom-btn">
+                        <div class="dropdown-menu__empty" aria-live="polite">No match — press Enter to add as custom</div>
+                        <button type="button" class="dropdown-menu__custom-btn">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            <span class="deg-dropdown__custom-label">Add custom degree</span>
+                            <span class="dropdown-menu__custom-label">Add custom degree</span>
                         </button>
                     </div>
-                    <input type="hidden" name="edu_degree[]" class="deg-dropdown__hidden">
+                    <input type="hidden" name="edu_degree[]" class="dropdown-menu__hidden">
                 </div>
             </div>
             <div class="form-field">
@@ -357,5 +358,6 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/dropdown.js' %}"></script>
 <script src="{% static 'js/dashboard-info.js' %}"></script>
 {% endblock %}

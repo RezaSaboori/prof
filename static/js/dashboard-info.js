@@ -175,169 +175,10 @@
         return '';
     }
 
-    // ══════════════════════════════════════════════════
-    // DEGREE SEARCHABLE DROPDOWN
-    // ══════════════════════════════════════════════════
-
-    function initDegDropdown(root) {
-        if (!root || root._degInit) return;
-        root._degInit = true;
-
-        var trigger   = root.querySelector('.deg-dropdown__trigger');
-        var menu      = root.querySelector('.deg-dropdown__menu');
-        var search    = root.querySelector('.deg-dropdown__search');
-        var list      = root.querySelector('.deg-dropdown__list');
-        var empty     = root.querySelector('.deg-dropdown__empty');
-        var customBtn = root.querySelector('.deg-dropdown__custom-btn');
-        var customLbl = root.querySelector('.deg-dropdown__custom-label');
-        var hidden    = root.querySelector('.deg-dropdown__hidden');
-        var textSpan  = root.querySelector('.deg-dropdown__text');
-
-        function openMenu() {
-            // Close any other open deg-dropdowns first
-            document.querySelectorAll('.deg-dropdown__menu.is-open').forEach(function (m) {
-                if (m !== menu) closeMenu(m.closest('.deg-dropdown'));
-            });
-            menu.classList.add('is-open');
-            trigger.setAttribute('aria-expanded', 'true');
-            search.value = '';
-            filterItems('');
-            setTimeout(function () { search.focus(); }, 60);
-        }
-
-        function closeMenu(r) {
-            var target = r || root;
-            var m = target.querySelector('.deg-dropdown__menu');
-            var t = target.querySelector('.deg-dropdown__trigger');
-            if (m) m.classList.remove('is-open');
-            if (t) t.setAttribute('aria-expanded', 'false');
-        }
-
-        function isOpen() {
-            return menu.classList.contains('is-open');
-        }
-
-        function selectItem(value) {
-            hidden.value = value;
-            textSpan.textContent = value;
-            textSpan.classList.remove('deg-dropdown__text--placeholder');
-            list.querySelectorAll('.deg-dropdown__item').forEach(function (it) {
-                it.classList.toggle('is-selected', it.getAttribute('data-value') === value);
-            });
-            closeMenu();
-        }
-
-        function filterItems(q) {
-            var query = q.toLowerCase().trim();
-            var visibleCount = 0;
-
-            list.querySelectorAll('.deg-dropdown__item').forEach(function (it) {
-                var text = (it.getAttribute('data-value') + ' ' + it.textContent).toLowerCase();
-                var show = !query || text.includes(query);
-                it.classList.toggle('is-hidden', !show);
-                if (show) visibleCount++;
-            });
-
-            // Hide group labels whose entire group is hidden
-            list.querySelectorAll('.deg-dropdown__group-label').forEach(function (gl) {
-                var next = gl.nextElementSibling;
-                var anyVisible = false;
-                while (next && !next.classList.contains('deg-dropdown__group-label')) {
-                    if (!next.classList.contains('is-hidden')) anyVisible = true;
-                    next = next.nextElementSibling;
-                }
-                gl.style.display = anyVisible ? '' : 'none';
-            });
-
-            empty.classList.toggle('is-visible', visibleCount === 0);
-
-            if (q.trim()) {
-                var exactMatch = Array.from(list.querySelectorAll('.deg-dropdown__item')).some(function (it) {
-                    return it.getAttribute('data-value').toLowerCase() === q.toLowerCase().trim();
-                });
-                customBtn.classList.toggle('is-visible', !exactMatch);
-                if (customLbl) customLbl.textContent = 'Add "' + q.trim() + '"';
-            } else {
-                customBtn.classList.remove('is-visible');
-            }
-        }
-
-        /**
-         * Programmatic value setter (used when loading from Supabase).
-         * If the value isn't in the list it is added as a custom item.
-         */
-        function setValue(rawValue) {
-            if (rawValue == null || rawValue === '') return;
-            var match = Array.from(list.querySelectorAll('.deg-dropdown__item')).find(function (it) {
-                return it.getAttribute('data-value').toLowerCase() === rawValue.toLowerCase();
-            });
-            if (match) {
-                selectItem(match.getAttribute('data-value'));
-            } else {
-                // Unknown value from DB — inject it as a new list item and select it
-                var newItem = document.createElement('div');
-                newItem.className = 'deg-dropdown__item';
-                newItem.setAttribute('data-value', rawValue);
-                newItem.setAttribute('role', 'option');
-                newItem.textContent = rawValue;
-                list.appendChild(newItem);
-                newItem.addEventListener('click', function () { selectItem(rawValue); });
-                selectItem(rawValue);
-            }
-        }
-
-        // ── Event wiring ─────────────────────────────────
-
-        trigger.addEventListener('click', function (e) {
-            e.stopPropagation();
-            isOpen() ? closeMenu() : openMenu();
-        });
-
-        search.addEventListener('click', function (e) { e.stopPropagation(); });
-
-        search.addEventListener('input', function () { filterItems(search.value); });
-
-        search.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                var q = search.value.trim();
-                if (!q) return;
-                var visible = Array.from(list.querySelectorAll('.deg-dropdown__item:not(.is-hidden)'));
-                if (visible.length === 1) {
-                    selectItem(visible[0].getAttribute('data-value'));
-                } else {
-                    setValue(q);
-                }
-            } else if (e.key === 'Escape') {
-                closeMenu();
-            }
-        });
-
-        list.addEventListener('click', function (e) {
-            var item = e.target.closest('.deg-dropdown__item');
-            if (!item) return;
-            selectItem(item.getAttribute('data-value'));
-        });
-
-        customBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            var q = search.value.trim();
-            if (q) setValue(q);
-        });
-
-        document.addEventListener('click', function (e) {
-            if (!root.contains(e.target)) closeMenu();
-        });
-
-        // Public API
-        root._degSetValue = setValue;
-        root._degGetValue = function () { return hidden.value; };
-    }
-
-    /** Convenience: set the degree dropdown value on a card by card element. */
+    /** Convenience: set the dropdown value on a card by card element. */
     function setDegreeValue(card, rawValue) {
-        var dd = card.querySelector('.deg-dropdown');
-        if (dd && dd._degSetValue) dd._degSetValue(rawValue);
+        var dd = card.querySelector('.dropdown-menu');
+        if (dd && dd._dropdownSetValue) dd._dropdownSetValue(rawValue);
     }
 
     // ══════════════════════════════════════════════════
@@ -369,8 +210,8 @@
         });
 
         // Wire degree searchable dropdown (education cards only)
-        const degDd = card.querySelector('.deg-dropdown');
-        if (degDd) initDegDropdown(degDd);
+        const degDd = card.querySelector('.dropdown-menu');
+        if (degDd) initDropdown(degDd);
 
         // Wire activity tag input (education cards)
         const actWrapper = card.querySelector('.edu-activities-wrapper');
