@@ -91,8 +91,8 @@ h3, h4, h5, h6, p, span, div, li, a, button, input, textarea, select {
 
 /* 2. WebKit rules for Chrome, Edge, Safari */
 ::-webkit-scrollbar {
-    width: 9px;
-    height: 9px;
+    width: 12px;
+    height: 12px;
 }
 
 /* Invisible track with top/bottom padding */
@@ -106,8 +106,9 @@ h3, h4, h5, h6, p, span, div, li, a, button, input, textarea, select {
 ::-webkit-scrollbar-thumb {
     background-color: var(--color-gray4);
     border-radius: var(--border-radius-pill);
-    border: 1px solid transparent; /* Invisible padding around the thumb */
+    border: 3px solid transparent; /* Invisible padding around the thumb */
     background-clip: content-box;
+    cursor: pointer;
 }
 
 ::-webkit-scrollbar-thumb:hover {

@@ -1,5 +1,5 @@
 /* ============================================
-   TAGS — Generic reusable tag-input component
+   TAGS — Apple iMessage-style tag-input component
    Usage:
      initTagInput(wrapperElement, textInputElement, hiddenInputElement)
    Modifier classes on the root .tag-wrapper element:
@@ -15,7 +15,7 @@
 
     /**
      * Initialises one tag-input component.
-     * @param {HTMLElement} wrapper    – the .tag-wrapper element
+     * @param {HTMLElement} wrapper       – the .tag-wrapper element
      * @param {HTMLInputElement} textInput – the visible text input
      * @param {HTMLInputElement} hidden    – the hidden input for form value
      */
@@ -24,10 +24,19 @@
         if (wrapper._tagInit) return;
         wrapper._tagInit = true;
 
-        const tagList = wrapper.querySelector('.tag-list');
-        let tags = [];
+        const tagList   = wrapper.querySelector('.tag-list');
+        const sendBtn   = wrapper.querySelector('.tag-send-btn');
+        let   tags      = [];
 
-        // ── Render ───────────────────────────────────────
+        // ── Send button visibility ────────────────────────
+
+        function syncSendBtn() {
+            if (!sendBtn) return;
+            const hasText = textInput.value.trim().length > 0;
+            sendBtn.classList.toggle('is-visible', hasText);
+        }
+
+        // ── Render ────────────────────────────────────────
 
         function renderTags() {
             tagList.querySelectorAll('.tag-item').forEach(function (el) { el.remove(); });
@@ -65,13 +74,13 @@
             });
         }
 
-        // ── Sync hidden input ────────────────────────────
+        // ── Sync hidden input ─────────────────────────────
 
         function syncHidden() {
             hidden.value = JSON.stringify(tags);
         }
 
-        // ── Add tag ──────────────────────────────────────
+        // ── Add tag ───────────────────────────────────────
 
         function addTag(value) {
             const trimmed = value.trim().replace(/,+$/, '');
@@ -81,7 +90,17 @@
             syncHidden();
         }
 
-        // ── Public API ───────────────────────────────────
+        // ── Commit current input value as a tag ───────────
+
+        function commitInput() {
+            if (textInput.value.trim()) {
+                addTag(textInput.value);
+                textInput.value = '';
+                syncSendBtn();
+            }
+        }
+
+        // ── Public API ────────────────────────────────────
 
         function setTags(arr) {
             tags = Array.isArray(arr) ? arr.slice() : [];
@@ -89,15 +108,16 @@
             syncHidden();
         }
 
-        // ── Event wiring ─────────────────────────────────
+        // ── Event wiring ──────────────────────────────────
 
         wrapper.addEventListener('click', function () { textInput.focus(); });
+
+        textInput.addEventListener('input', syncSendBtn);
 
         textInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ',') {
                 e.preventDefault();
-                addTag(textInput.value);
-                textInput.value = '';
+                commitInput();
             } else if (e.key === 'Backspace' && textInput.value === '' && tags.length > 0) {
                 tags.pop();
                 renderTags();
@@ -107,10 +127,18 @@
 
         textInput.addEventListener('blur', function () {
             if (textInput.value.trim()) {
-                addTag(textInput.value);
-                textInput.value = '';
+                commitInput();
             }
         });
+
+        if (sendBtn) {
+            sendBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                commitInput();
+                textInput.focus();
+            });
+        }
 
         wrapper._setTags = setTags;
         wrapper._getTags = function () { return tags.slice(); };
