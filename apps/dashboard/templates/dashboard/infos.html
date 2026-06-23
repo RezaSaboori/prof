@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'css/tags.css' %}">
 <link rel="stylesheet" href="{% static 'css/dropdown.css' %}">
 <link rel="stylesheet" href="{% static 'css/dashboard-info.css' %}">
 {% endblock %}
@@ -104,7 +105,7 @@
         <div class="info-section__body">
             <div class="form-field">
                 <label class="form-label" for="skills-input">Skills</label>
-                <div class="tag-input-wrapper" id="skills-tag-wrapper">
+                <div class="tag-wrapper grid" id="skills-tag-wrapper" role="list" aria-label="Skills">
                     <div class="tag-list" id="skills-tags" role="list" aria-label="Skills tags"></div>
                     <input class="tag-input" type="text" id="skills-input" placeholder="e.g. Python, SQL …" autocomplete="off" aria-label="Add a skill">
                     <input type="hidden" name="skills" id="skills-hidden">
@@ -124,7 +125,7 @@
 
                 <div class="form-field form-field--full">
                     <label class="form-label" for="blocked-industries-input">Blocked Industries</label>
-                    <div class="tag-input-wrapper" id="blocked-industries-tag-wrapper">
+                    <div class="tag-wrapper grid" id="blocked-industries-tag-wrapper" role="list" aria-label="Blocked industries">
                         <div class="tag-list" id="blocked-industries-tags" role="list" aria-label="Blocked industries tags"></div>
                         <input class="tag-input" type="text" id="blocked-industries-input" placeholder="e.g. Medical, Batteries …" autocomplete="off" aria-label="Add a blocked industry">
                         <input type="hidden" name="blocked_industries" id="blocked-industries-hidden">
@@ -133,7 +134,7 @@
 
                 <div class="form-field form-field--full">
                     <label class="form-label" for="work-style-input">Work Style</label>
-                    <div class="tag-input-wrapper" id="work-style-tag-wrapper">
+                    <div class="tag-wrapper grid" id="work-style-tag-wrapper" role="list" aria-label="Work style">
                         <div class="tag-list" id="work-style-tags" role="list" aria-label="Work style tags"></div>
                         <input class="tag-input" type="text" id="work-style-input" placeholder="e.g. On-site, Night shifts …" autocomplete="off" aria-label="Add a work style preference">
                         <input type="hidden" name="work_style" id="work-style-hidden">
@@ -142,7 +143,7 @@
 
                 <div class="form-field form-field--full">
                     <label class="form-label" for="blocked-companies-input">Blocked Companies</label>
-                    <div class="tag-input-wrapper" id="blocked-companies-tag-wrapper">
+                    <div class="tag-wrapper grid" id="blocked-companies-tag-wrapper" role="list" aria-label="Blocked companies">
                         <div class="tag-list" id="blocked-companies-tags" role="list" aria-label="Blocked companies tags"></div>
                         <input class="tag-input" type="text" id="blocked-companies-input" placeholder="e.g. Acme Corp …" autocomplete="off" aria-label="Add a blocked company">
                         <input type="hidden" name="blocked_companies" id="blocked-companies-hidden">
@@ -151,7 +152,7 @@
 
                 <div class="form-field form-field--full">
                     <label class="form-label" for="blocked-titles-input">Blocked Titles</label>
-                    <div class="tag-input-wrapper" id="blocked-titles-tag-wrapper">
+                    <div class="tag-wrapper grid" id="blocked-titles-tag-wrapper" role="list" aria-label="Blocked titles">
                         <div class="tag-list" id="blocked-titles-tags" role="list" aria-label="Blocked titles tags"></div>
                         <input class="tag-input" type="text" id="blocked-titles-input" placeholder="e.g. Sales Manager …" autocomplete="off" aria-label="Add a blocked job title">
                         <input type="hidden" name="blocked_titles" id="blocked-titles-hidden">
@@ -160,7 +161,7 @@
 
                 <div class="form-field form-field--full">
                     <label class="form-label" for="blocked-details-input">Blocked Details</label>
-                    <div class="tag-input-wrapper" id="blocked-details-tag-wrapper">
+                    <div class="tag-wrapper grid" id="blocked-details-tag-wrapper" role="list" aria-label="Blocked details">
                         <div class="tag-list" id="blocked-details-tags" role="list" aria-label="Blocked details tags"></div>
                         <input class="tag-input" type="text" id="blocked-details-input" placeholder="e.g. Relocation required …" autocomplete="off" aria-label="Add a blocked detail">
                         <input type="hidden" name="blocked_details" id="blocked-details-hidden">
@@ -281,8 +282,8 @@
             </div>
             <div class="form-field form-field--full">
                 <label class="form-label">Activities</label>
-                <div class="tag-input-wrapper edu-activities-wrapper">
-                    <div class="tag-list" role="list" aria-label="Activities tags"></div>
+                <div class="tag-wrapper row edu-activities-wrapper">
+                    <div class="tag-list" role="list" aria-label="Activities bullets"></div>
                     <input class="tag-input" type="text" placeholder="e.g. Chess Club, Debate Society …" autocomplete="off" aria-label="Add an activity">
                     <input type="hidden" name="edu_activities[]">
                 </div>
@@ -345,8 +346,8 @@
             </div>
             <div class="form-field form-field--full">
                 <label class="form-label">Bullets</label>
-                <div class="tag-input-wrapper exp-bullets-wrapper">
-                    <div class="tag-list exp-bullets-list" role="list" aria-label="Bullet points"></div>
+                <div class="tag-wrapper row exp-bullets-wrapper">
+                    <div class="tag-list exp-bullets-list" role="list" aria-label="Bullets"></div>
                     <input class="tag-input" type="text" placeholder="Add a bullet point and press Enter …" autocomplete="off" aria-label="Add a bullet point">
                     <input type="hidden" name="exp_bullets[]">
                 </div>
@@ -358,6 +359,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/dropdown.js' %}"></script>
-<script src="{% static 'js/dashboard-info.js' %}"></script>
+<script src="{% static 'js/tags.js' %}" defer></script>
+<script src="{% static 'js/dropdown.js' %}" defer></script>
+<script src="{% static 'js/dashboard-info.js' %}" defer></script>
 {% endblock %}
