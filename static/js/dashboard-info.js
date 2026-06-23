@@ -442,7 +442,7 @@
             btn.removeAttribute('title');
         }
     }
-    
+
     async function loadUserInfo() {
         _isLoading = true;
         _updateSaveBtnLoadingState();
@@ -626,23 +626,105 @@
         };
     }
 
+    // ── SAVE BUTTON STATE MACHINE ──────────────────────────────────────────────
+
+    var LOADING_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20" fill="currentColor" aria-hidden="true"><circle cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline"/></circle><circle transform="rotate(45 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.125s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline"/></circle><circle transform="rotate(90 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.25s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline"/></circle><circle transform="rotate(135 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.375s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline"/></circle><circle transform="rotate(180 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline"/></circle><circle transform="rotate(225 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.625s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline"/></circle><circle transform="rotate(270 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.75s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline"/></circle><circle transform="rotate(315 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.875s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline"/></circle></svg>';
+
+    var CHECK_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    var SAVE_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>';
+
+    var LOADING_MESSAGES = [
+        'Saving\u2026',
+        'Almost there\u2026',
+        'Still working\u2026',
+        'Hang tight\u2026',
+        'Just a moment\u2026',
+        'Nearly done\u2026',
+    ];
+
+    function _buildSaveBtn(btn) {
+        btn.innerHTML = '';
+        var iconSpan = document.createElement('span');
+        iconSpan.className = 'save-btn__icon';
+        iconSpan.innerHTML = SAVE_ICON_SVG;
+        var textSpan = document.createElement('span');
+        textSpan.className = 'save-btn__text';
+        textSpan.textContent = 'Save Changes';
+        btn.appendChild(iconSpan);
+        btn.appendChild(textSpan);
+        btn.setAttribute('data-state', 'idle');
+    }
+
+    function _transitionBtnIcon(btn, newIconHTML) {
+        var iconSpan = btn.querySelector('.save-btn__icon');
+        if (!iconSpan) return;
+        iconSpan.classList.remove('save-btn__icon--enter');
+        iconSpan.classList.add('save-btn__icon--exit');
+        setTimeout(function () {
+            iconSpan.innerHTML = newIconHTML;
+            iconSpan.classList.remove('save-btn__icon--exit');
+            iconSpan.classList.add('save-btn__icon--enter');
+        }, 210);
+    }
+
+    function _transitionBtnText(btn, newText) {
+        var textSpan = btn.querySelector('.save-btn__text');
+        if (!textSpan) return;
+        textSpan.classList.remove('save-btn__text--enter');
+        textSpan.classList.add('save-btn__text--exit');
+        setTimeout(function () {
+            textSpan.textContent = newText;
+            textSpan.classList.remove('save-btn__text--exit');
+            textSpan.classList.add('save-btn__text--enter');
+        }, 210);
+    }
+
     document.getElementById('infoForm')?.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const saveBtn     = document.getElementById('saveInfoBtn');
-        const originalHTML = saveBtn.innerHTML;
+        var saveBtn = document.getElementById('saveInfoBtn');
+
+        // Ensure structured markup exists (idempotent)
+        if (!saveBtn.querySelector('.save-btn__icon')) {
+            _buildSaveBtn(saveBtn);
+        }
 
         saveBtn.disabled = true;
-        saveBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Saving\u2026';
+        saveBtn.setAttribute('data-state', 'loading');
+        _transitionBtnIcon(saveBtn, LOADING_ICON_SVG);
+        _transitionBtnText(saveBtn, LOADING_MESSAGES[0]);
+
+        // Progressive loading messages
+        var msgIndex = 1;
+        var msgTimer = setInterval(function () {
+            if (msgIndex < LOADING_MESSAGES.length) {
+                _transitionBtnText(saveBtn, LOADING_MESSAGES[msgIndex]);
+                msgIndex++;
+            }
+        }, 3000);
 
         try {
             await apiFetch('/dashboard/api/user-info/save/', 'POST', collectFormData());
-            saveBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Saved!';
-            setTimeout(function () { saveBtn.innerHTML = originalHTML; saveBtn.disabled = false; }, 2000);
+            clearInterval(msgTimer);
+            saveBtn.setAttribute('data-state', 'success');
+            _transitionBtnIcon(saveBtn, CHECK_ICON_SVG);
+            _transitionBtnText(saveBtn, 'Saved!');
+            setTimeout(function () {
+                saveBtn.setAttribute('data-state', 'idle');
+                _transitionBtnIcon(saveBtn, SAVE_ICON_SVG);
+                _transitionBtnText(saveBtn, 'Save Changes');
+                saveBtn.disabled = false;
+            }, 2200);
         } catch (err) {
+            clearInterval(msgTimer);
             console.error('Save failed:', err);
-            saveBtn.innerHTML = 'Save failed \u2014 retry';
+            saveBtn.setAttribute('data-state', 'idle');
+            _transitionBtnIcon(saveBtn, SAVE_ICON_SVG);
+            _transitionBtnText(saveBtn, 'Save failed \u2014 retry');
             saveBtn.disabled = false;
-            setTimeout(function () { saveBtn.innerHTML = originalHTML; }, 3000);
+            setTimeout(function () {
+                _transitionBtnText(saveBtn, 'Save Changes');
+            }, 3000);
         }
     });
 
