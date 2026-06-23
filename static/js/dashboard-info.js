@@ -35,6 +35,8 @@
     let blockedCompaniesWrapper   = null;
     let blockedTitlesWrapper      = null;
     let blockedDetailsWrapper     = null;
+    // True while loadUserInfo() is in flight — blocks Save to prevent overwriting DB with empty DOM
+    let _isLoading = false;
 
     // ══════════════════════════════════════════════════
     // DATE FORMAT NORMALIZERS
@@ -429,7 +431,21 @@
      * because showSectionSkeletons() replaces innerHTML, which detaches
      * the old DOM nodes that initStaticTagInput() originally bound to.
      */
+    function _updateSaveBtnLoadingState() {
+        var btn = document.getElementById('saveInfoBtn');
+        if (!btn) return;
+        if (_isLoading) {
+            btn.disabled = true;
+            btn.setAttribute('title', 'Please wait while your data is loading…');
+        } else {
+            btn.disabled = false;
+            btn.removeAttribute('title');
+        }
+    }
+    
     async function loadUserInfo() {
+        _isLoading = true;
+        _updateSaveBtnLoadingState();
         showSectionSkeletons();
 
         // ── Phase 1: personal scalars ────────────────────────────────────────────
@@ -437,13 +453,11 @@
             const personalResp = await fetch('/dashboard/api/user-info/personal/', {
                 credentials: 'same-origin',
             });
+            clearSingleSectionSkeleton('section-personal-body');
             if (personalResp.ok) {
                 const personal = await personalResp.json();
-                clearSingleSectionSkeleton('section-personal-body');  // ← clear FIRST
-                _applyPersonalData(personal);                         // ← then write to real DOM
+                _applyPersonalData(personal);
             }
-            // Clear only the personal section skeleton immediately
-            clearSingleSectionSkeleton('section-personal-body');
         } catch (err) {
             console.error('[Phase 1] personal load failed:', err);
             clearSingleSectionSkeleton('section-personal-body');
@@ -457,10 +471,8 @@
             if (!fullResp.ok) throw new Error('HTTP ' + fullResp.status);
             const data = await fullResp.json();
 
-            // 1. Restore the real DOM first (clears skeleton innerHTML)
             clearSectionSkeletons();
 
-            // 2. Re-init tag wrappers now that the real DOM nodes are back
             skillsWrapper             = initStaticTagInput('skills-tag-wrapper',             'skills-input',             'skills-hidden');
             blockedIndustriesWrapper  = initStaticTagInput('blocked-industries-tag-wrapper',  'blocked-industries-input', 'blocked-industries-hidden');
             workStyleWrapper          = initStaticTagInput('work-style-tag-wrapper',          'work-style-input',         'work-style-hidden');
@@ -468,12 +480,15 @@
             blockedTitlesWrapper      = initStaticTagInput('blocked-titles-tag-wrapper',      'blocked-titles-input',     'blocked-titles-hidden');
             blockedDetailsWrapper     = initStaticTagInput('blocked-details-tag-wrapper',     'blocked-details-input',    'blocked-details-hidden');
 
-            // 3. Populate fields — entry cards append to real containers, tags fill real wrappers
             _applyArrayData(data);
 
         } catch (err) {
             console.error('[Phase 2] full load failed:', err);
             clearSectionSkeletons();
+            showLoadError();
+        } finally {
+            _isLoading = false;
+            _updateSaveBtnLoadingState();
         }
     }
 
