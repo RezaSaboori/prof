@@ -1078,3 +1078,94 @@ body {
 .landing-page-body .page-shell > main {
     min-height: calc(100vh - 200px);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ── Webhook Test Button ─────────────────────────────── */
+.webhook-test-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3, 0.75rem);
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+.btn-webhook-test {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  max-width: 480px;
+  padding: var(--space-2, 0.5rem) var(--space-5, 1.25rem);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--color-text-inverse, #f9f8f4);
+  background-color: var(--color-primary, #01696f);
+  border: none;
+  border-radius: var(--radius-md, 0.5rem);
+  cursor: pointer;
+  transition: background-color var(--transition-interactive, 180ms),
+              box-shadow var(--transition-interactive, 180ms),
+              color var(--transition-interactive, 180ms);
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.btn-webhook-test:hover:not(:disabled) {
+  background-color: var(--color-primary-hover, #0c4e54);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.08));
+}
+
+.btn-webhook-test:active:not(:disabled) {
+  background-color: var(--color-primary-active, #0f3638);
+}
+
+.btn-webhook-test:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-webhook-success {
+  background-color: var(--color-success, #437a22) !important;
+}
+
+.btn-webhook-error {
+  background-color: var(--color-error, #a12c7b) !important;
+}
+
+.webhook-test-output {
+  font-size: var(--text-sm, 0.875rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid var(--color-border, #d4d1ca);
+  background-color: var(--color-surface-2, #fbfbf9);
+  color: var(--color-text, #28251d);
+  max-width: 480px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: monospace;
+}
+
+.webhook-test-output.webhook-success {
+  border-color: var(--color-success, #437a22);
+  background-color: var(--color-success-highlight, #d4dfcc);
+}
+
+.webhook-test-output.webhook-error {
+  border-color: var(--color-error, #a12c7b);
+  background-color: var(--color-error-highlight, #e0ced7);
+}

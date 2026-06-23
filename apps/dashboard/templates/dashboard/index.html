@@ -26,4 +26,19 @@
         <p>Coming soon — AI-powered career insights.</p>
     </div>
 </div>
+<div class="webhook-test-wrapper">
+  <button
+    id="webhookTestBtn"
+    class="btn btn-webhook-test"
+    type="button"
+    data-url="{% url 'dashboard_webhook_trigger' %}"
+  >
+    Test Btn
+  </button>
+  <div id="webhookTestOutput" class="webhook-test-output" hidden></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/webhook_test.js' %}" defer></script>
 {% endblock %}
