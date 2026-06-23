@@ -439,7 +439,8 @@
             });
             if (personalResp.ok) {
                 const personal = await personalResp.json();
-                _applyPersonalData(personal);
+                clearSingleSectionSkeleton('section-personal-body');  // ← clear FIRST
+                _applyPersonalData(personal);                         // ← then write to real DOM
             }
             // Clear only the personal section skeleton immediately
             clearSingleSectionSkeleton('section-personal-body');
