@@ -8,11 +8,11 @@
     'use strict';
 
     // ── DOM refs ──────────────────────────────────────────────────────────────
-    const dropzone   = document.getElementById('resumeDropzone');
+    const dropzone  = document.getElementById('resumeDropzone');
     const dropTarget = dropzone ? dropzone.querySelector('.upload-dropzone') : null;
-    const fileInput  = document.getElementById('resumeFileInput');
-    const uploadBtn  = document.getElementById('resumeUploadBtn');
-    const fileList   = document.getElementById('resumeFileList');
+    const fileInput = document.getElementById('resumeFileInput');
+    const uploadBtn = document.getElementById('resumeUploadBtn');
+    const fileList  = document.getElementById('resumeFileList');
 
     if (!dropzone || !dropTarget || !fileInput || !uploadBtn || !fileList) return;
 
@@ -43,37 +43,25 @@
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
-    // ── Drag events on the hero card (visual feedback only — no click) ────────
-    ['dragenter', 'dragover'].forEach(evt => {
-        dropzone.addEventListener(evt, e => {
-            e.preventDefault();
-            dropTarget.classList.add('drag-over');
-        });
-    });
-
-    ['dragleave', 'drop'].forEach(evt => {
-        dropzone.addEventListener(evt, e => {
-            e.preventDefault();
-            dropTarget.classList.remove('drag-over');
-        });
-    });
-
+    // ── Drag events — attached to the whole hero card for wide drop target ────
+    dropzone.addEventListener('dragenter', e => { e.preventDefault(); dropTarget.classList.add('drag-over'); });
+    dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropTarget.classList.add('drag-over'); });
+    dropzone.addEventListener('dragleave', e => { e.preventDefault(); dropTarget.classList.remove('drag-over'); });
     dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropTarget.classList.remove('drag-over');
         handleFiles(e.dataTransfer.files);
     });
 
-    // ── Click to open file picker — ONLY on the drop target zone and the button ──
-    dropTarget.addEventListener('click', () => {
-        fileInput.click();
-    });
-
+    // ── Upload button — ONLY trigger for click-to-browse ─────────────────────
+    // stopPropagation prevents the click bubbling up through dropTarget
+    // and any ancestor that might have a click→fileInput.click() listener
     uploadBtn.addEventListener('click', e => {
-        // Stop the click from bubbling up to dropzone (which has no click handler
-        // now, but belt-and-suspenders to prevent future double-triggers)
         e.stopPropagation();
         fileInput.click();
     });
 
+    // ── File input change ─────────────────────────────────────────────────────
     fileInput.addEventListener('change', () => {
         handleFiles(fileInput.files);
         fileInput.value = '';
@@ -134,7 +122,7 @@
         return item;
     }
 
-    // ── Upload logic (XHR with progress) ─────────────────────────────────────
+    // ── Handle files ──────────────────────────────────────────────────────────
     function handleFiles(files) {
         Array.from(files).forEach(file => {
             if (!isAccepted(file)) {
@@ -165,9 +153,7 @@
         });
 
         deleteBtn.addEventListener('click', () => {
-            if (confirm(`Delete "${file.name}"?`)) {
-                item.remove();
-            }
+            if (confirm(`Delete "${file.name}"?`)) item.remove();
         });
 
         acceptBtn.addEventListener('click', () => {
