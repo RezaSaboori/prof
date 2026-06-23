@@ -207,24 +207,168 @@
     }
 
     // ══════════════════════════════════════════════════
-    // SKELETON / ERROR UX
+    // SKELETON / ERROR UX  (uses dashboard-skeleton.js)
     // ══════════════════════════════════════════════════
 
+    // Skeleton configs per section container id
+    var SECTION_SKELETONS = {
+        // Personal — 5 inputs in a grid
+        'section-personal-body': {
+            type: 'personal',
+            count: 1,
+        },
+        // Education — 1 card placeholder
+        'educationEntries': {
+            type: 'education',
+            count: 1,
+        },
+        // Certifications — 1 card placeholder
+        'certificationEntries': {
+            type: 'certification',
+            count: 1,
+        },
+        // Experience — 1 card placeholder
+        'experienceEntries': {
+            type: 'experience',
+            count: 1,
+        },
+        // Skills — tag cloud
+        'section-skills-body': {
+            type: 'tags',
+            count: 1,
+        },
+        // Blocked — 5 tag inputs
+        'section-blocked-body': {
+            type: 'blocked',
+            count: 1,
+        },
+    };
+
+    // Inline skeleton HTML per custom type
+    var SKELETON_HTML = {
+        personal: `
+            <div class="skeleton-group" aria-hidden="true">
+                <div class="skeleton-grid skeleton-grid--2" style="margin-bottom:var(--spacing-sm);">
+                    <div style="display:flex;flex-direction:column;gap:var(--spacing-xs);">
+                        <div class="skeleton skeleton-line" style="width:80px;height:0.8em;"></div>
+                        <div class="skeleton skeleton-input"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:var(--spacing-xs);">
+                        <div class="skeleton skeleton-line" style="width:60px;height:0.8em;"></div>
+                        <div class="skeleton skeleton-input"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:var(--spacing-xs);">
+                        <div class="skeleton skeleton-line" style="width:100px;height:0.8em;"></div>
+                        <div class="skeleton skeleton-input"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:var(--spacing-xs);">
+                        <div class="skeleton skeleton-line" style="width:70px;height:0.8em;"></div>
+                        <div class="skeleton skeleton-input"></div>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:var(--spacing-xs);">
+                    <div class="skeleton skeleton-line" style="width:70px;height:0.8em;"></div>
+                    <div class="skeleton skeleton-input"></div>
+                </div>
+            </div>`,
+
+        education: `
+            <div class="skeleton-card" aria-hidden="true" style="padding:var(--spacing-md);margin-bottom:var(--spacing-md);">
+                <div class="skeleton-row" style="margin-bottom:var(--spacing-md);">
+                    <div class="skeleton skeleton-line" style="width:90px;height:1em;flex:1;"></div>
+                    <div class="skeleton skeleton-icon skeleton-icon--sm"></div>
+                </div>
+                <div class="skeleton-grid skeleton-grid--2" style="gap:var(--spacing-sm);">
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton skeleton-input" style="grid-column:1/-1;"></div>
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton skeleton-input"></div>
+                </div>
+                <div class="skeleton skeleton-input" style="margin-top:var(--spacing-sm);height:38px;"></div>
+            </div>`,
+
+        certification: `
+            <div class="skeleton-card" aria-hidden="true" style="padding:var(--spacing-md);margin-bottom:var(--spacing-md);">
+                <div class="skeleton-row" style="margin-bottom:var(--spacing-md);">
+                    <div class="skeleton skeleton-line" style="width:110px;height:1em;flex:1;"></div>
+                    <div class="skeleton skeleton-icon skeleton-icon--sm"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:var(--spacing-sm);">
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton-grid skeleton-grid--2" style="gap:var(--spacing-sm);">
+                        <div class="skeleton skeleton-input"></div>
+                        <div class="skeleton skeleton-input"></div>
+                    </div>
+                </div>
+            </div>`,
+
+        experience: `
+            <div class="skeleton-card" aria-hidden="true" style="padding:var(--spacing-md);margin-bottom:var(--spacing-md);">
+                <div class="skeleton-row" style="margin-bottom:var(--spacing-md);">
+                    <div class="skeleton skeleton-line" style="width:100px;height:1em;flex:1;"></div>
+                    <div class="skeleton skeleton-icon skeleton-icon--sm"></div>
+                </div>
+                <div class="skeleton-grid skeleton-grid--2" style="gap:var(--spacing-sm);">
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton skeleton-input"></div>
+                    <div class="skeleton skeleton-input"></div>
+                </div>
+                <div class="skeleton skeleton-input" style="margin-top:var(--spacing-sm);height:60px;"></div>
+            </div>`,
+
+        tags: `
+            <div class="skeleton-group" aria-hidden="true">
+                <div class="skeleton skeleton-line" style="width:50px;height:0.8em;margin-bottom:var(--spacing-xs);"></div>
+                <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);">
+                    ${[80,60,95,70,55,85,65,75].map(function(w){
+                        return '<div class="skeleton skeleton-tag" style="width:'+w+'px;"></div>';
+                    }).join('')}
+                </div>
+            </div>`,
+
+        blocked: `
+            <div class="skeleton-group" aria-hidden="true" style="gap:var(--spacing-md);">
+                ${['Blocked Industries','Work Style','Blocked Companies','Blocked Titles','Blocked Details'].map(function(){
+                    return `<div>
+                        <div class="skeleton skeleton-line" style="width:130px;height:0.8em;margin-bottom:var(--spacing-xs);"></div>
+                        <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);">
+                            ${[75,60,90,65,80].map(function(w){
+                                return '<div class="skeleton skeleton-tag" style="width:'+w+'px;"></div>';
+                            }).join('')}
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>`,
+    };
+
+    // Track original content so we can restore it
+    var _sectionOriginals = {};
+
     function showSectionSkeletons() {
-        const skeletonHTML = `
-            <div class="skeleton-block" aria-hidden="true">
-                <div class="skeleton-line skeleton-line--wide"></div>
-                <div class="skeleton-line skeleton-line--medium"></div>
-                <div class="skeleton-line skeleton-line--short"></div>
-            </div>`;
-        ['educationEntries', 'certificationEntries', 'experienceEntries'].forEach(function (id) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = skeletonHTML;
+        Object.keys(SECTION_SKELETONS).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            var type = SECTION_SKELETONS[id].type;
+            _sectionOriginals[id] = el.innerHTML;
+            el.innerHTML = SKELETON_HTML[type] || '';
+            el.setAttribute('aria-busy', 'true');
         });
     }
 
     function clearSectionSkeletons() {
-        document.querySelectorAll('.skeleton-block').forEach(function (el) { el.remove(); });
+        Object.keys(SECTION_SKELETONS).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            if (_sectionOriginals[id] !== undefined) {
+                el.innerHTML = _sectionOriginals[id];
+                delete _sectionOriginals[id];
+            }
+            el.removeAttribute('aria-busy');
+        });
     }
 
     function showLoadError() {
