@@ -24,6 +24,32 @@
         if (wrapper._tagInit) return;
         wrapper._tagInit = true;
 
+        // Replace <input> with <textarea> for multi-line support with 5-line cap
+        let actualInput = textInput;
+        if (textInput.tagName === 'INPUT') {
+            const ta = document.createElement('textarea');
+            ta.className        = textInput.className;
+            ta.id               = textInput.id || '';
+            ta.placeholder      = textInput.placeholder || '';
+            ta.autocomplete     = textInput.autocomplete || 'off';
+            ta.setAttribute('aria-label', textInput.getAttribute('aria-label') || '');
+            ta.rows             = 1;
+            textInput.replaceWith(ta);
+            actualInput = ta;
+        }
+        const textInput_ = actualInput; // shadow original ref
+
+        // Auto-grow textarea up to 5 lines, then scroll
+        function autoGrow() {
+            textInput_.style.height = 'auto';
+            const lineHeight = parseFloat(getComputedStyle(textInput_).lineHeight) || 20;
+            const maxHeight  = lineHeight * 5 + 8;
+            textInput_.style.height = Math.min(textInput_.scrollHeight, maxHeight) + 'px';
+            textInput_.style.overflowY = textInput_.scrollHeight > maxHeight ? 'auto' : 'hidden';
+        }
+        textInput_.addEventListener('input', autoGrow);
+        autoGrow();
+
         const tagList   = wrapper.querySelector('.tag-list');
         const sendBtn   = wrapper.querySelector('.tag-send-btn');
         let   tags      = [];
@@ -32,7 +58,7 @@
 
         function syncSendBtn() {
             if (!sendBtn) return;
-            const hasText = textInput.value.trim().length > 0;
+            const hasText = textInput_.value.trim().length > 0;
             sendBtn.classList.toggle('is-visible', hasText);
         }
 
@@ -93,9 +119,10 @@
         // ── Commit current input value as a tag ───────────
 
         function commitInput() {
-            if (textInput.value.trim()) {
-                addTag(textInput.value);
-                textInput.value = '';
+            if (textInput_.value.trim()) {
+                addTag(textInput_.value);
+                textInput_.value = '';
+                autoGrow();
                 syncSendBtn();
             }
         }
@@ -110,19 +137,19 @@
 
         // ── Event wiring ──────────────────────────────────
 
-        wrapper.addEventListener('click', function () { textInput.focus(); });
+        wrapper.addEventListener('click', function () { textInput_.focus(); });
 
-        textInput.addEventListener('input', syncSendBtn);
+        textInput_.addEventListener('input', syncSendBtn);
 
-        textInput.addEventListener('keydown', function (e) {
+        textInput_.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ',') {
                 e.preventDefault();
                 commitInput();
             }
         });
 
-        textInput.addEventListener('blur', function () {
-            if (textInput.value.trim()) {
+        textInput_.addEventListener('blur', function () {
+            if (textInput_.value.trim()) {
                 commitInput();
             }
         });
@@ -132,7 +159,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 commitInput();
-                textInput.focus();
+                textInput_.focus();
             });
         }
 

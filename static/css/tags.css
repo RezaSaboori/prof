@@ -11,20 +11,21 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--border-radius-item-xl);
     border: var(--border-width-thin) solid
         color-mix(in srgb, var(--color-gray12) 12%, transparent);
     background: color-mix(in srgb, var(--color-gray1) 100%, transparent);
-    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, padding 0.18s ease;
     cursor: text;
     min-height: 46px;
     max-height: calc(5 * 34px + 5 * var(--spacing-xs) + var(--spacing-sm) * 2 + 46px);
     overflow-y: auto;
 }
 
-/* When tags exist, push content to the top so new items stack downward */
+/* When tags exist: expand padding and push content to top */
 .tag-wrapper:has(.tag-item) {
+    padding: var(--spacing-sm);
     justify-content: flex-start;
 }
 
@@ -41,13 +42,18 @@
 }
 /* ── Tag list container ── */
 .tag-list {
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: var(--spacing-xs);
 }
 
+/* Only show the tag-list when it contains tag items */
+.tag-list:has(.tag-item) {
+    display: flex;
+}
+
 /* .grid: tags flow inline, wrap like chips */
-.tag-wrapper.grid .tag-list {
+.tag-wrapper.grid .tag-list:has(.tag-item) {
     flex-direction: row;
     flex-wrap: wrap;
     gap: var(--spacing-xs);
@@ -55,7 +61,7 @@
 }
 
 /* .row: tags stack vertically (one per line) — default column direction */
-.tag-wrapper.row .tag-list {
+.tag-wrapper.row .tag-list:has(.tag-item) {
     flex-direction: column;
 }
 
@@ -186,7 +192,14 @@
     outline: none;
     font-family: var(--font-family-base);
     line-height: 1.5;
-    padding: 4px var(--spacing-xs);
+    padding: 4px var(--spacing-sm);
+    resize: none;
+    overflow-y: auto;
+    max-height: calc(1.5em * 5 + 8px);
+    min-height: calc(1.5em + 8px);
+    display: block;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .tag-input::placeholder {
