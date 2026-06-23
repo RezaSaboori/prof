@@ -115,6 +115,69 @@ def api_user_info_get(request):
 
 
 @login_required
+@require_http_methods(['GET'])
+def api_user_info_personal_get(request):
+    """
+    PHASE-1 FAST ENDPOINT — returns only scalar (non-JSON) columns.
+
+    Architecture note — Two-phase profile load:
+    ┌─────────────────────────────────────────────────────────────────┐
+    │  The full user_info row is ~58 KB of serialised JSON arrays.    │
+    │  Fetching it in one call causes 15-45 s timeouts on cold        │
+    │  Supabase connections (free/small tier wakes the instance).     │
+    │                                                                 │
+    │  Solution: split into two sequential API calls:                 │
+    │   • /api/user-info/personal/  → scalar columns only (~200 B)    │
+    │     → populated immediately; user sees live data in < 1 s       │
+    │   • /api/user-info/           → full row with JSON arrays       │
+    │     → called right after Phase 1 resolves; fills in the rest    │
+    │                                                                 │
+    │  PostgREST column-select: ?select=col1,col2 avoids transferring │
+    │  large jsonb columns over the wire at all, not just in Django.  │
+    └─────────────────────────────────────────────────────────────────┘
+
+    To extend: if you add a new scalar column to the user_info table,
+    add its name to the SELECT_COLS tuple below.
+    If you add a new JSON/array column, it belongs in api_user_info_get.
+    """
+    # Only these lightweight scalar columns are fetched.
+    # PostgREST's ?select= param tells Supabase to project on the DB side —
+    # the large jsonb columns are never read from disk or sent over the wire.
+    SELECT_COLS = ('name', 'phone', 'linkedin', 'website', 'location', 'email')
+
+    email = request.user.email
+    try:
+        resp = _session.get(
+            f'{settings.SUPABASE_URL}/rest/v1/user_info',
+            params={
+                'email':  f'eq.{email}',
+                'select': ','.join(SELECT_COLS),
+                'limit':  1,
+            },
+            headers=_supabase_headers(),
+            timeout=(5, 8),   # tighter timeout — this call must be fast
+        )
+        if not resp.ok:
+            logger.error('Supabase personal GET error %s: %s', resp.status_code, resp.text)
+            return JsonResponse(
+                {'error': f'Supabase {resp.status_code}', 'detail': resp.text},
+                status=502,
+            )
+        rows = resp.json()
+        return JsonResponse(rows[0] if rows else {}, safe=False)
+
+    except requests.exceptions.Timeout:
+        logger.error('Supabase personal GET timed out for %s', email)
+        return JsonResponse({'error': 'timeout'}, status=504)
+    except requests.exceptions.ConnectionError as e:
+        logger.error('Supabase personal GET connection error for %s: %s', email, e)
+        return JsonResponse({'error': 'connection_error'}, status=502)
+    except requests.RequestException as e:
+        logger.error('user_info personal GET failed: %s', e)
+        return JsonResponse({'error': str(e)}, status=502)
+
+
+@login_required
 @require_http_methods(['POST'])
 def api_user_info_save(request):
     """

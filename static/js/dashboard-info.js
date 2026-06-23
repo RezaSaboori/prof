@@ -373,6 +373,21 @@
         });
     }
 
+    /**
+     * Clears the skeleton for a single section body by its element ID.
+     * Used by the two-phase loader to reveal Phase-1 data (personal scalars)
+     * immediately, without waiting for Phase-2 (JSON arrays) to complete.
+     *
+     * @param {string} sectionBodyId - The id attribute of the section body element.
+     */
+    function clearSingleSectionSkeleton(sectionBodyId) {
+        var el = document.getElementById(sectionBodyId);
+        if (!el || !_sectionOriginals[sectionBodyId]) return;
+        el.innerHTML = _sectionOriginals[sectionBodyId];
+        delete _sectionOriginals[sectionBodyId];
+        el.removeAttribute('aria-busy');
+    }
+
     function showLoadError() {
         const banner = document.createElement('div');
         banner.className = 'info-load-error';
@@ -392,30 +407,56 @@
     // LOAD DATA
     // ══════════════════════════════════════════════════
 
+    /**
+     * Two-phase profile loader.
+     *
+     * Architecture:
+     *   Phase 1 — /api/user-info/personal/
+     *     Fetches only the 5 scalar fields (name, phone, linkedin, website,
+     *     location). The payload is ~200 bytes and returns in < 1 s even on
+     *     a cold Supabase connection. The Personal Information section is
+     *     populated and its skeleton cleared immediately.
+     *
+     *   Phase 2 — /api/user-info/
+     *     Fetches the full row including all JSON array columns (skills,
+     *     blocked_*, education, certifications, experience). Called right
+     *     after Phase 1 resolves. Each section's skeleton is cleared as
+     *     soon as the data arrives.
+     *
+     * To add a new scalar field: populate it in _applyPersonalData().
+     * To add a new JSON section: populate it in _applyArrayData().
+     * Tag-input wrappers are re-initialised here after skeleton clear
+     * because showSectionSkeletons() replaces innerHTML, which detaches
+     * the old DOM nodes that initStaticTagInput() originally bound to.
+     */
     async function loadUserInfo() {
         showSectionSkeletons();
-        const MAX_RETRIES = 3;
-        const BACKOFF_BASE = 800;
 
-        async function attempt(n) {
-            try {
-                return await apiFetch('/dashboard/api/user-info/');
-            } catch (err) {
-                if (n < MAX_RETRIES) {
-                    const delay = BACKOFF_BASE * Math.pow(2, n - 1) + Math.random() * 300;
-                    console.warn('loadUserInfo attempt ' + n + ' failed, retrying in ' + Math.round(delay) + 'ms…', err);
-                    await new Promise(function (res) { setTimeout(res, delay); });
-                    return attempt(n + 1);
-                }
-                throw err;
+        // ── Phase 1: personal scalars ────────────────────────────────────────────
+        try {
+            const personalResp = await fetch('/dashboard/api/user-info/personal/', {
+                credentials: 'same-origin',
+            });
+            if (personalResp.ok) {
+                const personal = await personalResp.json();
+                _applyPersonalData(personal);
             }
+            // Clear only the personal section skeleton immediately
+            clearSingleSectionSkeleton('section-personal-body');
+        } catch (err) {
+            console.error('[Phase 1] personal load failed:', err);
+            clearSingleSectionSkeleton('section-personal-body');
         }
 
+        // ── Phase 2: JSON array sections ─────────────────────────────────────────
         try {
-            const data = await attempt(1);
-            clearSectionSkeletons();
+            const fullResp = await fetch('/dashboard/api/user-info/', {
+                credentials: 'same-origin',
+            });
+            if (!fullResp.ok) throw new Error('HTTP ' + fullResp.status);
+            const data = await fullResp.json();
 
-            // Re-query wrappers after skeleton restore (innerHTML replacement detaches old nodes)
+            // Re-init tag wrappers after skeleton innerHTML replacement
             skillsWrapper             = initStaticTagInput('skills-tag-wrapper',             'skills-input',             'skills-hidden');
             blockedIndustriesWrapper  = initStaticTagInput('blocked-industries-tag-wrapper',  'blocked-industries-input', 'blocked-industries-hidden');
             workStyleWrapper          = initStaticTagInput('work-style-tag-wrapper',          'work-style-input',         'work-style-hidden');
@@ -423,76 +464,40 @@
             blockedTitlesWrapper      = initStaticTagInput('blocked-titles-tag-wrapper',      'blocked-titles-input',     'blocked-titles-hidden');
             blockedDetailsWrapper     = initStaticTagInput('blocked-details-tag-wrapper',     'blocked-details-input',    'blocked-details-hidden');
 
-            if (!data || Object.keys(data).length === 0) return;
-
-            // Personal
-            setFieldValue('field-name',     data.name);
-            setFieldValue('field-phone',    data.phone);
-            setFieldValue('field-linkedin', data.linkedin);
-            setFieldValue('field-website',  data.website);
-            setFieldValue('field-location', data.location);
-
-            // Skills
-            if (skillsWrapper && Array.isArray(data.skills)) skillsWrapper._setTags(data.skills);
-
-            // Education
-            if (Array.isArray(data.education)) {
-                data.education.forEach(function (edu) {
-                    const card = addEntryCard('educationEntries', 'education-entry-template', 'Degree');
-                    if (!card) return;
-                    setDegreeValue(card, edu.degree || null);
-                    setCardField(card, 'edu_major[]',      edu.major);
-                    setCardField(card, 'edu_institution[]', edu.institution);
-                    setCardField(card, 'edu_start_year[]', toYearInput(edu.start_year));
-                    setCardField(card, 'edu_end_year[]',   toYearInput(edu.end_year));
-                    setCardField(card, 'edu_gpa[]',        edu.gpa != null ? edu.gpa : '');
-                    setCardField(card, 'edu_honors[]',     edu.honors);
-                    const actWrapper = card.querySelector('.edu-activities-wrapper');
-                    if (actWrapper && actWrapper._setTags && Array.isArray(edu.activities)) {
-                        actWrapper._setTags(edu.activities);
-                    }
-                });
-            }
-
-            // Certifications
-            if (Array.isArray(data.certifications)) {
-                data.certifications.forEach(function (cert) {
-                    const card = addEntryCard('certificationEntries', 'certification-entry-template', 'Certification');
-                    if (!card) return;
-                    setCardField(card, 'cert_name[]',       cert.certification_name || cert.name       || null);
-                    setCardField(card, 'cert_issuer[]',     cert.organization       || cert.issuer     || null);
-                    setCardField(card, 'cert_issue_date[]', toMonthInput(cert.date  || cert.issue_date || null));
-                });
-            }
-
-            // Experience
-            if (Array.isArray(data.experience)) {
-                data.experience.forEach(function (exp) {
-                    const card = addEntryCard('experienceEntries', 'experience-entry-template', 'Experience');
-                    if (!card) return;
-                    setCardField(card, 'exp_job_title[]',  exp.job_title);
-                    setCardField(card, 'exp_company[]',    exp.company);
-                    setCardField(card, 'exp_start_date[]', toMonthInput(exp.start_date));
-                    setCardField(card, 'exp_end_date[]',   toMonthInput(exp.end_date));
-                    const bulletsWrapper = card.querySelector('.exp-bullets-wrapper');
-                    if (bulletsWrapper && bulletsWrapper._setTags && Array.isArray(exp.bullets)) {
-                        bulletsWrapper._setTags(exp.bullets);
-                    }
-                });
-            }
-
-            // Blocked
-            if (blockedIndustriesWrapper && Array.isArray(data.blocked_industries)) blockedIndustriesWrapper._setTags(data.blocked_industries);
-            if (workStyleWrapper         && Array.isArray(data.work_style))         workStyleWrapper._setTags(data.work_style);
-            if (blockedCompaniesWrapper  && Array.isArray(data.blocked_companies))  blockedCompaniesWrapper._setTags(data.blocked_companies);
-            if (blockedTitlesWrapper     && Array.isArray(data.blocked_titles))     blockedTitlesWrapper._setTags(data.blocked_titles);
-            if (blockedDetailsWrapper    && Array.isArray(data.blocked_details))    blockedDetailsWrapper._setTags(data.blocked_details);
-
+            _applyArrayData(data);
+            clearSectionSkeletons(); // clears education, skills, blocked, etc.
         } catch (err) {
+            console.error('[Phase 2] full load failed:', err);
             clearSectionSkeletons();
-            console.error('Failed to load user info after retries:', err);
-            showLoadError();
         }
+    }
+
+    /** Populates only scalar input fields from the personal endpoint response. */
+    function _applyPersonalData(data) {
+        var set = function (id, val) { var el = document.getElementById(id); if (el) el.value = val || ''; };
+        set('field-name',     data.name);
+        set('field-phone',    data.phone);
+        set('field-linkedin', data.linkedin);
+        set('field-website',  data.website);
+        set('field-location', data.location);
+    }
+
+    /** Populates all JSON array sections from the full endpoint response. */
+    function _applyArrayData(data) {
+        if (!data || !Object.keys(data).length) return;
+
+        // Education, Certifications, Experience
+        (data.education      || []).forEach(function (e) { addEntryCard('education',      e); });
+        (data.certifications || []).forEach(function (e) { addEntryCard('certification',  e); });
+        (data.experience     || []).forEach(function (e) { addEntryCard('experience',     e); });
+
+        // Tag inputs — wrappers must already be re-initialised before calling _setTags
+        if (skillsWrapper?._setTags)            skillsWrapper._setTags(data.skills             || []);
+        if (blockedIndustriesWrapper?._setTags) blockedIndustriesWrapper._setTags(data.blocked_industries || []);
+        if (workStyleWrapper?._setTags)         workStyleWrapper._setTags(data.work_style        || []);
+        if (blockedCompaniesWrapper?._setTags)  blockedCompaniesWrapper._setTags(data.blocked_companies  || []);
+        if (blockedTitlesWrapper?._setTags)     blockedTitlesWrapper._setTags(data.blocked_titles    || []);
+        if (blockedDetailsWrapper?._setTags)    blockedDetailsWrapper._setTags(data.blocked_details   || []);
     }
 
     function setFieldValue(id, value) {
