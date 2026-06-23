@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/user-info/save/',     views.api_user_info_save,         name='api_user_info_save'),
 
     path('webhook/trigger/', trigger_webhook, name='webhook_trigger'),
+    path('api/upload-resume/', views.api_upload_resume, name='api_upload_resume'),
 ]

@@ -6,11 +6,54 @@
 <link rel="stylesheet" href="{% static 'css/tags.css' %}">
 <link rel="stylesheet" href="{% static 'css/dropdown.css' %}">
 <link rel="stylesheet" href="{% static 'css/dashboard-info.css' %}">
+<link rel="stylesheet" href="{% static 'css/upload.css' %}">
 {% endblock %}
 
 {% block dashboard_title %}Info's{% endblock %}
 
 {% block dashboard_content %}
+<!-- ── MASTER RESUME UPLOAD ── -->
+<section class="upload-section info-section" aria-labelledby="upload-section-title">
+    <div class="upload-hero blue-glass" id="resumeDropzone" role="region" aria-label="Resume upload area">
+        <div class="upload-hero__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+        </div>
+
+        <h2 class="upload-hero__title" id="upload-section-title">Upload Your Master Resume</h2>
+        <p class="upload-hero__subtitle">Our intelligence layer reads your document and automatically extracts everything we need.</p>
+
+        <div class="upload-dropzone" aria-label="Drop your resume here">
+            <div class="upload-dropzone__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+            </div>
+            <span class="upload-dropzone__label">Drag &amp; drop your resume here</span>
+            <span class="upload-dropzone__hint">PDF, DOC or DOCX — max 10 MB</span>
+        </div>
+
+        <button type="button" class="upload-btn" id="resumeUploadBtn" aria-label="Choose resume file to upload">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Upload File
+        </button>
+
+        <input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx" aria-label="Resume file input">
+
+        <div class="upload-file-list" id="resumeFileList" role="list" aria-label="Uploaded files" aria-live="polite"></div>
+    </div>
+</section>
+
 <div class="dashboard-header">
     <h1>Your Information</h1>
     <p>Manage your professional profile data</p>
@@ -410,4 +453,5 @@
 <script src="{% static 'js/tags.js' %}" defer></script>
 <script src="{% static 'js/dropdown.js' %}" defer></script>
 <script src="{% static 'js/dashboard-info.js' %}" defer></script>
+<script src="{% static 'js/upload.js' %}" defer></script>
 {% endblock %}

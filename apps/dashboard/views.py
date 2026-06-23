@@ -8,6 +8,10 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+import os
+from django.views.decorators.http import require_POST
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -353,3 +357,33 @@ def jobs(request):
         'active_tab': 'jobs',
         'page_title': "Job's",
     })
+
+
+
+@login_required
+@require_POST
+def api_upload_resume(request):
+    """
+    Receives a resume file via XHR (FormData key: 'resume').
+    Saves it to MEDIA_ROOT/resumes/<user_id>/<filename>.
+    Returns JSON { "status": "ok", "path": "..." } or { "error": "..." }.
+    """
+    resume = request.FILES.get('resume')
+    if not resume:
+        return JsonResponse({'error': 'No file provided.'}, status=400)
+
+    allowed_ext = {'.pdf', '.doc', '.docx'}
+    ext = os.path.splitext(resume.name)[1].lower()
+    if ext not in allowed_ext:
+        return JsonResponse({'error': 'Unsupported file type.'}, status=415)
+
+    MAX_SIZE = 10 * 1024 * 1024  # 10 MB
+    if resume.size > MAX_SIZE:
+        return JsonResponse({'error': 'File exceeds 10 MB limit.'}, status=413)
+
+    upload_dir = os.path.join(settings.MEDIA_ROOT, 'resumes', str(request.user.id))
+    fs = FileSystemStorage(location=upload_dir)
+    filename = fs.save(resume.name, resume)
+    saved_path = os.path.join('resumes', str(request.user.id), filename)
+
+    return JsonResponse({'status': 'ok', 'path': saved_path})
