@@ -10,23 +10,35 @@
 .tag-wrapper {
     display: flex;
     flex-direction: column;
-    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-xs) var(--spacing-sm);
+    justify-content: center;
+    padding: var(--spacing-sm);
     border-radius: var(--border-radius-item-xl);
     border: var(--border-width-thin) solid
         color-mix(in srgb, var(--color-gray12) 12%, transparent);
     background: color-mix(in srgb, var(--color-gray1) 100%, transparent);
     transition: border-color 0.18s ease, box-shadow 0.18s ease;
     cursor: text;
+    min-height: 46px;
     max-height: calc(5 * 34px + 5 * var(--spacing-xs) + var(--spacing-sm) * 2 + 46px);
     overflow-y: auto;
 }
 
-
-.tag-wrapper:focus-within {
-    border-color: color-mix(in srgb, var(--color-blue) 55%, transparent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-blue) 10%, transparent);
+/* When tags exist, push content to the top so new items stack downward */
+.tag-wrapper:has(.tag-item) {
+    justify-content: flex-start;
 }
 
+/* Focused background */
+.tag-wrapper:focus-within {
+    border-color: color-mix(in srgb, var(--color-blue) 55%, transparent);
+    box-shadow: var(--elevation-2);
+}
+
+.tag-input:focus {
+    background: var(--color-gray2);
+    border-radius: var(--border-radius-item-lg);
+    transition: background 0.18s ease;
+}
 /* ── Tag list container ── */
 .tag-list {
     display: flex;
@@ -151,7 +163,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
-    padding: 2px 0;
+    padding: 2px;
     margin-top: 0;
 }
 
@@ -182,7 +194,7 @@
     font-size: 13px;
 }
 
-/* ── Send button ── */
+ /* ── Send button ── */
 .tag-send-btn {
     display: flex;
     align-items: center;
@@ -191,31 +203,31 @@
     width: 28px;
     height: 28px;
     border-radius: var(--border-radius-pill);
-    background: var(--color-blue);
+    /* Inactive state: gray, not clickable */
+    background: var(--color-gray2);
     border: none;
-    color: #fff;
-    cursor: pointer;
+    color: var(--color-gray5);
+    cursor: default;
     padding: 0;
-    /* Hidden by default — shown via JS when input has text */
-    opacity: 0;
-    transform: scale(0.6);
     pointer-events: none;
-    transition: opacity 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
-                transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
-                background 0.15s ease;
+    transition: background 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+                color 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.15s ease;
 }
 
+/* Active state: user has typed something */
 .tag-send-btn.is-visible {
-    opacity: 1;
-    transform: scale(1);
+    background: var(--color-blue);
+    color: #fff;
+    cursor: pointer;
     pointer-events: auto;
 }
 
-.tag-send-btn:hover {
+.tag-send-btn.is-visible:hover {
     background: var(--accent-dark);
 }
 
-.tag-send-btn:active {
+.tag-send-btn.is-visible:active {
     transform: scale(0.88);
 }
 
