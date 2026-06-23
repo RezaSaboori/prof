@@ -439,9 +439,12 @@
             btn.setAttribute('title', 'Please wait while your data is loading…');
         } else {
             btn.removeAttribute('title');
-            if (!_formDirty && !_formSaved) {
-                _setBtnGlass(btn, 'pristine');
-            }
+            // After loading finishes, capture the snapshot then sync the button.
+            // _captureSnapshot() must be called here because _applyArrayData()
+            // (which populates tag inputs) runs before _isLoading is set to false,
+            // so this is the correct moment to record the "clean" baseline.
+            _captureSnapshot();
+            _syncSaveBtn();
         }
     }
 
