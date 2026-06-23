@@ -438,8 +438,10 @@
             btn.disabled = true;
             btn.setAttribute('title', 'Please wait while your data is loading…');
         } else {
-            btn.disabled = false;
             btn.removeAttribute('title');
+            if (!_formDirty && !_formSaved) {
+                _setBtnGlass(btn, 'pristine');
+            }
         }
     }
 
@@ -680,23 +682,47 @@
         }, 210);
     }
 
+    // dirty = user has unsaved changes; saved = last action was a successful save
+    var _formDirty = false;
+    var _formSaved = false;
+
     function _setBtnGlass(btn, state) {
-        btn.classList.remove('glass-dark', 'blue-glass', 'green-glass');
-        if (state === 'loading') btn.classList.add('blue-glass');
-        else if (state === 'success') btn.classList.add('green-glass');
-        else btn.classList.add('glass-dark');
+        btn.classList.remove('glass', 'glass-dark', 'blue-glass', 'green-glass');
+        if (state === 'loading') {
+            btn.classList.add('blue-glass');
+        } else if (state === 'success') {
+            btn.classList.add('green-glass');
+        } else if (state === 'pristine') {
+            btn.classList.add('glass');
+            btn.disabled = true;
+        } else {
+            btn.classList.add('glass-dark');
+            btn.disabled = false;
+        }
+    }
+
+    function _markDirty() {
+        var btn = document.getElementById('saveInfoBtn');
+        if (!btn) return;
+        if (_formDirty) return;
+        _formDirty = true;
+        _formSaved = false;
+        if (btn.getAttribute('data-state') === 'idle' || btn.getAttribute('data-state') === 'success') {
+            btn.setAttribute('data-state', 'idle');
+            _setBtnGlass(btn, 'idle');
+        }
     }
 
     document.getElementById('saveInfoBtn')?.addEventListener('mouseenter', function () {
-        if (this.getAttribute('data-state') === 'idle') {
-            this.classList.remove('glass-dark', 'blue-glass', 'green-glass');
+        if (this.getAttribute('data-state') === 'idle' && _formDirty) {
+            this.classList.remove('glass', 'glass-dark', 'blue-glass', 'green-glass');
             this.classList.add('blue-glass');
         }
     });
 
     document.getElementById('saveInfoBtn')?.addEventListener('mouseleave', function () {
-        if (this.getAttribute('data-state') === 'idle') {
-            this.classList.remove('glass-dark', 'blue-glass', 'green-glass');
+        if (this.getAttribute('data-state') === 'idle' && _formDirty) {
+            this.classList.remove('glass', 'glass-dark', 'blue-glass', 'green-glass');
             this.classList.add('glass-dark');
         }
     });
@@ -728,20 +754,17 @@
         try {
             await apiFetch('/dashboard/api/user-info/save/', 'POST', collectFormData());
             clearInterval(msgTimer);
+            _formDirty = false;
+            _formSaved = true;
             saveBtn.setAttribute('data-state', 'success');
             _setBtnGlass(saveBtn, 'success');
             _transitionBtnIcon(saveBtn, CHECK_ICON_SVG);
             _transitionBtnText(saveBtn, 'Saved!');
-            setTimeout(function () {
-                saveBtn.setAttribute('data-state', 'idle');
-                _setBtnGlass(saveBtn, 'idle');
-                _transitionBtnIcon(saveBtn, SAVE_ICON_SVG);
-                _transitionBtnText(saveBtn, 'Save Changes');
-                saveBtn.disabled = false;
-            }, 2200);
+            saveBtn.disabled = true;
         } catch (err) {
             clearInterval(msgTimer);
             console.error('Save failed:', err);
+            _formDirty = true;
             saveBtn.setAttribute('data-state', 'idle');
             _setBtnGlass(saveBtn, 'idle');
             _transitionBtnIcon(saveBtn, SAVE_ICON_SVG);
@@ -754,6 +777,17 @@
     });
 
     // ── INIT ──────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', loadUserInfo);
+    document.addEventListener('DOMContentLoaded', function () {
+        loadUserInfo();
+
+        // Mark form dirty on any input change
+        var form = document.getElementById('infoForm');
+        if (form) {
+            form.addEventListener('input', _markDirty);
+            form.addEventListener('change', _markDirty);
+        }
+        // Also expose _markDirty for tag inputs and dynamic entry cards
+        window._markInfoFormDirty = _markDirty;
+    });
 
 })();
