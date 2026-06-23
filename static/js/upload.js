@@ -9,11 +9,12 @@
 
     // ── DOM refs ──────────────────────────────────────────────────────────────
     const dropzone   = document.getElementById('resumeDropzone');
+    const dropTarget = dropzone ? dropzone.querySelector('.upload-dropzone') : null;
     const fileInput  = document.getElementById('resumeFileInput');
     const uploadBtn  = document.getElementById('resumeUploadBtn');
     const fileList   = document.getElementById('resumeFileList');
 
-    if (!dropzone || !fileInput || !uploadBtn || !fileList) return;
+    if (!dropzone || !dropTarget || !fileInput || !uploadBtn || !fileList) return;
 
     // ── CSRF helper ───────────────────────────────────────────────────────────
     function getCsrfToken() {
@@ -42,29 +43,33 @@
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
-    // ── Drag events ───────────────────────────────────────────────────────────
+    // ── Drag events on the hero card (visual feedback only — no click) ────────
     ['dragenter', 'dragover'].forEach(evt => {
         dropzone.addEventListener(evt, e => {
             e.preventDefault();
-            dropzone.classList.add('drag-over');
+            dropTarget.classList.add('drag-over');
         });
     });
 
     ['dragleave', 'drop'].forEach(evt => {
         dropzone.addEventListener(evt, e => {
             e.preventDefault();
-            dropzone.classList.remove('drag-over');
+            dropTarget.classList.remove('drag-over');
         });
     });
 
     dropzone.addEventListener('drop', e => {
-        const files = e.dataTransfer.files;
-        handleFiles(files);
+        handleFiles(e.dataTransfer.files);
     });
 
-    dropzone.addEventListener('click', () => fileInput.click());
+    // ── Click to open file picker — ONLY on the drop target zone and the button ──
+    dropTarget.addEventListener('click', () => {
+        fileInput.click();
+    });
 
     uploadBtn.addEventListener('click', e => {
+        // Stop the click from bubbling up to dropzone (which has no click handler
+        // now, but belt-and-suspenders to prevent future double-triggers)
         e.stopPropagation();
         fileInput.click();
     });
@@ -154,27 +159,22 @@
 
         const xhr = new XMLHttpRequest();
 
-        // ── Cancel ──
         cancelBtn.addEventListener('click', () => {
             xhr.abort();
             item.remove();
         });
 
-        // ── Delete after upload ──
         deleteBtn.addEventListener('click', () => {
             if (confirm(`Delete "${file.name}"?`)) {
                 item.remove();
             }
         });
 
-        // ── Accept: commit the upload ──
         acceptBtn.addEventListener('click', () => {
             item.dataset.state = 'accepted';
             label.textContent  = file.name + ' ready';
-            acceptBtn.setAttribute('aria-pressed', 'true');
         });
 
-        // ── Progress ──
         xhr.upload.addEventListener('progress', e => {
             if (!e.lengthComputable) return;
             const pct = Math.round((e.loaded / e.total) * 100);
@@ -183,7 +183,6 @@
             label.textContent = `Uploading… ${pct}%`;
         });
 
-        // ── Done ──
         xhr.addEventListener('load', () => {
             if (xhr.status >= 200 && xhr.status < 300) {
                 fill.style.width = '100%';
@@ -198,7 +197,6 @@
             }
         });
 
-        // ── Error / abort ──
         xhr.addEventListener('error', () => {
             label.textContent = 'Upload failed — check your connection';
             fill.style.backgroundColor = 'var(--color-red)';
