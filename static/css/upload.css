@@ -10,6 +10,10 @@
 }
 
 /* ── Blue-glass card for the drop zone header ── */
+.upload-section.info-section {
+    overflow: visible; /* allow ::before specular highlight to render */
+}
+
 .upload-hero {
     border-radius: var(--border-radius-container-lg);
     padding: var(--spacing-3xl) var(--spacing-2xl);
@@ -18,7 +22,7 @@
     align-items: center;
     gap: var(--spacing-md);
     text-align: center;
-    overflow: visible; /* must NOT be hidden — clips the ::before pseudo-element */
+    overflow: visible;
 }
 
 .upload-hero__icon {
