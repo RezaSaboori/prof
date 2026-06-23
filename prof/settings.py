@@ -96,6 +96,11 @@ SUPABASE_URL              = os.getenv('SUPABASE_URL', '')
 SUPABASE_ANON_KEY         = os.getenv('SUPABASE_ANON_KEY', '')
 SUPABASE_SERVICE_ROLE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY', '')
 
+# ── n8n Gateway Webhook ────────────────────────────────────────────
+N8N_GATEWAY_URL                  = os.getenv('N8N_GATEWAY_URL', '')
+N8N_GATEWAY_SECRET_HEADER_NAME   = os.getenv('N8N_GATEWAY_SECRET_HEADER_NAME', 'X-Workflow-Secret')
+N8N_GATEWAY_SECRET_HEADER_VALUE  = os.getenv('N8N_GATEWAY_SECRET_HEADER_VALUE', '')
+
 # ── Social Auth: Increase timeout for slow connections ──────────────
 REQUESTS_TIMEOUT = 15.0
 SOCIAL_AUTH_REQUESTS_TIMEOUT = 15.0

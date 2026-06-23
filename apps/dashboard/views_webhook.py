@@ -1,45 +1,53 @@
 # apps/dashboard/views_webhook.py
 
-import json
-import requests
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
-WEBHOOK_URL = "https://dietpi.taild764a0.ts.net/webhook/gateway"
-WEBHOOK_SECRET = '1v8Dp8Zx<5agP"V$m`}`1&Npt.\\:?"£V{vR]E(;(<JO?.v!0zY'
 
-WEBHOOK_PAYLOAD = [
+from apps.core.webhook_client import WebhookClient, WebhookConfig
+
+# ── Gateway config ─────────────────────────────────────────────────────────────
+# Move these to settings.py / .env for production
+_GATEWAY_CONFIG = WebhookConfig(
+    url=settings.N8N_GATEWAY_URL,
+    secret_header_name=settings.N8N_GATEWAY_SECRET_HEADER_NAME,
+    secret_header_value=settings.N8N_GATEWAY_SECRET_HEADER_VALUE,
+    timeout=30,
+    max_retries=5,
+    retry_backoff_base=1.5,
+)
+
+_GATEWAY_CLIENT = WebhookClient(_GATEWAY_CONFIG)
+
+# ── Payload ────────────────────────────────────────────────────────────────────
+_TEST_PAYLOAD = [
     {
         "id": "123",
         "route": "resume",
-        "input": "a dude"
+        "input": "a dude",
     }
 ]
+
+
+# ── View ───────────────────────────────────────────────────────────────────────
 
 @login_required
 @require_POST
 def trigger_webhook(request):
-    try:
-        response = requests.post(
-            WEBHOOK_URL,
-            headers={
-                "Content-Type": "application/json",
-                "X-Workflow-Secret": WEBHOOK_SECRET,
-            },
-            json=WEBHOOK_PAYLOAD,
-            timeout=30,
-        )
-        try:
-            data = response.json()
-        except ValueError:
-            data = response.text
+    result = _GATEWAY_CLIENT.send(_TEST_PAYLOAD)
 
-        return JsonResponse({"success": True, "response": data}, status=200)
+    body = {
+        "success": result.success,
+        "attempts": result.attempts,
+        "duration_ms": result.duration_ms,
+        "status_code": result.status_code,
+    }
 
-    except requests.exceptions.Timeout:
-        return JsonResponse({"success": False, "response": "Request timed out."}, status=504)
-    except requests.exceptions.ConnectionError:
-        return JsonResponse({"success": False, "response": "Connection error."}, status=502)
-    except Exception as e:
-        return JsonResponse({"success": False, "response": str(e)}, status=500)
+    if result.success:
+        body["response"] = result.data
+        return JsonResponse(body, status=200)
+    else:
+        body["error"] = result.error
+        return JsonResponse(body, status=502)
