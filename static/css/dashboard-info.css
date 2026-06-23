@@ -258,6 +258,8 @@ DASHBOARD INFO — Page-specific styles
 
 .info-form__actions {
     display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
     justify-content: flex-start;
     padding: var(--spacing-lg) 0 var(--spacing-xl);
 }
@@ -411,4 +413,68 @@ DASHBOARD INFO — Page-specific styles
 @keyframes saveBtnTextEnter {
     from { filter: blur(5px); transform: scale(0.88) translateX(-6px); opacity: 0; }
     to   { filter: blur(0px); transform: scale(1) translateX(0);       opacity: 1; }
+}
+
+
+/* ── UNDO BUTTON ── */
+
+#undoInfoBtn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-2xl);
+    min-width: 180px;
+    border: none;
+    border-radius: var(--border-radius-pill);
+    font-family: var(--font-family-base);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-gray2);
+    cursor: pointer;
+    overflow: hidden;
+
+    /* Hidden by default — revealed via blur+scale */
+    opacity: 0;
+    transform: scale(0.82);
+    filter: blur(6px);
+    pointer-events: none;
+
+    transition:
+        opacity 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 400ms cubic-bezier(1, 0, 0.4, 1),
+        background-image 400ms cubic-bezier(1, 0, 0.4, 1);
+}
+
+#undoInfoBtn.undo-visible {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+    pointer-events: auto;
+}
+
+#undoInfoBtn:hover {
+    /* Swap to pink-glass on hover — reuse existing class via JS, or override here */
+}
+
+.undo-btn__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.undo-btn__icon svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.undo-btn__text {
+    white-space: nowrap;
 }

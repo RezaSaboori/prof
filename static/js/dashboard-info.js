@@ -744,6 +744,7 @@
                 btn.setAttribute('data-state', 'idle');
             }
             _setBtnGlass(btn, 'idle');
+            _showUndoBtn();
         } else {
             // Pristine: either just loaded, just saved, or user reverted all changes
             var currentState = btn.getAttribute('data-state');
@@ -753,7 +754,22 @@
                 btn.setAttribute('data-state', 'idle');
                 _setBtnGlass(btn, 'pristine');
             }
+            _hideUndoBtn();
         }
+    }
+
+    // ── Undo button visibility ─────────────────────────────────────────────────
+
+    function _showUndoBtn() {
+        var btn = document.getElementById('undoInfoBtn');
+        if (!btn) return;
+        btn.classList.add('undo-visible');
+    }
+
+    function _hideUndoBtn() {
+        var btn = document.getElementById('undoInfoBtn');
+        if (!btn) return;
+        btn.classList.remove('undo-visible');
     }
 
     // Kept as public API for tag inputs and dynamic cards to call
@@ -768,11 +784,47 @@
         }
     });
 
-    document.getElementById('saveInfoBtn')?.addEventListener('mouseleave', function () {
-        if (this.getAttribute('data-state') === 'idle' && !this.disabled) {
-            this.classList.remove('glass', 'blue-glass', 'indigo-glass', 'green-glass');
-            this.classList.add('blue-glass');
-        }
+    // ── Undo button — hover glass swap + click restore ─────────────────────────
+
+    document.getElementById('undoInfoBtn')?.addEventListener('mouseenter', function () {
+        this.classList.remove('orange-glass');
+        this.classList.add('pink-glass');
+    });
+
+    document.getElementById('undoInfoBtn')?.addEventListener('mouseleave', function () {
+        this.classList.remove('pink-glass');
+        this.classList.add('orange-glass');
+    });
+
+    document.getElementById('undoInfoBtn')?.addEventListener('click', function () {
+        if (_savedSnapshot === null || _btnSaving) return;
+
+        var snapshot = JSON.parse(_savedSnapshot);
+
+        // Clear dynamic entry cards before re-populating
+        var eduContainer  = document.getElementById('educationEntries');
+        var certContainer = document.getElementById('certificationEntries');
+        var expContainer  = document.getElementById('experienceEntries');
+        if (eduContainer)  eduContainer.innerHTML  = '';
+        if (certContainer) certContainer.innerHTML = '';
+        if (expContainer)  expContainer.innerHTML  = '';
+
+        // Restore scalar fields
+        _applyPersonalData(snapshot);
+
+        // Restore array fields (education, certs, experience, tags)
+        _applyArrayData(snapshot);
+
+        // Re-wire static tag inputs (they reference wrapper elements by id)
+        skillsWrapper            = initStaticTagInput('skills-tag-wrapper',             'skills-tag-input',             'id_skills');
+        blockedIndustriesWrapper = initStaticTagInput('blocked-industries-tag-wrapper', 'blocked-industries-tag-input', 'id_blocked_industries');
+        workStyleWrapper         = initStaticTagInput('work-style-tag-wrapper',         'work-style-tag-input',         'id_work_style');
+        blockedCompaniesWrapper  = initStaticTagInput('blocked-companies-tag-wrapper',  'blocked-companies-tag-input',  'id_blocked_companies');
+        blockedTitlesWrapper     = initStaticTagInput('blocked-titles-tag-wrapper',     'blocked-titles-tag-input',     'id_blocked_titles');
+        blockedDetailsWrapper    = initStaticTagInput('blocked-details-tag-wrapper',    'blocked-details-tag-input',    'id_blocked_details');
+
+        // Sync button state — form is now clean again
+        _syncSaveBtn();
     });
 
     document.getElementById('infoForm')?.addEventListener('submit', async function (e) {
