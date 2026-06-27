@@ -113,22 +113,26 @@
                 <i class="${iconClass}"></i>
             </div>
 
-            <div class="upload-file-item__name" title="${file.name}">${file.name}</div>
+            <div class="upload-file-item__content">
+                <div class="upload-file-item__header">
+                    <div class="upload-file-item__name" title="${file.name}">${file.name}</div>
 
-            <div class="upload-file-item__actions">
-                <button type="button" class="upload-action-btn upload-action-btn--delete" aria-label="Remove file" title="Remove">
-                    <i class="fa-regular fa-trash-can"></i>
-                </button>
-            </div>
-
-            <div class="upload-file-item__progress-row">
-                <div class="upload-file-item__status-line">
-                    <span class="upload-file-size">0KB of ${totalFmt}</span>
-                    <span class="upload-status-dot upload-status-dot--uploading"></span>
-                    <span class="upload-progress-label">Uploading ...</span>
+                    <div class="upload-file-item__actions">
+                        <button type="button" class="upload-action-btn upload-action-btn--delete" aria-label="Remove file" title="Remove">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="upload-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress for ${file.name}">
-                    <div class="upload-progress-bar__fill"></div>
+
+                <div class="upload-file-item__progress-row">
+                    <div class="upload-file-item__status-line">
+                        <span class="upload-file-size">0KB of ${totalFmt}</span>
+                        <span class="upload-status-dot upload-status-dot--uploading"></span>
+                        <span class="upload-progress-label">Uploading ...</span>
+                    </div>
+                    <div class="upload-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress for ${file.name}">
+                        <div class="upload-progress-bar__fill"></div>
+                    </div>
                 </div>
             </div>
         `;
