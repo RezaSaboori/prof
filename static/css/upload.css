@@ -10,7 +10,7 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-2xl);
     align-items: center;
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: var(--spacing-5xl);
 }
 
 /* ── Left text panel ── */
@@ -22,31 +22,19 @@
 
 .upload-section__title {
     font-family: var(--font-family-inter), sans-serif;
-    font-size: clamp(26px, 3.5vw, 40px);
-    font-weight: 800;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
     color: var(--color-gray11);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     line-height: 1.15;
 }
 
 .upload-section__desc {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     color: var(--color-gray7);
     line-height: 1.65;
     max-width: 52ch;
-}
-
-.upload-section__scratch {
-    font-size: 14px;
-    color: var(--color-gray7);
-    line-height: 1.65;
-}
-
-.upload-section__scratch strong {
-    color: var(--color-gray11);
-    display: block;
-    margin-bottom: var(--spacing-xs);
 }
 
 /* ── Blue-glass hero card (right panel) ── */
@@ -62,14 +50,23 @@
     position: relative;
 }
 
+/* ── Top row: icon + drag label side by side ── */
+.upload-hero__top-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-lg);
+    width: 100%;
+}
+
 /* ── Top icon ── */
 .upload-hero__top-icon {
-    width: 72px;
-    height: 72px;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: var(--spacing-xs);
 }
 
 .upload-hero__top-icon img {
@@ -82,11 +79,12 @@
 /* ── "Drag & Drop here or" label ── */
 .upload-hero__drag-label {
     font-family: var(--font-family-inter), sans-serif;
-    font-size: clamp(20px, 2.5vw, 28px);
+    font-size: clamp(24px, 3vw, 35px);
     font-weight: 700;
     color: var(--color-gray1);
-    line-height: 1.25;
+    line-height: 1.5;
     letter-spacing: -0.02em;
+    text-align: left;
 }
 
 /* ── "choose file" pill button ── */
@@ -126,15 +124,12 @@
 }
 
 .upload-hero__hints span {
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.55;
     color: color-mix(in srgb, var(--color-gray1) 80%, transparent);
+    text-align: left;
 }
 
-.upload-hero__hints span:first-child {
-    color: color-mix(in srgb, var(--color-yellow, #f5c842) 90%, var(--color-gray1) 10%);
-    font-weight: 500;
-}
 
 /* Hidden real file input */
 #resumeFileInput {
@@ -332,7 +327,6 @@
 
 .upload-send-btn:hover {
     background: color-mix(in srgb, var(--color-gray1) 88%, var(--color-gray4) 12%);
-    transform: translateY(-1px);
     box-shadow: 0 4px 18px color-mix(in srgb, var(--color-gray11) 28%, transparent);
 }
 

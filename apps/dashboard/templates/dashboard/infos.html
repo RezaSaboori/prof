@@ -18,14 +18,16 @@
         <h2 class="upload-section__title" id="upload-section-title">Upload Your<br>Master Resume</h2>
         <p class="upload-section__desc">Your resume is the starting point for everything. Once uploaded, our system automatically extracts your skills, experience, and preferences — no manual entry needed.</p>
         <p class="upload-section__desc">You'll get a chance to <strong>review</strong> and <strong>confirm</strong> the details before anything goes live. After that, our agents search continuously and surface only the opportunities that are a strong match for you.</p>
-        <p class="upload-section__scratch"><strong>Prefer to start from scratch?</strong><br>Use the form below to build your profile manually.</p>
+        <p class="upload-section__desc"><strong>Prefer to start from scratch?</strong> Use the form below to build your profile manually.</p>
     </div>
 
     <div class="upload-hero blue-glass" id="resumeDropzone" role="region" aria-label="Resume upload area">
-        <div class="upload-hero__top-icon" aria-hidden="true">
-            <img src="{% static 'img/documents.svg' %}" alt="" width="72" height="72">
+        <div class="upload-hero__top-row">
+            <div class="upload-hero__top-icon" aria-hidden="true">
+                <img src="{% static 'img/documents.svg' %}" alt="" width="100" height="100">
+            </div>
+            <p class="upload-hero__drag-label">Drag &amp; Drop here<br>or</p>
         </div>
-        <p class="upload-hero__drag-label">Drag &amp; Drop<br>here or</p>
 
         <button type="button" class="upload-choose-btn" id="resumeUploadBtn" aria-label="Choose resume file to upload">
             choose file
@@ -46,10 +48,6 @@
     </div>
 </section>
 
-<div class="dashboard-header">
-    <h1>Your Information</h1>
-    <p>Manage your professional profile data</p>
-</div>
 
 <form class="info-form" id="infoForm" novalidate>
     {% csrf_token %}

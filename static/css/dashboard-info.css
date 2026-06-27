@@ -2,24 +2,6 @@
 DASHBOARD INFO — Page-specific styles
 ============================================ */
 
-/* ── Page header ── */
-.dashboard-header {
-   margin-bottom: var(--spacing-xl);
-}
-
-.dashboard-header h1 {
-   font-family: var(--font-family-variable);
-   font-size: 28px;
-   font-weight: 700;
-   color: var(--color-gray11);
-   letter-spacing: -0.02em;
-}
-
-.dashboard-header p {
-   font-size: 14px;
-   color: var(--color-gray6);
-   margin-top: var(--spacing-xs);
-}
 
 /* ── Form layout ── */
 .info-form {
@@ -42,14 +24,14 @@ DASHBOARD INFO — Page-specific styles
 
 .info-section__title {
    font-family: var(--font-family-variable);
-   font-size: 16px;
+   font-size: 20px;
    font-weight: 700;
    color: var(--color-gray11);
    letter-spacing: -0.01em;
 }
 
 .info-section__desc {
-   font-size: 13px;
+   font-size: 16px;
    color: var(--color-gray6);
    margin-top: var(--spacing-xs);
 }
@@ -80,7 +62,7 @@ DASHBOARD INFO — Page-specific styles
 }
 
 .form-label {
-   font-size: 13px;
+   font-size: 14px;
    font-weight: 600;
    color: var(--color-gray8);
    letter-spacing: 0.01em;
@@ -153,10 +135,9 @@ DASHBOARD INFO — Page-specific styles
 }
 
 .entry-card__label {
-   font-size: 13px;
+   font-size: 16px;
    font-weight: 600;
    color: var(--color-gray7);
-   text-transform: uppercase;
    letter-spacing: 0.06em;
 }
 
