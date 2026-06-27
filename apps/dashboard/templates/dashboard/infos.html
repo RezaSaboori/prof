@@ -26,12 +26,8 @@
             <div class="upload-hero__top-icon" aria-hidden="true">
                 <img src="{% static 'img/documents.svg' %}" alt="" width="100" height="100">
             </div>
-            <p class="upload-hero__drag-label">Drag &amp; Drop here<br>or</p>
+            <p class="upload-hero__drag-label">Drag &amp; Drop here<br>or <button type="button" class="upload-choose-btn" id="resumeUploadBtn" aria-label="Choose resume file to upload">choose file</button></p>
         </div>
-
-        <button type="button" class="upload-choose-btn" id="resumeUploadBtn" aria-label="Choose resume file to upload">
-            choose file
-        </button>
 
         <input type="file" id="resumeFileInput" accept=".csv,.doc,.docx" aria-label="Resume file input">
 

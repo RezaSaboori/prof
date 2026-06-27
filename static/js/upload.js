@@ -53,16 +53,28 @@
         handleFiles(e.dataTransfer.files);
     });
 
+    // ── Move fileInput outside the dropzone to prevent click bubbling loops ──
+    document.body.appendChild(fileInput);
+
+    // ── Guard against double-open (some browsers fire click twice) ───────────
+    let fileDialogOpen = false;
+
     // ── Upload button — ONLY trigger for click-to-browse ─────────────────────
-    // stopPropagation prevents the click bubbling up through dropTarget
-    // and any ancestor that might have a click→fileInput.click() listener
     uploadBtn.addEventListener('click', e => {
         e.stopPropagation();
+        if (fileDialogOpen) return;
+        fileDialogOpen = true;
         fileInput.click();
     });
 
+    // ── Reset guard when dialog closes (focus returns to window) ─────────────
+    window.addEventListener('focus', () => {
+        fileDialogOpen = false;
+    }, { capture: true });
+
     // ── File input change ─────────────────────────────────────────────────────
     fileInput.addEventListener('change', () => {
+        fileDialogOpen = false;
         handleFiles(fileInput.files);
         fileInput.value = '';
     });

@@ -55,14 +55,15 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl);
     width: 100%;
+    margin-bottom: var(--spacing-xl);
 }
 
 /* ── Top icon ── */
 .upload-hero__top-icon {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -87,32 +88,32 @@
     text-align: left;
 }
 
-/* ── "choose file" pill button ── */
+/* ── "choose file" — inline within the drag label text ── */
 .upload-choose-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-sm) var(--spacing-2xl);
-    background: color-mix(in srgb, var(--color-gray1) 18%, transparent);
-    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray1) 35%, transparent);
+    display: inline;
+    background: color-mix(in srgb, var(--color-gray1) 30%, transparent);
+    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray1) 50%, transparent);
     border-radius: var(--border-radius-pill);
-    font-family: var(--font-family-base);
-    font-size: 15px;
-    font-weight: 500;
+    font-family: var(--font-family-inter), sans-serif;
+    font-size: clamp(20px, 2.5vw, 30px);
+    font-weight: 700;
     color: var(--color-gray1);
+    letter-spacing: -0.02em;
+    line-height: 1.5;
+    padding: 0 var(--spacing-lg) 2px;
     cursor: pointer;
-    transition: background 220ms ease, border-color 220ms ease, transform 180ms ease;
+    transition: background 220ms ease, border-color 220ms ease;
     white-space: nowrap;
-    letter-spacing: 0.01em;
+    vertical-align: baseline;
 }
 
 .upload-choose-btn:hover {
-    background: color-mix(in srgb, var(--color-gray1) 28%, transparent);
-    border-color: color-mix(in srgb, var(--color-gray1) 60%, transparent);
+    background: color-mix(in srgb, var(--color-gray1) 50%, transparent);
+    border-color: color-mix(in srgb, var(--color-gray1) 70%, transparent);
 }
 
 .upload-choose-btn:active {
-    transform: scale(0.97);
+    opacity: 0.8;
 }
 
 /* ── Hint text ── */
