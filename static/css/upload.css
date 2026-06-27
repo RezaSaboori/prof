@@ -157,9 +157,7 @@
     row-gap: var(--spacing-xs);
     align-items: center;
     padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--border-radius-item-lg);
-    background: color-mix(in srgb, var(--color-gray1) 12%, transparent);
-    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray1) 20%, transparent);
+    border-radius: var(--border-radius-container-sm);
 }
 
 /* File icon */
@@ -171,7 +169,7 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--border-radius-item-sm);
-    background: color-mix(in srgb, var(--color-gray1) 15%, transparent);
+    background: color-mix(in srgb, var(--color-gray12) 15%, transparent);
     color: var(--color-gray1);
     flex-shrink: 0;
 }
@@ -184,7 +182,7 @@
 .upload-file-item__name {
     font-size: 13px;
     font-weight: 600;
-    color: var(--color-gray1);
+    color: var(--color-gray12);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -193,7 +191,7 @@
 
 .upload-file-item__meta {
     font-size: 11px;
-    color: color-mix(in srgb, var(--color-gray1) 65%, transparent);
+    color: color-mix(in srgb, var(--color-gray10) 65%, transparent);
 }
 
 .upload-file-item__actions {
@@ -233,7 +231,7 @@
 
 .upload-progress-label {
     font-size: 11px;
-    color: color-mix(in srgb, var(--color-gray1) 65%, transparent);
+    color:  var(--color-gray10);
     letter-spacing: 0.01em;
 }
 
@@ -249,7 +247,7 @@
     background: transparent;
     cursor: pointer;
     transition: background 180ms ease, color 180ms ease, transform 150ms ease;
-    color: color-mix(in srgb, var(--color-gray1) 70%, transparent);
+    color: var(--color-gray10);
     flex-shrink: 0;
 }
 
@@ -259,12 +257,12 @@
 }
 
 .upload-action-btn:hover {
-    background: color-mix(in srgb, var(--color-gray1) 15%, transparent);
+    background: var(--color-gray1) ;
     transform: scale(1.1);
 }
 
 .upload-action-btn--cancel:hover { color: var(--color-orange); }
-.upload-action-btn--delete       { color: color-mix(in srgb, var(--color-gray1) 70%, transparent); }
+.upload-action-btn--delete       { color: var(--color-gray10); }
 .upload-action-btn--delete:hover { color: var(--color-red); background: color-mix(in srgb, var(--color-red) 15%, transparent); }
 .upload-action-btn--accept:hover { color: var(--color-green); background: color-mix(in srgb, var(--color-green) 15%, transparent); }
 
