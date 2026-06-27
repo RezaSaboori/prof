@@ -29,7 +29,7 @@
             <p class="upload-hero__drag-label">Drag &amp; Drop here<br>or <button type="button" class="upload-choose-btn" id="resumeUploadBtn" aria-label="Choose resume file to upload">choose file</button></p>
         </div>
 
-        <input type="file" id="resumeFileInput" accept=".csv,.doc,.docx" aria-label="Resume file input">
+        <input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx" aria-label="Resume file input">
 
         <div class="upload-hero__hints" aria-hidden="true">
             <span>Upload you Resume in CSV, DOC or DOCX format (max 15 MB).</span>
@@ -38,8 +38,8 @@
 
         <div class="upload-file-list" id="resumeFileList" role="list" aria-label="Uploaded files" aria-live="polite"></div>
 
-        <div class="upload-hero__footer">
-            <button type="button" class="upload-send-btn" id="resumeSendBtn" aria-label="Send resume">Send</button>
+        <div class="upload-hero__footer upload-hero__footer--hidden" id="resumeFooter">
+            <button type="button" class="upload-send-btn" id="resumeSendBtn" disabled aria-label="Send resume">Send</button>
         </div>
     </div>
 </section>

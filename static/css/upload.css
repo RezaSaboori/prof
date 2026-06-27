@@ -131,13 +131,12 @@
     text-align: left;
 }
 
-
 /* Hidden real file input */
 #resumeFileInput {
     display: none;
 }
 
-/* ── File item card ── */
+/* ── File item list ── */
 .upload-file-list {
     display: none;
     flex-direction: column;
@@ -149,70 +148,126 @@
     display: flex;
 }
 
+/* ── File item card — uses .glass from style.css ── */
 .upload-file-item {
     display: grid;
-    grid-template-columns: 40px 1fr auto;
+    grid-template-columns: 48px 1fr auto;
     grid-template-rows: auto auto;
     column-gap: var(--spacing-md);
-    row-gap: var(--spacing-xs);
+    row-gap: 2px;
     align-items: center;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-md);
     border-radius: var(--border-radius-container-sm);
 }
 
-/* File icon */
+/* ── File type icon (Font Awesome) ── */
 .upload-file-item__icon {
     grid-row: 1 / 3;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--border-radius-item-sm);
-    background: color-mix(in srgb, var(--color-gray12) 15%, transparent);
-    color: var(--color-gray1);
+    background: color-mix(in srgb, var(--color-blue) 12%, transparent);
     flex-shrink: 0;
 }
 
-.upload-file-item__icon svg {
-    width: 22px;
-    height: 22px;
+.upload-file-item__icon i {
+    font-size: 28px;
+    line-height: 1;
 }
 
+/* PDF icon — red tint */
+.upload-file-item__icon i.fa-file-pdf {
+    color: var(--color-red);
+}
+
+/* Word icon — blue tint */
+.upload-file-item__icon i.fa-file-word {
+    color: var(--color-blue);
+}
+
+/* ── File name ── */
 .upload-file-item__name {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-    color: var(--color-gray12);
+    color: var(--color-gray11);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+    align-self: end;
 }
 
-.upload-file-item__meta {
-    font-size: 11px;
-    color: color-mix(in srgb, var(--color-gray10) 65%, transparent);
-}
-
+/* ── Delete/action button column ── */
 .upload-file-item__actions {
     grid-row: 1 / 3;
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
     flex-shrink: 0;
+    align-self: center;
 }
 
+/* ── Progress row: meta + bar ── */
 .upload-file-item__progress-row {
-    grid-column: 2 / 4;
+    grid-column: 2 / 3;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
+    align-self: start;
 }
 
+/* ── Status line: size + uploading text on one row ── */
+.upload-file-item__status-line {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 12px;
+    color: var(--color-gray7);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.upload-file-item__status-line .upload-file-size {
+    flex-shrink: 0;
+}
+
+/* Status dot */
+.upload-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--border-radius-pill);
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+.upload-status-dot--uploading {
+    background: var(--color-blue);
+}
+
+.upload-status-dot--done {
+    background: var(--color-green);
+}
+
+.upload-status-dot--error {
+    background: var(--color-red);
+}
+
+.upload-progress-label {
+    font-size: 12px;
+    color: var(--color-gray7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Progress bar ── */
 .upload-progress-bar {
     width: 100%;
     height: 5px;
-    background: color-mix(in srgb, var(--color-gray1) 20%, transparent);
+    background: color-mix(in srgb, var(--color-gray4) 50%, transparent);
     border-radius: var(--border-radius-pill);
     overflow: hidden;
 }
@@ -221,18 +276,16 @@
     height: 100%;
     width: 0%;
     border-radius: var(--border-radius-pill);
-    background: var(--color-gray1);
+    background: var(--color-blue);
     transition: width 120ms linear;
 }
 
-.upload-progress-bar__fill.upload-progress-bar__fill--complete {
+.upload-progress-bar__fill--complete {
     background: var(--color-green);
 }
 
-.upload-progress-label {
-    font-size: 11px;
-    color:  var(--color-gray10);
-    letter-spacing: 0.01em;
+.upload-progress-bar__fill--error {
+    background: var(--color-red);
 }
 
 /* ── Action icon buttons ── */
@@ -240,70 +293,52 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--border-radius-item-sm);
     border: none;
     background: transparent;
     cursor: pointer;
     transition: background 180ms ease, color 180ms ease, transform 150ms ease;
-    color: var(--color-gray10);
+    color: var(--color-gray7);
     flex-shrink: 0;
-}
-
-.upload-action-btn svg {
-    width: 16px;
-    height: 16px;
+    font-size: 15px;
 }
 
 .upload-action-btn:hover {
-    background: var(--color-gray1) ;
     transform: scale(1.1);
 }
 
-.upload-action-btn--cancel:hover { color: var(--color-orange); }
-.upload-action-btn--delete       { color: var(--color-gray10); }
-.upload-action-btn--delete:hover { color: var(--color-red); background: color-mix(in srgb, var(--color-red) 15%, transparent); }
-.upload-action-btn--accept:hover { color: var(--color-green); background: color-mix(in srgb, var(--color-green) 15%, transparent); }
-
-/* State visibility */
-.upload-file-item[data-state="uploading"] .upload-action-btn--cancel { display: inline-flex; }
-.upload-file-item[data-state="uploading"] .upload-action-btn--delete  { display: none; }
-.upload-file-item[data-state="uploading"] .upload-action-btn--accept  { display: none; }
-
-.upload-file-item[data-state="done"] .upload-action-btn--cancel { display: none; }
-.upload-file-item[data-state="done"] .upload-action-btn--delete  { display: inline-flex; }
-.upload-file-item[data-state="done"] .upload-action-btn--accept  { display: inline-flex; }
-
-.upload-file-item[data-state="accepted"] .upload-action-btn--cancel { display: none; }
-.upload-file-item[data-state="accepted"] .upload-action-btn--delete  { display: inline-flex; }
-.upload-file-item[data-state="accepted"] .upload-action-btn--accept  { display: none; }
-
-.upload-file-item[data-state="accepted"] .upload-progress-bar__fill {
-    background: var(--color-green);
-    width: 100%;
+.upload-action-btn--delete {
+    color: var(--color-gray7);
 }
 
-/* ── Accepted badge ── */
-.upload-accepted-badge {
-    display: none;
-    align-items: center;
-    gap: var(--spacing-xs);
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--color-green);
+.upload-action-btn--delete:hover {
+    color: var(--color-red);
+    background: color-mix(in srgb, var(--color-red) 10%, transparent);
 }
 
-.upload-accepted-badge svg { width: 14px; height: 14px; }
+/* State-based visibility */
+/* uploading state: show only delete (trash) */
+.upload-file-item[data-state="uploading"] .upload-action-btn--delete { display: inline-flex; }
 
-.upload-file-item[data-state="accepted"] .upload-accepted-badge { display: inline-flex; }
+/* done state: show delete */
+.upload-file-item[data-state="done"] .upload-action-btn--delete { display: inline-flex; }
+
+/* error state: show delete */
+.upload-file-item[data-state="error"] .upload-action-btn--delete { display: inline-flex; }
 
 /* ── Footer with Send button ── */
 .upload-hero__footer {
     width: 100%;
     display: flex;
     justify-content: flex-end;
-    margin-top: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+}
+
+/* Hidden until a file is chosen */
+.upload-hero__footer--hidden {
+    display: none;
 }
 
 .upload-send-btn {
@@ -319,20 +354,27 @@
     font-weight: 600;
     color: var(--color-blue);
     cursor: pointer;
-    transition: background 220ms ease, transform 180ms ease, box-shadow 220ms ease;
+    transition: background 220ms ease, transform 180ms ease, box-shadow 220ms ease, opacity 220ms ease;
     box-shadow: 0 2px 12px color-mix(in srgb, var(--color-gray11) 20%, transparent);
     white-space: nowrap;
 }
 
-.upload-send-btn:hover {
+.upload-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.upload-send-btn:not(:disabled):hover {
     background: color-mix(in srgb, var(--color-gray1) 88%, var(--color-gray4) 12%);
     box-shadow: 0 4px 18px color-mix(in srgb, var(--color-gray11) 28%, transparent);
 }
 
-.upload-send-btn:active {
+.upload-send-btn:not(:disabled):active {
     transform: scale(0.97);
 }
 
+/* ── Drag-over state ── */
 .upload-hero.drag-over {
     outline: 2px dashed color-mix(in srgb, var(--color-gray1) 60%, transparent);
     outline-offset: -4px;
@@ -356,7 +398,7 @@
     }
 
     .upload-file-item {
-        grid-template-columns: 36px 1fr auto;
+        grid-template-columns: 40px 1fr auto;
         padding: var(--spacing-sm) var(--spacing-md);
     }
 }
