@@ -55,7 +55,6 @@
 
     // ── Move fileInput outside the dropzone to prevent click bubbling loops ──
     document.body.appendChild(fileInput);
-
     // ── Guard against double-open (some browsers fire click twice) ───────────
     let fileDialogOpen = false;
 
@@ -67,15 +66,17 @@
         fileInput.click();
     });
 
-    // ── Reset guard when dialog closes (focus returns to window) ─────────────
+    // ── Reset guard only when the file dialog truly closes (window regains focus) ──
     window.addEventListener('focus', () => {
-        fileDialogOpen = false;
-    }, { capture: true });
+        setTimeout(() => { fileDialogOpen = false; }, 300);
+    });
 
     // ── File input change ─────────────────────────────────────────────────────
     fileInput.addEventListener('change', () => {
         fileDialogOpen = false;
-        handleFiles(fileInput.files);
+        if (fileInput.files && fileInput.files.length > 0) {
+            handleFiles(fileInput.files);
+        }
         fileInput.value = '';
     });
 
