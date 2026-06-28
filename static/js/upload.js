@@ -87,11 +87,13 @@
         if (elapsed >= MIN_STATE_HOLD_MS) {
             _setGlass(newGlass);
         } else {
-            // Defer until the hold window expires
+            // Defer until the hold window expires.
+            // IMPORTANT: do NOT capture newGlass — re-evaluate at fire time
+            // so a stale deferred call never overwrites a fresher state.
             const delay = MIN_STATE_HOLD_MS - elapsed;
             setTimeout(() => {
-                // Re-evaluate — conditions may have changed during the delay
-                _setGlass(newGlass);
+                const fresh = resolveGlass(_cachedStatus, _hasError);
+                _setGlass(fresh);
             }, delay);
         }
     }
@@ -386,10 +388,42 @@
     }
 
     // ── Send button ───────────────────────────────────────────────────────────
-    sendBtn.addEventListener('click', () => {
+    sendBtn.addEventListener('click', async () => {
         if (sendBtn.disabled) return;
-        sendBtn.textContent = 'Sent';
+
         sendBtn.disabled    = true;
+        sendBtn.textContent = 'Sending...';
+
+        try {
+            const resp = await fetch('/dashboard/api/resume-status/set/', {
+                method:  'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken':  getCsrfToken(),
+                },
+                body: JSON.stringify({ original_resume_status: 1 }),
+            });
+
+            if (!resp.ok) {
+                throw new Error(`HTTP ${resp.status}`);
+            }
+
+            const data = await resp.json();
+            if (data.error) throw new Error(data.error);
+
+            sendBtn.textContent = 'Sent';
+            _cachedStatus = 1;
+            _hasError     = false;
+            applyGlass(resolveGlass(_cachedStatus, _hasError));
+            fetchResumeStatus();   // confirm server state immediately
+
+        } catch (err) {
+            console.error('[upload] send failed:', err.message);
+            sendBtn.textContent = 'Retry';
+            sendBtn.disabled    = false;
+            _hasError = true;
+            applyGlass(resolveGlass(_cachedStatus, _hasError));
+        }
     });
 
     // ── Bootstrap ─────────────────────────────────────────────────────────────

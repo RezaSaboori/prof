@@ -491,3 +491,66 @@ def api_resume_status(request):
     except requests.RequestException as e:
         logger.error('resume_status GET failed for %s: %s', email, e)
         return JsonResponse({'error': str(e)}, status=502)
+    
+@login_required
+@require_POST
+def api_set_resume_status(request):
+    """
+    Accepts { "original_resume_status": <int> } and writes it to Supabase.
+    Called by the Send button in upload.js to manually advance the status to 1.
+    """
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    new_status = body.get('original_resume_status')
+    if not isinstance(new_status, int):
+        return JsonResponse({'error': 'original_resume_status must be an integer'}, status=400)
+
+    email = request.user.email
+    try:
+        get_resp = _session.get(
+            f'{settings.SUPABASE_URL}/rest/v1/user_info',
+            params={'email': f'eq.{email}', 'limit': 1},
+            headers=_supabase_headers(),
+            timeout=(5, 10),
+        )
+        if not get_resp.ok:
+            return JsonResponse({'error': f'Supabase {get_resp.status_code}'}, status=502)
+
+        row_exists = bool(get_resp.json())
+        payload = {'original_resume_status': new_status}
+
+        if row_exists:
+            resp = _session.patch(
+                f'{settings.SUPABASE_URL}/rest/v1/user_info',
+                params={'email': f'eq.{email}'},
+                json=payload,
+                headers={**_supabase_headers(), 'Prefer': 'return=minimal'},
+                timeout=(5, 15),
+            )
+        else:
+            payload['email'] = email
+            resp = _session.post(
+                f'{settings.SUPABASE_URL}/rest/v1/user_info',
+                json=payload,
+                headers={**_supabase_headers(), 'Prefer': 'return=minimal'},
+                timeout=(5, 15),
+            )
+
+        if not resp.ok:
+            logger.error('Supabase set_resume_status error %s for %s: %s', resp.status_code, email, resp.text)
+            return JsonResponse({'error': f'Supabase {resp.status_code}'}, status=502)
+
+        return JsonResponse({'ok': True})
+
+    except requests.exceptions.Timeout:
+        logger.error('Supabase set_resume_status timed out for %s', email)
+        return JsonResponse({'error': 'timeout'}, status=504)
+    except requests.exceptions.ConnectionError as exc:
+        logger.error('Supabase set_resume_status connection error for %s: %s', email, exc)
+        return JsonResponse({'error': 'connection_error'}, status=502)
+    except requests.RequestException as exc:
+        logger.error('set_resume_status failed for %s: %s', email, exc)
+        return JsonResponse({'error': str(exc)}, status=502)
