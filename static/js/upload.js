@@ -46,10 +46,6 @@
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
-    function getFileIconClass(file) {
-        return '';
-    }
-
     function updateFooterState() {
         const hasFiles = fileList.children.length > 0;
         if (hasFiles) {
@@ -97,7 +93,6 @@
     function createFileItem(file) {
         const totalBytes = file.size;
         const totalFmt   = formatSize(totalBytes);
-        const iconClass  = getFileIconClass(file);
 
         const item = document.createElement('div');
         item.className = 'upload-file-item glass';

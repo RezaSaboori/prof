@@ -187,28 +187,20 @@
     min-width: 0;
 }
 
-/* ── File type icon (Font Awesome) ── */
+/* ── File type icon ── */
 .upload-file-item__icon {
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--border-radius-item-sm);
     flex-shrink: 0;
+    padding-bottom: var(--spacing-sm);
 }
 
-.upload-file-item__icon i {
-    font-size: 36px;
-    line-height: 1;
-}
-
-/* PDF icon */
-.upload-file-item__icon i.fa-file-pdf {
-    color: var(--color-gray1);
-}
-
-/* Word icon */
-.upload-file-item__icon i.fa-file-word {
-    color: var(--color-gray1);
+.upload-file-item__icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
 }
 
 /* ── File name ── */
