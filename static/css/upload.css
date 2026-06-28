@@ -383,11 +383,6 @@
     transform: scale(0.97);
 }
 
-/* ── Drag-over state ── */
-.upload-hero.drag-over {
-    outline: 2px dashed color-mix(in srgb, var(--color-gray1) 60%, transparent);
-    outline-offset: -4px;
-}
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
