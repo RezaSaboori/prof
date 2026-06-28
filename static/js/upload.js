@@ -1,12 +1,21 @@
 /**
  * upload.js
- * Handles master resume drag-and-drop / click upload for infos.html
- * Depends on: upload.css, Font Awesome (fa-regular fa-file-pdf / fa-file-word)
+ * Handles master resume drag-and-drop / click upload for infos.html.
+ *
+ * Glass state machine for #resumeDropzone:
+ *   indigo-glass  → status=0, idle
+ *   purple-glass  → status=0 + drag-over OR file is currently uploading
+ *   teal-glass    → status=1 or 2  (processing / extracting)
+ *   green-glass   → status=3 or 4  (complete / confirmed)
+ *   red-glass     → any fetch/network error
+ *
+ * Polling: every 3 s while page is visible; min display time 2 s per state.
  */
 
 (function () {
     'use strict';
 
+    // ── DOM refs ──────────────────────────────────────────────────────────────
     const dropzone  = document.getElementById('resumeDropzone');
     const fileInput = document.getElementById('resumeFileInput');
     const uploadBtn = document.getElementById('resumeUploadBtn');
@@ -16,28 +25,27 @@
 
     if (!dropzone || !fileInput || !uploadBtn || !fileList || !footer || !sendBtn) return;
 
-    // Track active uploads to manage Send button state
-    let activeUploads = 0;
+    // ── Constants ─────────────────────────────────────────────────────────────
+    const ALL_GLASS_CLASSES  = ['indigo-glass', 'purple-glass', 'teal-glass', 'green-glass', 'red-glass'];
+    const POLL_INTERVAL_MS   = 3000;   // poll every 3 s
+    const MIN_STATE_HOLD_MS  = 2000;   // minimum time to display each glass state
+    const FETCH_TIMEOUT_MS   = 8000;   // abort fetch after 8 s
+    const STATUS_URL         = '/dashboard/api/resume-status/';
 
+    // ── State ─────────────────────────────────────────────────────────────────
+    let activeUploads      = 0;
+    let isDragOver         = false;
+    let currentGlass       = 'indigo-glass';
+    let lastStateChangeAt  = Date.now();
+    let pollTimer          = null;
+    let fetchController    = null;   // AbortController for in-flight status fetch
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
     function getCsrfToken() {
         const meta = document.querySelector('meta[name="csrf-token"]');
         if (meta) return meta.getAttribute('content');
         const match = document.cookie.match(/csrftoken=([^;]+)/);
         return match ? match[1] : '';
-    }
-
-    const ACCEPTED_TYPES = [
-        'application/pdf',
-    ];
-    const ACCEPTED_EXT = ['.pdf'];
-
-    function isAccepted(file) {
-        const ext = '.' + file.name.split('.').pop().toLowerCase();
-        return ACCEPTED_TYPES.includes(file.type) || ACCEPTED_EXT.includes(ext);
-    }
-
-    function getFileExt(file) {
-        return file.name.split('.').pop().toLowerCase();
     }
 
     function formatSize(bytes) {
@@ -46,27 +54,167 @@
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
-    function updateFooterState() {
-        const hasFiles = fileList.children.length > 0;
-        if (hasFiles) {
-            footer.classList.remove('upload-hero__footer--hidden');
-        } else {
-            footer.classList.add('upload-hero__footer--hidden');
-        }
-        sendBtn.disabled = activeUploads > 0;
+    function isAccepted(file) {
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        return file.type === 'application/pdf' || ext === '.pdf';
     }
 
-    // ── Drag events ──────────────────────────────────────────────────────────
-    dropzone.addEventListener('dragenter', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-    dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-    dropzone.addEventListener('dragleave', e => { e.preventDefault(); dropzone.classList.remove('drag-over'); });
-    dropzone.addEventListener('drop', e => {
-        e.preventDefault();
-        dropzone.classList.remove('drag-over');
-        handleFiles(e.dataTransfer.files);
+    // ── Glass state machine ───────────────────────────────────────────────────
+
+    /**
+     * Resolve which glass class SHOULD be applied right now based on
+     * resumeStatus + interaction flags, without touching the DOM yet.
+     */
+    function resolveGlass(resumeStatus, hasError) {
+        if (hasError)                          return 'red-glass';
+        if (resumeStatus === 3 || resumeStatus === 4) return 'green-glass';
+        if (resumeStatus === 1 || resumeStatus === 2) return 'teal-glass';
+        // status === 0 (or unknown)
+        if (isDragOver || activeUploads > 0)   return 'purple-glass';
+        return 'indigo-glass';
+    }
+
+    /**
+     * Apply a glass class to the dropzone, respecting MIN_STATE_HOLD_MS.
+     * If the minimum hold time hasn't elapsed, the update is deferred.
+     */
+    function applyGlass(newGlass) {
+        if (newGlass === currentGlass) return;
+
+        const now     = Date.now();
+        const elapsed = now - lastStateChangeAt;
+
+        if (elapsed >= MIN_STATE_HOLD_MS) {
+            _setGlass(newGlass);
+        } else {
+            // Defer until the hold window expires
+            const delay = MIN_STATE_HOLD_MS - elapsed;
+            setTimeout(() => {
+                // Re-evaluate — conditions may have changed during the delay
+                _setGlass(newGlass);
+            }, delay);
+        }
+    }
+
+    function _setGlass(newGlass) {
+        if (newGlass === currentGlass) return;
+        ALL_GLASS_CLASSES.forEach(cls => dropzone.classList.remove(cls));
+        dropzone.classList.add(newGlass);
+        currentGlass      = newGlass;
+        lastStateChangeAt = Date.now();
+    }
+
+    // ── Status polling ────────────────────────────────────────────────────────
+
+    let _cachedStatus = 0;
+    let _hasError     = false;
+
+    async function fetchResumeStatus() {
+        // Cancel any previous in-flight request
+        if (fetchController) fetchController.abort();
+        fetchController = new AbortController();
+
+        const timeoutId = setTimeout(() => fetchController.abort(), FETCH_TIMEOUT_MS);
+
+        try {
+            const resp = await fetch(STATUS_URL, {
+                method:  'GET',
+                headers: { 'X-CSRFToken': getCsrfToken() },
+                signal:  fetchController.signal,
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!resp.ok) {
+                throw new Error(`HTTP ${resp.status}`);
+            }
+
+            const data = await resp.json();
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            _cachedStatus = typeof data.original_resume_status === 'number'
+                ? data.original_resume_status
+                : 0;
+            _hasError = false;
+
+        } catch (err) {
+            clearTimeout(timeoutId);
+
+            if (err.name === 'AbortError') {
+                // Aborted intentionally (new request started or tab hidden) — not an error
+                return;
+            }
+
+            console.warn('[upload] resume status fetch failed:', err.message);
+            _hasError = true;
+        }
+
+        applyGlass(resolveGlass(_cachedStatus, _hasError));
+    }
+
+    function startPolling() {
+        if (pollTimer !== null) return;   // already running
+        fetchResumeStatus();              // immediate first call
+        pollTimer = setInterval(fetchResumeStatus, POLL_INTERVAL_MS);
+    }
+
+    function stopPolling() {
+        if (pollTimer !== null) {
+            clearInterval(pollTimer);
+            pollTimer = null;
+        }
+        if (fetchController) {
+            fetchController.abort();
+            fetchController = null;
+        }
+    }
+
+    // Pause polling when the tab is hidden; resume when visible again
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopPolling();
+        } else {
+            startPolling();
+        }
     });
 
-    // ── Move fileInput outside dropzone to prevent click loop ────────────────
+    // ── Drag events ───────────────────────────────────────────────────────────
+    dropzone.addEventListener('dragenter', e => {
+        e.preventDefault();
+        isDragOver = true;
+        dropzone.classList.add('drag-over');
+        applyGlass(resolveGlass(_cachedStatus, _hasError));
+    });
+
+    dropzone.addEventListener('dragover', e => {
+        e.preventDefault();
+        if (!isDragOver) {
+            isDragOver = true;
+            dropzone.classList.add('drag-over');
+            applyGlass(resolveGlass(_cachedStatus, _hasError));
+        }
+    });
+
+    dropzone.addEventListener('dragleave', e => {
+        e.preventDefault();
+        isDragOver = false;
+        dropzone.classList.remove('drag-over');
+        applyGlass(resolveGlass(_cachedStatus, _hasError));
+    });
+
+    dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        isDragOver = false;
+        dropzone.classList.remove('drag-over');
+        handleFiles(e.dataTransfer.files);
+        // Glass update deferred to uploadFile() which sets activeUploads
+    });
+
+    // ── File input ────────────────────────────────────────────────────────────
+    // Move fileInput outside dropzone to prevent click loop
     document.body.appendChild(fileInput);
     let fileDialogOpen = false;
 
@@ -89,12 +237,21 @@
         fileInput.value = '';
     });
 
-    // ── Build file item card ─────────────────────────────────────────────────
-    function createFileItem(file) {
-        const totalBytes = file.size;
-        const totalFmt   = formatSize(totalBytes);
+    // ── Footer state ──────────────────────────────────────────────────────────
+    function updateFooterState() {
+        const hasFiles = fileList.children.length > 0;
+        if (hasFiles) {
+            footer.classList.remove('upload-hero__footer--hidden');
+        } else {
+            footer.classList.add('upload-hero__footer--hidden');
+        }
+        sendBtn.disabled = activeUploads > 0;
+    }
 
-        const item = document.createElement('div');
+    // ── File item card ────────────────────────────────────────────────────────
+    function createFileItem(file) {
+        const totalFmt = formatSize(file.size);
+        const item     = document.createElement('div');
         item.className = 'upload-file-item glass';
         item.dataset.state = 'uploading';
         item.setAttribute('role', 'listitem');
@@ -103,18 +260,15 @@
             <div class="upload-file-item__icon" aria-hidden="true">
                 <img src="/static/img/pdf.svg" alt="" width="28" height="28">
             </div>
-
             <div class="upload-file-item__content">
                 <div class="upload-file-item__header">
                     <div class="upload-file-item__name" title="${file.name}">${file.name}</div>
-
                     <div class="upload-file-item__actions">
                         <button type="button" class="upload-action-btn upload-action-btn--delete" aria-label="Remove file" title="Remove">
                             <i class="fa-regular fa-trash-can"></i>
                         </button>
                     </div>
                 </div>
-
                 <div class="upload-file-item__progress-row">
                     <div class="upload-file-item__status-line">
                         <span class="upload-file-size">0KB of ${totalFmt}</span>
@@ -132,7 +286,7 @@
         return item;
     }
 
-    // ── Handle files ─────────────────────────────────────────────────────────
+    // ── Handle files ──────────────────────────────────────────────────────────
     function handleFiles(files) {
         Array.from(files).forEach(file => {
             if (!isAccepted(file)) {
@@ -143,7 +297,7 @@
         });
     }
 
-    // ── Upload a single file ─────────────────────────────────────────────────
+    // ── Upload a single file ──────────────────────────────────────────────────
     function uploadFile(file) {
         const item       = createFileItem(file);
         const fill       = item.querySelector('.upload-progress-bar__fill');
@@ -156,6 +310,7 @@
 
         activeUploads++;
         updateFooterState();
+        applyGlass(resolveGlass(_cachedStatus, _hasError));
 
         const formData = new FormData();
         formData.append('resume', file);
@@ -167,6 +322,7 @@
             item.remove();
             activeUploads = Math.max(0, activeUploads - 1);
             updateFooterState();
+            applyGlass(resolveGlass(_cachedStatus, _hasError));
         });
 
         xhr.upload.addEventListener('progress', e => {
@@ -182,6 +338,7 @@
 
         xhr.addEventListener('load', () => {
             activeUploads = Math.max(0, activeUploads - 1);
+
             if (xhr.status >= 200 && xhr.status < 300) {
                 fill.style.width = '100%';
                 fill.classList.add('upload-progress-bar__fill--complete');
@@ -191,14 +348,20 @@
                 sizeEl.textContent = formatSize(totalBytes) + ' of ' + formatSize(totalBytes);
                 label.textContent  = 'Uploaded';
                 item.dataset.state = 'done';
+
+                // Immediately poll status — server sets status=1 after upload
+                fetchResumeStatus();
             } else {
                 fill.classList.add('upload-progress-bar__fill--error');
                 dot.classList.remove('upload-status-dot--uploading');
                 dot.classList.add('upload-status-dot--error');
                 label.textContent  = 'Upload failed (' + xhr.status + ')';
                 item.dataset.state = 'error';
+                _hasError = true;
             }
+
             updateFooterState();
+            applyGlass(resolveGlass(_cachedStatus, _hasError));
         });
 
         xhr.addEventListener('error', () => {
@@ -208,11 +371,13 @@
             dot.classList.add('upload-status-dot--error');
             label.textContent  = 'Upload failed — check your connection';
             item.dataset.state = 'error';
+            _hasError = true;
             updateFooterState();
+            applyGlass(resolveGlass(_cachedStatus, _hasError));
         });
 
         xhr.addEventListener('abort', () => {
-            // item already removed in deleteBtn click handler
+            // Item already removed by deleteBtn handler; nothing extra needed
         });
 
         xhr.open('POST', '/dashboard/api/upload-resume/');
@@ -220,11 +385,14 @@
         xhr.send(formData);
     }
 
-    // ── Send button ──────────────────────────────────────────────────────────
+    // ── Send button ───────────────────────────────────────────────────────────
     sendBtn.addEventListener('click', () => {
         if (sendBtn.disabled) return;
         sendBtn.textContent = 'Sent';
-        sendBtn.disabled = true;
+        sendBtn.disabled    = true;
     });
+
+    // ── Bootstrap ─────────────────────────────────────────────────────────────
+    startPolling();
 
 })();

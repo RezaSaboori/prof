@@ -452,3 +452,42 @@ def api_upload_resume(request):
     except requests.RequestException as exc:
         logger.error('resume upload failed for %s: %s', email, exc)
         return JsonResponse({'error': str(exc)}, status=502)
+    
+@login_required
+@require_http_methods(['GET'])
+def api_resume_status(request):
+    """
+    Returns only the original_resume_status scalar for the logged-in user.
+    Used by upload.js to poll and update the upload-hero glass state.
+    """
+    email = request.user.email
+    try:
+        resp = _session.get(
+            f'{settings.SUPABASE_URL}/rest/v1/user_info',
+            params={
+                'email':  f'eq.{email}',
+                'select': 'original_resume_status',
+                'limit':  1,
+            },
+            headers=_supabase_headers(),
+            timeout=(5, 8),
+        )
+        if not resp.ok:
+            logger.error('Supabase resume_status GET error %s: %s', resp.status_code, resp.text)
+            return JsonResponse({'error': f'Supabase {resp.status_code}'}, status=502)
+
+        rows = resp.json()
+        if not rows:
+            return JsonResponse({'original_resume_status': 0})
+
+        return JsonResponse({'original_resume_status': rows[0].get('original_resume_status', 0)})
+
+    except requests.exceptions.Timeout:
+        logger.error('Supabase resume_status GET timed out for %s', email)
+        return JsonResponse({'error': 'timeout'}, status=504)
+    except requests.exceptions.ConnectionError as e:
+        logger.error('Supabase resume_status GET connection error for %s: %s', email, e)
+        return JsonResponse({'error': 'connection_error'}, status=502)
+    except requests.RequestException as e:
+        logger.error('resume_status GET failed for %s: %s', email, e)
+        return JsonResponse({'error': str(e)}, status=502)
