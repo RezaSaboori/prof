@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import os
 from django.views.decorators.http import require_POST
-from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -364,26 +363,92 @@ def jobs(request):
 @require_POST
 def api_upload_resume(request):
     """
-    Receives a resume file via XHR (FormData key: 'resume').
-    Saves it to MEDIA_ROOT/resumes/<user_id>/<filename>.
-    Returns JSON { "status": "ok", "path": "..." } or { "error": "..." }.
+    Receives a PDF resume via XHR (FormData key: 'resume').
+    Converts it to Markdown using pymupdf4llm, saves the result to
+    Supabase user_info.original_resume, and sets original_resume_status = 1.
+    Returns JSON { "status": "ok" } or { "error": "..." }.
     """
+    import tempfile
+    import pymupdf4llm
+
     resume = request.FILES.get('resume')
     if not resume:
         return JsonResponse({'error': 'No file provided.'}, status=400)
 
-    allowed_ext = {'.pdf', '.doc', '.docx'}
+    allowed_ext = {'.pdf'}
     ext = os.path.splitext(resume.name)[1].lower()
     if ext not in allowed_ext:
-        return JsonResponse({'error': 'Unsupported file type.'}, status=415)
+        return JsonResponse({'error': 'Only PDF files are supported.'}, status=415)
 
     MAX_SIZE = 10 * 1024 * 1024  # 10 MB
     if resume.size > MAX_SIZE:
         return JsonResponse({'error': 'File exceeds 10 MB limit.'}, status=413)
 
-    upload_dir = os.path.join(settings.MEDIA_ROOT, 'resumes', str(request.user.id))
-    fs = FileSystemStorage(location=upload_dir)
-    filename = fs.save(resume.name, resume)
-    saved_path = os.path.join('resumes', str(request.user.id), filename)
+    email = request.user.email
 
-    return JsonResponse({'status': 'ok', 'path': saved_path})
+    try:
+        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp:
+            for chunk in resume.chunks():
+                tmp.write(chunk)
+            tmp_path = tmp.name
+
+        try:
+            md = pymupdf4llm.to_markdown(tmp_path)
+        finally:
+            os.remove(tmp_path)
+
+    except Exception as exc:
+        logger.error('pymupdf4llm conversion failed for %s: %s', email, exc)
+        return JsonResponse({'error': 'Failed to convert PDF to markdown.'}, status=500)
+
+    # Upsert original_resume and set original_resume_status = 1
+    try:
+        # Check if row exists
+        get_resp = _session.get(
+            f'{settings.SUPABASE_URL}/rest/v1/user_info',
+            params={'email': f'eq.{email}', 'limit': 1},
+            headers=_supabase_headers(),
+            timeout=(5, 15),
+        )
+        if not get_resp.ok:
+            logger.error('Supabase GET error %s (resume upload): %s', get_resp.status_code, get_resp.text)
+            return JsonResponse({'error': f'Supabase {get_resp.status_code}'}, status=502)
+
+        row_exists = bool(get_resp.json())
+        resume_payload = {
+            'original_resume': md,
+            'original_resume_status': 1,
+        }
+
+        if row_exists:
+            resp = _session.patch(
+                f'{settings.SUPABASE_URL}/rest/v1/user_info',
+                params={'email': f'eq.{email}'},
+                json=resume_payload,
+                headers={**_supabase_headers(), 'Prefer': 'return=minimal'},
+                timeout=(5, 30),
+            )
+        else:
+            resume_payload['email'] = email
+            resp = _session.post(
+                f'{settings.SUPABASE_URL}/rest/v1/user_info',
+                json=resume_payload,
+                headers={**_supabase_headers(), 'Prefer': 'return=minimal'},
+                timeout=(5, 30),
+            )
+
+        if not resp.ok:
+            logger.error('Supabase resume save error %s for %s: %s', resp.status_code, email, resp.text)
+            return JsonResponse({'error': f'Supabase {resp.status_code}', 'detail': resp.text}, status=502)
+
+        return JsonResponse({'status': 'ok'})
+
+    except requests.exceptions.Timeout:
+        logger.error('Supabase timed out saving resume for %s', email)
+        return JsonResponse({'error': 'timeout'}, status=504)
+    except requests.exceptions.ConnectionError as exc:
+        logger.error('Supabase connection error saving resume for %s: %s', email, exc)
+        return JsonResponse({'error': 'connection_error'}, status=502)
+    except requests.RequestException as exc:
+        logger.error('resume upload failed for %s: %s', email, exc)
+        return JsonResponse({'error': str(exc)}, status=502)
