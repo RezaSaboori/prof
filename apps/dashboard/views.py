@@ -417,7 +417,6 @@ def api_upload_resume(request):
         row_exists = bool(get_resp.json())
         resume_payload = {
             'original_resume': md,
-            'original_resume_status': 1,
         }
 
         if row_exists:

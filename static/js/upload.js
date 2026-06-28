@@ -74,27 +74,46 @@
         return 'indigo-glass';
     }
 
+    // Single pending deferred-glass timer — only one can be queued at a time.
+    let _pendingGlassTimer = null;
+
     /**
      * Apply a glass class to the dropzone, respecting MIN_STATE_HOLD_MS.
-     * If the minimum hold time hasn't elapsed, the update is deferred.
+     *
+     * Rules:
+     *  1. If newGlass === currentGlass → no-op.
+     *  2. If the current state has been shown for >= MIN_STATE_HOLD_MS → apply immediately.
+     *  3. Otherwise → cancel any existing pending timer and schedule ONE new deferred
+     *     evaluation. At fire time, re-evaluate resolveGlass() from live state —
+     *     never use a captured value.
+     *  4. A deferred timer will NEVER downgrade to indigo/purple while
+     *     isDragOver=true or activeUploads>0 — those flags are re-checked live.
      */
     function applyGlass(newGlass) {
         if (newGlass === currentGlass) return;
 
-        const now     = Date.now();
-        const elapsed = now - lastStateChangeAt;
+        const elapsed = Date.now() - lastStateChangeAt;
 
         if (elapsed >= MIN_STATE_HOLD_MS) {
+            _cancelPendingGlass();
             _setGlass(newGlass);
         } else {
-            // Defer until the hold window expires.
-            // IMPORTANT: do NOT capture newGlass — re-evaluate at fire time
-            // so a stale deferred call never overwrites a fresher state.
+            // Cancel any previously scheduled deferred evaluation —
+            // only the most-recent intended transition should fire.
+            _cancelPendingGlass();
             const delay = MIN_STATE_HOLD_MS - elapsed;
-            setTimeout(() => {
-                const fresh = resolveGlass(_cachedStatus, _hasError);
-                _setGlass(fresh);
+            _pendingGlassTimer = setTimeout(() => {
+                _pendingGlassTimer = null;
+                // Re-evaluate live — never use the captured newGlass.
+                _setGlass(resolveGlass(_cachedStatus, _hasError));
             }, delay);
+        }
+    }
+
+    function _cancelPendingGlass() {
+        if (_pendingGlassTimer !== null) {
+            clearTimeout(_pendingGlassTimer);
+            _pendingGlassTimer = null;
         }
     }
 
@@ -351,8 +370,9 @@
                 label.textContent  = 'Uploaded';
                 item.dataset.state = 'done';
 
-                // Immediately poll status — server sets status=1 after upload
-                fetchResumeStatus();
+                // Do NOT poll immediately — status stays 0 until Send is clicked.
+                // Just re-evaluate glass from current live state.
+                applyGlass(resolveGlass(_cachedStatus, _hasError));
             } else {
                 fill.classList.add('upload-progress-bar__fill--error');
                 dot.classList.remove('upload-status-dot--uploading');
