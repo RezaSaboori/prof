@@ -223,7 +223,7 @@
     // ── Send button ──────────────────────────────────────────────────────────
     sendBtn.addEventListener('click', () => {
         if (sendBtn.disabled) return;
-        sendBtn.textContent = 'Sent ✓';
+        sendBtn.textContent = 'Sent';
         sendBtn.disabled = true;
     });
 
