@@ -200,32 +200,57 @@
                 heroStatus = UPLOAD_HERO_STATUS.UPLOADING;
             }
 
-            if (heroIconImg) {
-                heroIconImg.src = UPLOAD_HERO_ICON[heroStatus];
-            }
-
             const heroContent = UPLOAD_HERO_CONTENT[heroStatus];
             const dragLabelEl = document.getElementById('resumeHeroDragLabel');
             const hintsEl     = document.getElementById('resumeHeroHints');
+            const targets     = [heroIconImg, dragLabelEl, hintsEl].filter(Boolean);
+            const EXIT_MS     = 300;
 
-            if (dragLabelEl && heroContent) {
-                dragLabelEl.innerHTML = heroContent.label;
-                const newUploadBtn = dragLabelEl.querySelector('#resumeUploadBtn');
-                if (newUploadBtn) {
-                    newUploadBtn.addEventListener('click', e => {
-                        e.stopPropagation();
-                        if (fileDialogOpen) return;
-                        fileDialogOpen = true;
-                        fileInput.click();
-                    });
+            // Phase 1 — exit: scale up + blur out all three elements together
+            targets.forEach(el => {
+                el.classList.remove('upload-hero-content--entering');
+                el.classList.add('upload-hero-content--exiting');
+            });
+
+            // Phase 2 — after exit completes: swap content then enter
+            setTimeout(() => {
+                // Swap icon src
+                if (heroIconImg) {
+                    heroIconImg.src = UPLOAD_HERO_ICON[heroStatus];
                 }
-            }
 
-            if (hintsEl && heroContent) {
-                hintsEl.innerHTML = heroContent.hints
-                    .map(h => `<span>${h}</span>`)
-                    .join('');
-            }
+                // Swap drag label HTML + re-bind upload button
+                if (dragLabelEl && heroContent) {
+                    dragLabelEl.innerHTML = heroContent.label;
+                    const newUploadBtn = dragLabelEl.querySelector('#resumeUploadBtn');
+                    if (newUploadBtn) {
+                        newUploadBtn.addEventListener('click', e => {
+                            e.stopPropagation();
+                            if (fileDialogOpen) return;
+                            fileDialogOpen = true;
+                            fileInput.click();
+                        });
+                    }
+                }
+
+                // Swap hints HTML
+                if (hintsEl && heroContent) {
+                    hintsEl.innerHTML = heroContent.hints
+                        .map(h => `<span>${h}</span>`)
+                        .join('');
+                }
+
+                // Phase 3 — enter: scale in from small + unblur
+                targets.forEach(el => {
+                    el.classList.remove('upload-hero-content--exiting');
+                    el.classList.add('upload-hero-content--entering');
+                });
+
+                // Clean up entering class after animation finishes
+                setTimeout(() => {
+                    targets.forEach(el => el.classList.remove('upload-hero-content--entering'));
+                }, 450);
+            }, EXIT_MS);
         }
     }
 
