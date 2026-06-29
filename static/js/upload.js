@@ -153,7 +153,7 @@
      *     isDragOver=true or activeUploads>0 — those flags are re-checked live.
      */
     function applyGlass(newGlass) {
-        if (newGlass === currentGlass) return;
+        if (newGlass === currentGlass && !dropzone.classList.contains('upload-hero--pending')) return;
 
         const elapsed = Date.now() - lastStateChangeAt;
 
