@@ -1,0 +1,33 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="3.54 3.25 17.5 17.5"
+  width="200"
+  height="200"
+  fill="none"
+  color="#265BFF"
+>
+  <style>
+    @keyframes n-info-mark {
+      0%, 100% { transform: rotate(0deg); transform-origin: 12.29px 12px; }
+      10%, 90% { transform: rotate(2deg); }
+      20%, 40%, 60% { transform: rotate(-6deg); }
+      30%, 50%, 70% { transform: rotate(6deg); }
+      80% { transform: rotate(-2deg); }
+    }
+    .mark {
+      animation: n-info-mark .8s cubic-bezier(.455,.03,.515,.955) both infinite;
+    }
+  </style>
+
+  <circle cx="12.29" cy="12" r="8" stroke="currentColor" stroke-width="1.5"/>
+
+  <g class="mark">
+    <path
+      d="M12.29 8.143v4.55"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+    />
+    <circle cx="12.29" cy="14.957" r=".9" fill="currentColor"/>
+  </g>
+</svg>
