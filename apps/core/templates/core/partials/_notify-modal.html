@@ -1,0 +1,30 @@
+<!-- ============================================================
+     Reusable notify modal — triggered via window.notify(options)
+     Structure mirrors auth-modal-panel glass exactly.
+     ============================================================ -->
+<div id="notifyModalOverlay" class="auth-modal-overlay notify-modal-overlay" hidden aria-modal="true" role="dialog" aria-labelledby="notifyModalCategory">
+
+    <div class="auth-modal-panel notify-modal-panel">
+
+        <!-- Top bar: category label (like auth-modal-logo-text) + close btn -->
+        <div class="auth-modal-topbar">
+            <span id="notifyModalCategory" class="auth-modal-logo-text notify-modal-category"></span>
+            <button type="button" class="auth-modal-close notify-modal-close" aria-label="Close notification">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Optional title -->
+        <p id="notifyModalTitle" class="notify-modal-title" hidden></p>
+
+        <!-- Body message -->
+        <p id="notifyModalBody" class="notify-modal-body"></p>
+
+        <!-- Confirm button -->
+        <div class="notify-modal-footer">
+            <button type="button" id="notifyModalOkBtn" class="notify-modal-ok-btn">OK</button>
+        </div>
+
+    </div>
+
+</div>

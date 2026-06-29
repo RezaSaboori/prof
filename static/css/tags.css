@@ -249,3 +249,89 @@
     height: 14px;
     display: block;
 }
+
+/* ============================================
+   NOTIFY MODAL — reusable programmatic dialog
+   Inherits all auth-modal-panel glass styles.
+   ============================================ */
+
+.notify-modal-overlay {
+    z-index: 10100;
+}
+
+.notify-modal-panel {
+    width: 360px;
+}
+
+.notify-modal-category {
+    /* inherits auth-modal-logo-text; variant coloring applied via JS data attr */
+}
+
+.notify-modal-panel[data-type="error"] .notify-modal-category {
+    color: var(--color-red);
+}
+
+.notify-modal-panel[data-type="warning"] .notify-modal-category {
+    color: var(--color-orange);
+}
+
+.notify-modal-panel[data-type="success"] .notify-modal-category {
+    color: var(--color-green);
+}
+
+.notify-modal-panel[data-type="info"] .notify-modal-category {
+    color: var(--color-blue);
+}
+
+.notify-modal-title {
+    font-family: var(--font-family-variable);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-gray10);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.notify-modal-body {
+    font-size: 14px;
+    color: var(--color-gray8);
+    line-height: 1.6;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.notify-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    z-index: 1;
+}
+
+.notify-modal-ok-btn {
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--border-radius-pill);
+    font-family: var(--font-family-variable);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: color-mix(in srgb, var(--color-gray1) 35%, transparent);
+    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray1) 25%, transparent);
+    color: var(--color-gray10);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.notify-modal-ok-btn:hover {
+    background: color-mix(in srgb, var(--color-gray1) 60%, transparent);
+    color: var(--color-gray12);
+}
+
+.notify-modal-panel[data-type="error"] .notify-modal-ok-btn {
+    color: var(--color-red);
+    border-color: color-mix(in srgb, var(--color-red) 30%, transparent);
+}
+
+.notify-modal-panel[data-type="error"] .notify-modal-ok-btn:hover {
+    background: color-mix(in srgb, var(--color-red) 10%, transparent);
+}

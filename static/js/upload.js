@@ -425,7 +425,11 @@
     function handleFiles(files) {
         Array.from(files).forEach(file => {
             if (!isAccepted(file)) {
-                alert(`"${file.name}" is not a supported format. Please upload a PDF file.`);
+                window.notify({
+                    type:     'error',
+                    category: 'Error',
+                    body:     `"${file.name}" is not a supported format. Please upload a PDF file.`,
+                });
                 return;
             }
             uploadFile(file);
