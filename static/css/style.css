@@ -559,7 +559,7 @@ body {
 .btn-secondary {
     background: var(--color-gray1);
     color: var(--color-gray11);
-    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray12) 12%, transparent);
+    border: var(--border-width-thin) solid var(--color-gray4);
     box-shadow: 0 2px 8px color-mix(in srgb, var(--color-gray12) 8%, transparent);
 }
 
