@@ -226,6 +226,7 @@
                     if (newUploadBtn) {
                         newUploadBtn.addEventListener('click', e => {
                             e.stopPropagation();
+                            if (!isDropAllowed()) return;
                             if (fileDialogOpen) return;
                             fileDialogOpen = true;
                             fileInput.click();
@@ -341,26 +342,16 @@
         }
     });
 
-    // ── Drag events ───────────────────────────────────────────────────────────
-
-    /**
-     * Drag-and-drop is only permitted when the upload hero is in uploading
-     * status (original_resume_status === 0 or 1).
-     * Any other status (2, 3, 4) silently blocks all drag interaction.
-     */
-    function isDropAllowed() {
-        return _cachedStatus === 0 || _cachedStatus === 1;
-    }
 
     // ── Drag events ───────────────────────────────────────────────────────────
 
     /**
      * Drag-and-drop and file selection are only permitted when the upload hero
-     * is in uploading status (original_resume_status === 0 or 1).
+     * is in uploading status (original_resume_status === 0 ).
      * Any other status silently blocks all interaction.
      */
     function isDropAllowed() {
-        return _cachedStatus === 0 || _cachedStatus === 1;
+        return _cachedStatus === 0;
     }
 
     dropzone.addEventListener('dragenter', e => {
@@ -405,6 +396,7 @@
 
     uploadBtn.addEventListener('click', e => {
         e.stopPropagation();
+        if (!isDropAllowed()) return;
         if (fileDialogOpen) return;
         fileDialogOpen = true;
         fileInput.click();
@@ -647,6 +639,7 @@
             if (newUploadBtn) {
                 newUploadBtn.addEventListener('click', e => {
                     e.stopPropagation();
+                    if (!isDropAllowed()) return;
                     if (fileDialogOpen) return;
                     fileDialogOpen = true;
                     fileInput.click();
