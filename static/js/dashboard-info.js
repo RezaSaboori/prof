@@ -899,6 +899,10 @@
     });
 
     // ── INIT ──────────────────────────────────────────
+    // Expose loadUserInfo globally so upload.js can trigger a refresh
+    window._reloadInfoForm = loadUserInfo;
+
+    // ── INIT ──────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', function () {
         loadUserInfo();
 
