@@ -533,7 +533,6 @@
     }
 
     // ── Upload a single file ──────────────────────────────────────────────────
-// ── Upload a single file ──────────────────────────────────────────────────
     function uploadFile(file) {
         const item       = createFileItem(file);
         const fill       = item.querySelector('.upload-progress-bar__fill');
@@ -544,18 +543,29 @@
         const deleteBtn  = item.querySelector('.upload-action-btn--delete');
         const totalBytes = file.size;
 
-        // ── Progress phases ───────────────────────────────────────────────
-        // Phase 1: XHR upload bytes  → 0%  to 60%  (real progress, capped)
-        // Phase 2: Server processing → 60% to 80%  (very slow simulated crawl)
-        // Phase 3: Response received → 80% to 100% (smooth animated finish)
-        const UPLOAD_CAP    = 60;   // max % shown while bytes are in-flight
-        const CRAWL_TARGET  = 80;   // % reached at end of slow crawl
-        const CRAWL_STEP_MS = 600;  // ms between each +0.25% crawl tick
-        const CRAWL_STEP_PC = 0.25; // % increment per tick  (≈ 2 min to cross 20 %)
-        const FINISH_MS     = 600;  // ms for the smooth 80→100 animation via CSS transition
+        // ── Progress phases ───────────────────────────────────────────────────
+        // Phase 1 — Uploading  : real XHR byte progress mapped to  0 % → 60 %
+        //                        CSS transition: 300ms ease — smooths each event
+        // Phase 2 — Processing : slow simulated crawl from 60 % → 80 %
+        //                        CSS transition: 550ms ease — each tick glides in
+        //                        Represents unknown server markdown-convert time
+        // Phase 3 — Finishing  : fast smooth sweep from current → 100 %
+        //                        CSS transition: 700ms ease-out — satisfying close
+        const UPLOAD_CAP    = 60;    // % ceiling while bytes are in-flight
+        const CRAWL_TARGET  = 80;    // % ceiling during server processing
+        const CRAWL_STEP_MS = 700;   // ms between crawl ticks
+        const CRAWL_STEP_PC = 0.3;   // % per tick  → ~47 s to cross the 20 % band
 
-        let currentPct     = 0;
-        let crawlTimer     = null;
+        let currentPct  = 0;
+        let crawlTimer  = null;
+        let phase       = 1;         // 1=uploading, 2=crawling, 3=finishing
+
+        // ── Internal helpers ──────────────────────────────────────────────────
+
+        function _setPhaseClass(cls) {
+            fill.classList.remove('upload-progress-bar__fill--crawling', 'upload-progress-bar__fill--finishing');
+            if (cls) fill.classList.add(cls);
+        }
 
         function _setPct(pct) {
             currentPct = pct;
@@ -570,10 +580,16 @@
             }
         }
 
-        /** Start the slow 60→80 crawl to signal server-side processing. */
         function _startCrawl() {
             _stopCrawl();
+            phase = 2;
+            _setPhaseClass('upload-progress-bar__fill--crawling');
+
+            // Swap dot to pulsing-blue processing state
+            dot.classList.remove('upload-status-dot--uploading', 'upload-status-dot--done', 'upload-status-dot--error');
+            dot.classList.add('upload-status-dot--processing');
             label.textContent = 'Processing ...';
+
             crawlTimer = setInterval(() => {
                 if (currentPct < CRAWL_TARGET) {
                     _setPct(Math.min(currentPct + CRAWL_STEP_PC, CRAWL_TARGET));
@@ -583,35 +599,40 @@
             }, CRAWL_STEP_MS);
         }
 
-        /** Animate smoothly from current position to 100 % then finalise. */
         function _finishSuccess() {
             _stopCrawl();
-            // Let CSS transition carry the bar to 100 % smoothly
-            fill.style.transition = `width ${FINISH_MS}ms ease-in-out`;
-            _setPct(100);
-            fill.classList.add('upload-progress-bar__fill--complete');
+            phase = 3;
+            _setPhaseClass('upload-progress-bar__fill--finishing');
+
+            // Single rAF ensures the transition class is painted before width changes
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    _setPct(100);
+                    fill.classList.add('upload-progress-bar__fill--complete');
+                });
+            });
+
             bar.setAttribute('aria-valuenow', 100);
-            dot.classList.remove('upload-status-dot--uploading');
+            dot.classList.remove('upload-status-dot--uploading', 'upload-status-dot--processing', 'upload-status-dot--error');
             dot.classList.add('upload-status-dot--done');
             sizeEl.textContent = formatSize(totalBytes) + ' of ' + formatSize(totalBytes);
             label.textContent  = 'Uploaded';
             item.dataset.state = 'done';
             hasUploadedFile    = true;
-
-            // Restore default transition after animation completes
-            setTimeout(() => { fill.style.transition = ''; }, FINISH_MS + 50);
         }
 
         function _finishError(msg) {
             _stopCrawl();
+            _setPhaseClass(null);
             fill.classList.add('upload-progress-bar__fill--error');
-            dot.classList.remove('upload-status-dot--uploading');
+            dot.classList.remove('upload-status-dot--uploading', 'upload-status-dot--processing', 'upload-status-dot--done');
             dot.classList.add('upload-status-dot--error');
             label.textContent  = msg;
             item.dataset.state = 'error';
             hasFileError       = true;
         }
 
+        // ── Boot ──────────────────────────────────────────────────────────────
         activeUploads++;
         updateFooterState();
         applyGlass(resolveGlass(_cachedStatus, _hasError));
@@ -631,34 +652,32 @@
             applyGlass(resolveGlass(_cachedStatus, _hasError));
         });
 
+        // Phase 1 — map real byte progress onto 0–60 %
+        // CSS transition (300ms ease) smooths each discrete event into a glide
         xhr.upload.addEventListener('progress', e => {
-            if (!e.lengthComputable) return;
-            // Map real byte progress onto 0–60 % range
-            const pct    = Math.round((e.loaded / e.total) * UPLOAD_CAP);
-            const loaded = formatSize(e.loaded);
-            const total  = formatSize(totalBytes);
+            if (!e.lengthComputable || phase !== 1) return;
+            const pct = (e.loaded / e.total) * UPLOAD_CAP;
             _setPct(pct);
-            sizeEl.textContent = loaded + ' of ' + total;
+            sizeEl.textContent = formatSize(e.loaded) + ' of ' + formatSize(totalBytes);
             label.textContent  = 'Uploading ...';
         });
 
+        // Bytes fully sent → lock at 60 %, enter crawl phase
         xhr.upload.addEventListener('load', () => {
-            // All bytes sent — lock bar at 60 % and start the slow crawl
-            // while we wait for the server to finish processing / converting.
+            if (phase !== 1) return;
             _setPct(UPLOAD_CAP);
             sizeEl.textContent = formatSize(totalBytes) + ' of ' + formatSize(totalBytes);
             _startCrawl();
         });
 
+        // Server response received → finish
         xhr.addEventListener('load', () => {
             activeUploads = Math.max(0, activeUploads - 1);
-
             if (xhr.status >= 200 && xhr.status < 300) {
                 _finishSuccess();
             } else {
                 _finishError('Upload failed (' + xhr.status + ')');
             }
-
             updateFooterState();
             applyGlass(resolveGlass(_cachedStatus, _hasError));
         });

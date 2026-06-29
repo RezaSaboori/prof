@@ -269,6 +269,16 @@
     background: var(--color-blue);
 }
 
+.upload-status-dot--processing {
+    background: var(--color-blue);
+    animation: dot-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
 .upload-status-dot--done {
     background: var(--color-green);
 }
@@ -299,7 +309,15 @@
     width: 0%;
     border-radius: var(--border-radius-pill);
     background: var(--color-blue);
-    transition: width 120ms linear;
+    transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.upload-progress-bar__fill--crawling {
+    transition: width 550ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.upload-progress-bar__fill--finishing {
+    transition: width 700ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .upload-progress-bar__fill--complete {
