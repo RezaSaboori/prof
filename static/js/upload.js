@@ -340,10 +340,19 @@
                 throw new Error(data.error);
             }
 
-            _cachedStatus = typeof data.original_resume_status === 'number'
+            const incoming = typeof data.original_resume_status === 'number'
                 ? data.original_resume_status
                 : 0;
             _hasError = false;
+
+            if (incoming !== _cachedStatus) {
+                _cachedStatus = incoming;
+                if (typeof window._setInfoResumeStatus === 'function') {
+                    window._setInfoResumeStatus(_cachedStatus);
+                }
+            } else {
+                _cachedStatus = incoming;
+            }
 
         } catch (err) {
             clearTimeout(timeoutId);
