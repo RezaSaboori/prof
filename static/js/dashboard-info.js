@@ -44,6 +44,11 @@
     // True while loadUserInfo() is in flight — blocks Save to prevent overwriting DB with empty DOM
     let _isLoading = false;
 
+    // Tracks the original_resume_status fetched from the server.
+    // Used to show "Confirm" instead of "Save Changes" when status === 3,
+    // and to advance status to 4 on save.
+    let _resumeStatus = null;
+
     // ══════════════════════════════════════════════════
     // DATE FORMAT NORMALIZERS
     // ══════════════════════════════════════════════════
@@ -460,15 +465,22 @@
         _updateSaveBtnLoadingState();
         showSectionSkeletons();
 
-        // ── Phase 1: personal scalars ────────────────────────────────────────────
+        // ── Phase 1: personal scalars + resume status ────────────────────────────
         try {
-            const personalResp = await fetch('/dashboard/api/user-info/personal/', {
-                credentials: 'same-origin',
-            });
+            const [personalResp, statusResp] = await Promise.all([
+                fetch('/dashboard/api/user-info/personal/', { credentials: 'same-origin' }),
+                fetch('/dashboard/api/resume-status/',      { credentials: 'same-origin' }),
+            ]);
             if (personalResp.ok) {
                 const personal = await personalResp.json();
                 clearSingleSectionSkeleton('section-personal-body');
                 _applyPersonalData(personal);
+            }
+            if (statusResp.ok) {
+                const statusData = await statusResp.json();
+                if (typeof statusData.original_resume_status === 'number') {
+                    _resumeStatus = statusData.original_resume_status;
+                }
             }
             // On non-ok status, leave skeleton until Phase-2 clearSectionSkeletons() runs
         } catch (err) {
@@ -754,12 +766,27 @@
         if (_isLoading) return;
 
         var dirty = _isFormDirty();
+        var isConfirmMode = (_resumeStatus === 3);
 
-        if (dirty) {
+        if (isConfirmMode) {
+            // Status 3: always show "Confirm" button as active regardless of dirty state
+            btn.setAttribute('data-state', 'idle');
+            _setBtnGlass(btn, 'idle');
+            var textSpan = btn.querySelector('.save-btn__text');
+            if (textSpan) textSpan.textContent = 'Confirm';
+            btn.disabled = false;
+            if (dirty) {
+                _showUndoBtn();
+            } else {
+                _hideUndoBtn();
+            }
+        } else if (dirty) {
             if (btn.getAttribute('data-state') !== 'idle') {
                 btn.setAttribute('data-state', 'idle');
             }
             _setBtnGlass(btn, 'idle');
+            var textSpanDirty = btn.querySelector('.save-btn__text');
+            if (textSpanDirty) textSpanDirty.textContent = 'Save Changes';
             _showUndoBtn();
         } else {
             // Pristine: either just loaded, just saved, or user reverted all changes
@@ -869,7 +896,21 @@
         }, 3000);
 
         try {
+            // If status is 3 (Confirm mode), advance to stage 4 in parallel with the save
+            var wasConfirmMode = (_resumeStatus === 3);
+
             await apiFetch('/dashboard/api/user-info/save/', 'POST', collectFormData());
+
+            if (wasConfirmMode) {
+                try {
+                    await apiFetch('/dashboard/api/resume-status/set/', 'POST', { original_resume_status: 4 });
+                    _resumeStatus = 4;
+                } catch (statusErr) {
+                    console.error('Failed to advance resume status to 4:', statusErr);
+                    // Non-fatal: profile data was saved; status update failure is logged only
+                }
+            }
+
             clearInterval(msgTimer);
             // Snapshot the newly saved state so future comparisons are against this
             _captureSnapshot();
@@ -904,13 +945,24 @@
             console.error('Save failed:', err);
             _btnSaving = false;
             saveBtn.setAttribute('data-state', 'idle');
-            _setBtnGlass(saveBtn, 'idle');
-            _transitionBtnIcon(saveBtn, SAVE_ICON_SVG);
-            _transitionBtnText(saveBtn, 'Save failed \u2014 retry');
-            saveBtn.disabled = false;
-            setTimeout(function () {
-                _transitionBtnText(saveBtn, 'Save Changes');
-            }, 3000);
+            // If still in confirm mode after failure, restore "Confirm" label
+            if (_resumeStatus === 3) {
+                _setBtnGlass(saveBtn, 'idle');
+                _transitionBtnIcon(saveBtn, SAVE_ICON_SVG);
+                _transitionBtnText(saveBtn, 'Confirm failed \u2014 retry');
+                saveBtn.disabled = false;
+                setTimeout(function () {
+                    _transitionBtnText(saveBtn, 'Confirm');
+                }, 3000);
+            } else {
+                _setBtnGlass(saveBtn, 'idle');
+                _transitionBtnIcon(saveBtn, SAVE_ICON_SVG);
+                _transitionBtnText(saveBtn, 'Save failed \u2014 retry');
+                saveBtn.disabled = false;
+                setTimeout(function () {
+                    _transitionBtnText(saveBtn, 'Save Changes');
+                }, 3000);
+            }
         }
     });
 
