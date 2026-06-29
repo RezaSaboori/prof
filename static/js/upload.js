@@ -180,6 +180,21 @@
         }
     }
 
+    /**
+     * Reveals the upload hero for the first time after the stage is known.
+     * Runs once — subsequent calls are no-ops once the hero is revealed.
+     */
+    function _revealHeroIfPending() {
+        if (!dropzone.classList.contains('upload-hero--pending')) return;
+        dropzone.classList.remove('upload-hero--pending');
+        dropzone.classList.add('upload-hero--revealed');
+        // Clean up the revealed class after the animation completes
+        dropzone.addEventListener('animationend', function onRevealEnd() {
+            dropzone.classList.remove('upload-hero--revealed');
+            dropzone.removeEventListener('animationend', onRevealEnd);
+        });
+    }
+
     function _setGlass(newGlass) {
         if (newGlass === currentGlass) return;
         ALL_GLASS_CLASSES.forEach(cls => dropzone.classList.remove(cls));
@@ -318,6 +333,7 @@
         }
 
         applyGlass(resolveGlass(_cachedStatus, _hasError));
+        _revealHeroIfPending();
     }
 
     function startPolling() {
@@ -657,6 +673,9 @@
                 .join('');
         }
     })();
+
+    // ── Hide hero until first status fetch resolves ─────────────────────────
+    dropzone.classList.add('upload-hero--pending');
 
     startPolling();
 
