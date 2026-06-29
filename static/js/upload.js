@@ -628,32 +628,8 @@
         sendBtn.disabled    = true;
         sendBtn.textContent = 'Sending...';
 
-        // ── Step 1: set resume status to 1 ───────────────────────────────────
-        try {
-            const resp = await fetch('/dashboard/api/resume-status/set/', {
-                method:  'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken':  getCsrfToken(),
-                },
-                body: JSON.stringify({ original_resume_status: 1 }),
-            });
-
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const data = await resp.json();
-            if (data.error) throw new Error(data.error);
-
-        } catch (err) {
-            console.error('[upload] set-status failed:', err.message);
-            sendBtn.textContent = 'Retry';
-            sendBtn.disabled    = false;
-            _hasError = true;
-            applyGlass(resolveGlass(_cachedStatus, _hasError));
-            return;
-        }
-
-        // ── Step 2: fire Resume_Uploaded webhook ──────────────────────────────
-        sendBtn.textContent = 'Notifying...';
+        // ── Step 1: fire Resume_Uploaded webhook ──────────────────────────────
+        sendBtn.textContent = 'Checking...';
         let webhookOk = false;
         try {
             const wResp = await fetch('/dashboard/webhook/resume-uploaded/', {
@@ -676,6 +652,40 @@
             applyGlass(resolveGlass(_cachedStatus, _hasError));
 
             // Show error modal
+            if (typeof window.notify === 'function') {
+                window.notify({
+                    type:     'error',
+                    category: 'Error',
+                    body:     'Please refresh the page in a few minutes and try again. If the problem persists, contact us at contact@Proflab.us.',
+                });
+            }
+            sendBtn.textContent = 'Retry';
+            sendBtn.disabled    = false;
+            return;
+        }
+
+        // ── Step 2: webhook confirmed — now set resume status to 1 ───────────
+        sendBtn.textContent = 'Saving...';
+        try {
+            const resp = await fetch('/dashboard/api/resume-status/set/', {
+                method:  'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken':  getCsrfToken(),
+                },
+                body: JSON.stringify({ original_resume_status: 1 }),
+            });
+
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            if (data.error) throw new Error(data.error);
+
+        } catch (err) {
+            console.error('[upload] set-status failed:', err.message);
+            // Webhook already confirmed by n8n but status write failed —
+            // show modal and error state so user can retry
+            _hasError = true;
+            applyGlass(resolveGlass(_cachedStatus, _hasError));
             if (typeof window.notify === 'function') {
                 window.notify({
                     type:     'error',
