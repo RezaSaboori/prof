@@ -352,6 +352,17 @@
         return _cachedStatus === 0 || _cachedStatus === 1;
     }
 
+    // ── Drag events ───────────────────────────────────────────────────────────
+
+    /**
+     * Drag-and-drop and file selection are only permitted when the upload hero
+     * is in uploading status (original_resume_status === 0 or 1).
+     * Any other status silently blocks all interaction.
+     */
+    function isDropAllowed() {
+        return _cachedStatus === 0 || _cachedStatus === 1;
+    }
+
     dropzone.addEventListener('dragenter', e => {
         e.preventDefault();
         if (!isDropAllowed()) return;
@@ -405,7 +416,7 @@
 
     fileInput.addEventListener('change', () => {
         fileDialogOpen = false;
-        if (fileInput.files && fileInput.files.length > 0) {
+        if (isDropAllowed() && fileInput.files && fileInput.files.length > 0) {
             handleFiles(fileInput.files);
         }
         fileInput.value = '';
@@ -462,6 +473,7 @@
 
     // ── Handle files ──────────────────────────────────────────────────────────
     function handleFiles(files) {
+        if (!isDropAllowed()) return;
         Array.from(files).forEach(file => {
             if (!isAccepted(file)) {
                 window.notify({
