@@ -613,3 +613,70 @@
     startPolling();
 
 })();
+
+// ── Notify Modal ─────────────────────────────────────────────────────────────
+// Usage: window.notify({ type, category, title, body, okLabel })
+//   type      : 'error' | 'warning' | 'success' | 'info'  (default: 'info')
+//   category  : string shown in the header (e.g. 'Error', 'Warning')
+//   title     : optional string — shown as a sub-heading if provided
+//   body      : required string — the message text
+//   okLabel   : optional button label (default: 'OK')
+(function () {
+    'use strict';
+
+    function initNotifyModal() {
+        const overlay    = document.getElementById('notifyModalOverlay');
+        const panel      = overlay ? overlay.querySelector('.notify-modal-panel') : null;
+        const categoryEl = document.getElementById('notifyModalCategory');
+        const titleEl    = document.getElementById('notifyModalTitle');
+        const bodyEl     = document.getElementById('notifyModalBody');
+        const okBtn      = document.getElementById('notifyModalOkBtn');
+        const closeBtn   = overlay ? overlay.querySelector('.auth-modal-close') : null;
+
+        if (!overlay || !panel || !categoryEl || !titleEl || !bodyEl || !okBtn || !closeBtn) return;
+
+        function openNotify(options) {
+            const type     = options.type     || 'info';
+            const category = options.category || (type.charAt(0).toUpperCase() + type.slice(1));
+            const title    = options.title    || '';
+            const body     = options.body     || '';
+            const okLabel  = options.okLabel  || 'OK';
+
+            panel.dataset.type     = type;
+            categoryEl.textContent = category;
+            bodyEl.textContent     = body;
+            okBtn.textContent      = okLabel;
+
+            if (title) {
+                titleEl.textContent = title;
+                titleEl.hidden      = false;
+            } else {
+                titleEl.textContent = '';
+                titleEl.hidden      = true;
+            }
+
+            overlay.hidden = false;
+            okBtn.focus();
+        }
+
+        function closeNotify() {
+            overlay.hidden = true;
+            panel.removeAttribute('data-type');
+        }
+
+        okBtn.addEventListener('click', closeNotify);
+        closeBtn.addEventListener('click', closeNotify);
+
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeNotify();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !overlay.hidden) closeNotify();
+        });
+
+        window.notify = openNotify;
+    }
+
+    document.addEventListener('DOMContentLoaded', initNotifyModal);
+})();
