@@ -556,6 +556,18 @@ body {
     box-shadow: 0 8px 24px color-mix(in srgb, var(--color-gray12) 20%, transparent);
 }
 
+.btn-secondary {
+    background: var(--color-gray1);
+    color: var(--color-gray11);
+    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray12) 12%, transparent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-gray12) 8%, transparent);
+}
+
+.btn-secondary:hover {
+    background: var(--color-gray2);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-gray12) 12%, transparent);
+}
+
 .btn-ghost {
     background: transparent;
     color: var(--color-gray8);

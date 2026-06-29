@@ -172,3 +172,58 @@
     flex-shrink: 0;
     margin-bottom: 1px;
 }
+
+/* ============================================
+   NOTIFY MODAL — reusable programmatic dialog
+   Inherits all auth-modal-panel glass styles.
+   ============================================ */
+
+.notify-modal-overlay {
+    z-index: 10100;
+}
+
+.notify-modal-panel {
+    width: 360px;
+}
+
+.notify-modal-panel[data-type="error"] .notify-modal-category {
+    color: var(--color-red);
+}
+
+.notify-modal-panel[data-type="warning"] .notify-modal-category {
+    color: var(--color-orange);
+}
+
+.notify-modal-panel[data-type="success"] .notify-modal-category {
+    color: var(--color-green);
+}
+
+.notify-modal-panel[data-type="info"] .notify-modal-category {
+    color: var(--color-blue);
+}
+
+.notify-modal-title {
+    font-family: var(--font-family-variable);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-gray10);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.notify-modal-body {
+    font-size: 14px;
+    color: var(--color-gray8);
+    line-height: 1.6;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.notify-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    z-index: 1;
+}
