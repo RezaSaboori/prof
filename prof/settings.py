@@ -10,7 +10,7 @@ sys.path.insert(0, str(BASE_DIR / 'apps'))
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-me')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['dietpi.taild764a0.ts.net', '100.97.116.21', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['proflab.us', www.proflab.us', 'onrender.com', 'dietpi.taild764a0.ts.net', '100.97.116.21', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
