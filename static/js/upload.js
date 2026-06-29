@@ -16,12 +16,13 @@
     'use strict';
 
     // ── DOM refs ──────────────────────────────────────────────────────────────
-    const dropzone  = document.getElementById('resumeDropzone');
-    const fileInput = document.getElementById('resumeFileInput');
-    const uploadBtn = document.getElementById('resumeUploadBtn');
-    const fileList  = document.getElementById('resumeFileList');
-    const footer    = document.getElementById('resumeFooter');
-    const sendBtn   = document.getElementById('resumeSendBtn');
+    const dropzone    = document.getElementById('resumeDropzone');
+    const fileInput   = document.getElementById('resumeFileInput');
+    const uploadBtn   = document.getElementById('resumeUploadBtn');
+    const fileList    = document.getElementById('resumeFileList');
+    const footer      = document.getElementById('resumeFooter');
+    const sendBtn     = document.getElementById('resumeSendBtn');
+    const heroIconImg = document.getElementById('resumeHeroIconImg'); // status-driven icon
 
     if (!dropzone || !fileInput || !uploadBtn || !fileList || !footer || !sendBtn) return;
 
@@ -31,6 +32,28 @@
     const MIN_STATE_HOLD_MS  = 2000;   // minimum time to display each glass state
     const FETCH_TIMEOUT_MS   = 8000;   // abort fetch after 8 s
     const STATUS_URL         = '/dashboard/api/resume-status/';
+
+    // ── Upload hero status names ───────────────────────────────────────────────
+    // Each glass class maps to a named status for clarity across the codebase.
+    //   uploading  → indigo-glass / purple-glass  (idle or file in-flight)
+    //   analyzing  → teal-glass                   (server processing, status 1–2)
+    //   extracted  → green-glass                  (complete / confirmed, status 3–4)
+    //   error      → red-glass                    (network or XHR-level failure)
+    const UPLOAD_HERO_STATUS = {
+        UPLOADING: 'uploading',   // indigo-glass (idle) or purple-glass (active upload / drag)
+        ANALYZING: 'analyzing',   // teal-glass
+        EXTRACTED: 'extracted',   // green-glass
+        ERROR:     'error',       // red-glass
+    };
+
+    // ── Upload hero status → icon mapping ─────────────────────────────────────
+    // Maps each named upload hero status to its corresponding SVG icon file.
+    const UPLOAD_HERO_ICON = {
+        [UPLOAD_HERO_STATUS.UPLOADING]: '/static/img/document.svg',
+        [UPLOAD_HERO_STATUS.ANALYZING]: '/static/img/process.svg',
+        [UPLOAD_HERO_STATUS.EXTRACTED]: '/static/img/confirm.svg',
+        [UPLOAD_HERO_STATUS.ERROR]:     '/static/img/error.svg',
+    };
 
     // ── State ─────────────────────────────────────────────────────────────────
     let activeUploads      = 0;   // files currently in-flight (XHR not yet settled)
@@ -130,6 +153,25 @@
         dropzone.classList.add(newGlass);
         currentGlass      = newGlass;
         lastStateChangeAt = Date.now();
+
+        // ── Sync upload hero icon to the new glass status ──────────────────
+        // Resolve the named upload hero status from the active glass class,
+        // then swap the <img> src to its corresponding status icon.
+        if (heroIconImg) {
+            let heroStatus;
+            if (newGlass === 'teal-glass') {
+                heroStatus = UPLOAD_HERO_STATUS.ANALYZING;   // teal  → analyzing
+            } else if (newGlass === 'green-glass') {
+                heroStatus = UPLOAD_HERO_STATUS.EXTRACTED;   // green → extracted
+            } else if (newGlass === 'red-glass') {
+                heroStatus = UPLOAD_HERO_STATUS.ERROR;        // red   → error
+            } else {
+                // indigo-glass (idle) and purple-glass (active upload / drag-over)
+                // both represent the uploading status
+                heroStatus = UPLOAD_HERO_STATUS.UPLOADING;   // indigo / purple → uploading
+            }
+            heroIconImg.src = UPLOAD_HERO_ICON[heroStatus];
+        }
     }
 
     /**
