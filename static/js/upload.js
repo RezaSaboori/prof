@@ -80,10 +80,10 @@
             ],
         },
         [UPLOAD_HERO_STATUS.ERROR]: {
-            label: 'Drag &amp; Drop here<br>or <button type="button" class="upload-choose-btn" id="resumeUploadBtn" aria-label="Choose resume file to upload">choose file</button>',
+            label: 'Something Went<br>Wrong',
             hints: [
-                'Upload your Resume in PDF format (max 15 MB).',
-                'Our system will automatically extract your information — this takes a few minutes. Come back here to review and confirm before our agents start working.',
+                'We ran into an issue!',
+                'Please <strong>refresh the page </strong>after a while and try again. If the issue continues, contact us at <strong>contact@Proflab.us</strong>',
             ],
         },
     };
