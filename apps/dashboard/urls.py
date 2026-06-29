@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views_webhook import trigger_webhook
+from .views_webhook import trigger_webhook, webhook_resume_uploaded, webhook_information_confirmed
 
 app_name = 'dashboard'
 
@@ -22,8 +22,11 @@ urlpatterns = [
     path('api/user-info/',          views.api_user_info_get,          name='api_user_info_get'),
     path('api/user-info/save/',     views.api_user_info_save,         name='api_user_info_save'),
 
-    path('webhook/trigger/', trigger_webhook, name='webhook_trigger'),
-    path('api/upload-resume/',    views.api_upload_resume, name='api_upload_resume'),
-    path('api/resume-status/',     views.api_resume_status,     name='api_resume_status'),
+    path('webhook/trigger/',             trigger_webhook,              name='webhook_trigger'),
+    path('webhook/resume-uploaded/',     webhook_resume_uploaded,      name='webhook_resume_uploaded'),
+    path('webhook/information-confirmed/', webhook_information_confirmed, name='webhook_information_confirmed'),
+
+    path('api/upload-resume/',    views.api_upload_resume,    name='api_upload_resume'),
+    path('api/resume-status/',    views.api_resume_status,    name='api_resume_status'),
     path('api/resume-status/set/', views.api_set_resume_status, name='api_set_resume_status'),
 ]

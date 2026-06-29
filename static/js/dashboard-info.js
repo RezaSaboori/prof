@@ -914,6 +914,80 @@
                     _resumeStatus = 4;
                 } catch (statusErr) {
                     console.error('Failed to advance resume status to 4:', statusErr);
+                }
+            }
+
+            // ── Fire webhook after successful save ────────────────────────────
+            var webhookInput = wasConfirmMode ? 'Information_Confirmed' : 'Information_Confirmed';
+            var webhookOk = false;
+            try {
+                var wResp = await fetch('/dashboard/webhook/information-confirmed/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCsrfToken() },
+                    credentials: 'same-origin',
+                });
+                if (!wResp.ok) throw new Error('Webhook HTTP ' + wResp.status);
+                var wData = await wResp.json();
+                if (!wData.success) throw new Error(wData.error || 'Webhook failed');
+                webhookOk = true;
+            } catch (wErr) {
+                console.error('[info] webhook failed:', wErr.message);
+            }
+
+            clearInterval(msgTimer);
+            _captureSnapshot();
+            _btnSaving = false;
+
+            if (!webhookOk) {
+                // Save was successful but webhook failed — show error modal
+                saveBtn.setAttribute('data-state', 'idle');
+                _setBtnGlass(saveBtn, wasConfirmMode ? 'idle' : 'idle');
+                _transitionBtnIcon(saveBtn, SAVE_ICON_SVG);
+                _transitionBtnText(saveBtn, wasConfirmMode ? 'Confirm' : 'Save Changes');
+                saveBtn.disabled = false;
+                if (typeof window.notify === 'function') {
+                    window.notify({
+                        type:     'error',
+                        category: 'Error',
+                        body:     'Please refresh the page in a few minutes and try again. If the problem persists, contact us at contact@Proflab.us.',
+                    });
+                }
+                return;
+            }
+
+            saveBtn.setAttribute('data-state', 'success');
+            _setBtnGlass(saveBtn, 'success');
+            _transitionBtnIcon(saveBtn, CHECK_ICON_SVG);
+            _transitionBtnText(saveBtn, 'Saved!');
+            saveBtn.disabled = true;
+
+            // After 2.5s: transition back to pristine (no unsaved changes)
+            setTimeout(function () {
+                var btn2 = document.getElementById('saveInfoBtn');
+                if (!btn2) return;
+                if (!_isFormDirty()) {
+                    btn2.setAttribute('data-state', 'idle');
+                    _setBtnGlass(btn2, 'pristine');
+                    _transitionBtnIcon(btn2, SAVE_ICON_SVG);
+                    _transitionBtnText(btn2, 'Save Changes');
+                } else {
+                    btn2.setAttribute('data-state', 'idle');
+                    _setBtnGlass(btn2, 'idle');
+                    _transitionBtnIcon(btn2, SAVE_ICON_SVG);
+                    _transitionBtnText(btn2, 'Save Changes');
+                }
+            }, 2500);
+            // If status is 3 (Confirm mode), advance to stage 4 in parallel with the save
+            var wasConfirmMode = (_resumeStatus === 3);
+
+            await apiFetch('/dashboard/api/user-info/save/', 'POST', collectFormData());
+
+            if (wasConfirmMode) {
+                try {
+                    await apiFetch('/dashboard/api/resume-status/set/', 'POST', { original_resume_status: 4 });
+                    _resumeStatus = 4;
+                } catch (statusErr) {
+                    console.error('Failed to advance resume status to 4:', statusErr);
                     // Non-fatal: profile data was saved; status update failure is logged only
                 }
             }
