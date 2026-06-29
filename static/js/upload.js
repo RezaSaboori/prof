@@ -671,7 +671,11 @@
         }
 
         if (!webhookOk) {
-            // Status was already saved; surface user-facing modal
+            // Drive the hero to red-glass error state
+            _hasError = true;
+            applyGlass(resolveGlass(_cachedStatus, _hasError));
+
+            // Show error modal
             if (typeof window.notify === 'function') {
                 window.notify({
                     type:     'error',
