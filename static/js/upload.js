@@ -196,7 +196,7 @@
     }
 
     function _setGlass(newGlass) {
-        if (newGlass === currentGlass) return;
+        if (newGlass === currentGlass && !dropzone.classList.contains('upload-hero--pending')) return;
 
         // Is this the very first reveal? Capture before committing glass.
         const isFirstReveal = dropzone.classList.contains('upload-hero--pending');
@@ -652,58 +652,9 @@
     });
 
     // ── Bootstrap ─────────────────────────────────────────────────────────────
-
-    // Set the initial hero icon immediately from the glass class already on the
-    // dropzone in HTML — _setGlass only fires on transitions, so the icon must
-    // be initialised here explicitly on page load.
-    (function initHeroIcon() {
-        let heroStatus;
-        if (dropzone.classList.contains('teal-glass')) {
-            heroStatus = UPLOAD_HERO_STATUS.ANALYZING;
-        } else if (dropzone.classList.contains('green-glass')) {
-            heroStatus = UPLOAD_HERO_STATUS.EXTRACTED;
-        } else if (dropzone.classList.contains('red-glass')) {
-            heroStatus = UPLOAD_HERO_STATUS.ERROR;
-        } else {
-            heroStatus = UPLOAD_HERO_STATUS.UPLOADING;
-        }
-
-        if (heroIconImg) {
-            heroIconImg.src = UPLOAD_HERO_ICON[heroStatus];
-        }
-
-        // Sync label + hints to the initial glass state on page load
-        const heroContent = UPLOAD_HERO_CONTENT[heroStatus];
-        const dragLabelEl = document.getElementById('resumeHeroDragLabel');
-        const hintsEl     = document.getElementById('resumeHeroHints');
-
-        if (dragLabelEl && heroContent) {
-            dragLabelEl.innerHTML = heroContent.label;
-            const newUploadBtn = dragLabelEl.querySelector('#resumeUploadBtn');
-            if (newUploadBtn) {
-                newUploadBtn.addEventListener('click', e => {
-                    e.stopPropagation();
-                    if (!isDropAllowed()) return;
-                    if (fileDialogOpen) return;
-                    fileDialogOpen = true;
-                    fileInput.click();
-                });
-            }
-        }
-
-        if (hintsEl && heroContent) {
-            hintsEl.innerHTML = heroContent.hints
-                .map(h => `<span>${h}</span>`)
-                .join('');
-        }
-    })();
-
-    // ── Hide hero until first status fetch resolves ─────────────────────────
-    // Reset lastStateChangeAt so the MIN_STATE_HOLD guard does NOT defer the
-    // very first glass transition — the hero is invisible so there is nothing
-    // to "hold" visually. The guard will start working normally after reveal.
-    dropzone.classList.add('upload-hero--pending');
-    lastStateChangeAt = 0;   // force elapsed >> MIN_STATE_HOLD_MS on first fetch
+    // The hero starts hidden via upload-hero--pending set directly in the HTML.
+    // initHeroIcon is intentionally skipped — _setGlass handles all content
+    // on first reveal so there is never a flash of the wrong state.
 
     startPolling();
 
