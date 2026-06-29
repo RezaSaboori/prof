@@ -197,10 +197,15 @@
 
     function _setGlass(newGlass) {
         if (newGlass === currentGlass) return;
+
+        // Is this the very first reveal? Capture before committing glass.
+        const isFirstReveal = dropzone.classList.contains('upload-hero--pending');
+
         ALL_GLASS_CLASSES.forEach(cls => dropzone.classList.remove(cls));
         dropzone.classList.add(newGlass);
         currentGlass      = newGlass;
         lastStateChangeAt = Date.now();
+
         // When status reaches green-glass (status 3/4), force the info-form to reload.
         if (newGlass === 'green-glass' && typeof window._reloadInfoForm === 'function') {
             window._reloadInfoForm();
@@ -225,20 +230,10 @@
             const targets     = [heroIconImg, dragLabelEl, hintsEl].filter(Boolean);
             const EXIT_MS     = 300;
 
-            // Phase 1 — exit: scale up + blur out all three elements together
-            targets.forEach(el => {
-                el.classList.remove('upload-hero-content--entering');
-                el.classList.add('upload-hero-content--exiting');
-            });
-
-            // Phase 2 — after exit completes: swap content then enter
-            setTimeout(() => {
-                // Swap icon src
-                if (heroIconImg) {
-                    heroIconImg.src = UPLOAD_HERO_ICON[heroStatus];
-                }
-
-                // Swap drag label HTML + re-bind upload button
+            if (isFirstReveal) {
+                // First reveal: the hero is invisible — swap content instantly
+                // with no exit animation, then reveal the whole hero.
+                if (heroIconImg) heroIconImg.src = UPLOAD_HERO_ICON[heroStatus];
                 if (dragLabelEl && heroContent) {
                     dragLabelEl.innerHTML = heroContent.label;
                     const newUploadBtn = dragLabelEl.querySelector('#resumeUploadBtn');
@@ -252,25 +247,55 @@
                         });
                     }
                 }
-
-                // Swap hints HTML
                 if (hintsEl && heroContent) {
                     hintsEl.innerHTML = heroContent.hints
                         .map(h => `<span>${h}</span>`)
                         .join('');
                 }
-
-                // Phase 3 — enter: scale in from small + unblur
+                // Reveal the hero with scale+blur animation
+                _revealHeroIfPending();
+            } else {
+                // Normal transition: exit → swap → enter
+                // Phase 1 — exit: scale up + blur out all three elements together
                 targets.forEach(el => {
-                    el.classList.remove('upload-hero-content--exiting');
-                    el.classList.add('upload-hero-content--entering');
+                    el.classList.remove('upload-hero-content--entering');
+                    el.classList.add('upload-hero-content--exiting');
                 });
 
-                // Clean up entering class after animation finishes
+                // Phase 2 — after exit completes: swap content then enter
                 setTimeout(() => {
-                    targets.forEach(el => el.classList.remove('upload-hero-content--entering'));
-                }, 450);
-            }, EXIT_MS);
+                    if (heroIconImg) heroIconImg.src = UPLOAD_HERO_ICON[heroStatus];
+
+                    if (dragLabelEl && heroContent) {
+                        dragLabelEl.innerHTML = heroContent.label;
+                        const newUploadBtn = dragLabelEl.querySelector('#resumeUploadBtn');
+                        if (newUploadBtn) {
+                            newUploadBtn.addEventListener('click', e => {
+                                e.stopPropagation();
+                                if (!isDropAllowed()) return;
+                                if (fileDialogOpen) return;
+                                fileDialogOpen = true;
+                                fileInput.click();
+                            });
+                        }
+                    }
+
+                    if (hintsEl && heroContent) {
+                        hintsEl.innerHTML = heroContent.hints
+                            .map(h => `<span>${h}</span>`)
+                            .join('');
+                    }
+
+                    targets.forEach(el => {
+                        el.classList.remove('upload-hero-content--exiting');
+                        el.classList.add('upload-hero-content--entering');
+                    });
+
+                    setTimeout(() => {
+                        targets.forEach(el => el.classList.remove('upload-hero-content--entering'));
+                    }, 450);
+                }, EXIT_MS);
+            }
         }
     }
 
@@ -333,7 +358,6 @@
         }
 
         applyGlass(resolveGlass(_cachedStatus, _hasError));
-        _revealHeroIfPending();
     }
 
     function startPolling() {
@@ -675,7 +699,11 @@
     })();
 
     // ── Hide hero until first status fetch resolves ─────────────────────────
+    // Reset lastStateChangeAt so the MIN_STATE_HOLD guard does NOT defer the
+    // very first glass transition — the hero is invisible so there is nothing
+    // to "hold" visually. The guard will start working normally after reveal.
     dropzone.classList.add('upload-hero--pending');
+    lastStateChangeAt = 0;   // force elapsed >> MIN_STATE_HOLD_MS on first fetch
 
     startPolling();
 
