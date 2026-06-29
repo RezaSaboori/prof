@@ -533,6 +533,7 @@
     }
 
     // ── Upload a single file ──────────────────────────────────────────────────
+// ── Upload a single file ──────────────────────────────────────────────────
     function uploadFile(file) {
         const item       = createFileItem(file);
         const fill       = item.querySelector('.upload-progress-bar__fill');
@@ -542,6 +543,74 @@
         const sizeEl     = item.querySelector('.upload-file-size');
         const deleteBtn  = item.querySelector('.upload-action-btn--delete');
         const totalBytes = file.size;
+
+        // ── Progress phases ───────────────────────────────────────────────
+        // Phase 1: XHR upload bytes  → 0%  to 60%  (real progress, capped)
+        // Phase 2: Server processing → 60% to 80%  (very slow simulated crawl)
+        // Phase 3: Response received → 80% to 100% (smooth animated finish)
+        const UPLOAD_CAP    = 60;   // max % shown while bytes are in-flight
+        const CRAWL_TARGET  = 80;   // % reached at end of slow crawl
+        const CRAWL_STEP_MS = 600;  // ms between each +0.25% crawl tick
+        const CRAWL_STEP_PC = 0.25; // % increment per tick  (≈ 2 min to cross 20 %)
+        const FINISH_MS     = 600;  // ms for the smooth 80→100 animation via CSS transition
+
+        let currentPct     = 0;
+        let crawlTimer     = null;
+
+        function _setPct(pct) {
+            currentPct = pct;
+            fill.style.width = pct + '%';
+            bar.setAttribute('aria-valuenow', Math.round(pct));
+        }
+
+        function _stopCrawl() {
+            if (crawlTimer !== null) {
+                clearInterval(crawlTimer);
+                crawlTimer = null;
+            }
+        }
+
+        /** Start the slow 60→80 crawl to signal server-side processing. */
+        function _startCrawl() {
+            _stopCrawl();
+            label.textContent = 'Processing ...';
+            crawlTimer = setInterval(() => {
+                if (currentPct < CRAWL_TARGET) {
+                    _setPct(Math.min(currentPct + CRAWL_STEP_PC, CRAWL_TARGET));
+                } else {
+                    _stopCrawl();
+                }
+            }, CRAWL_STEP_MS);
+        }
+
+        /** Animate smoothly from current position to 100 % then finalise. */
+        function _finishSuccess() {
+            _stopCrawl();
+            // Let CSS transition carry the bar to 100 % smoothly
+            fill.style.transition = `width ${FINISH_MS}ms ease-in-out`;
+            _setPct(100);
+            fill.classList.add('upload-progress-bar__fill--complete');
+            bar.setAttribute('aria-valuenow', 100);
+            dot.classList.remove('upload-status-dot--uploading');
+            dot.classList.add('upload-status-dot--done');
+            sizeEl.textContent = formatSize(totalBytes) + ' of ' + formatSize(totalBytes);
+            label.textContent  = 'Uploaded';
+            item.dataset.state = 'done';
+            hasUploadedFile    = true;
+
+            // Restore default transition after animation completes
+            setTimeout(() => { fill.style.transition = ''; }, FINISH_MS + 50);
+        }
+
+        function _finishError(msg) {
+            _stopCrawl();
+            fill.classList.add('upload-progress-bar__fill--error');
+            dot.classList.remove('upload-status-dot--uploading');
+            dot.classList.add('upload-status-dot--error');
+            label.textContent  = msg;
+            item.dataset.state = 'error';
+            hasFileError       = true;
+        }
 
         activeUploads++;
         updateFooterState();
@@ -554,9 +623,9 @@
 
         deleteBtn.addEventListener('click', () => {
             xhr.abort();
+            _stopCrawl();
             item.remove();
             activeUploads = Math.max(0, activeUploads - 1);
-            // Recount file-level flags from remaining DOM cards
             _recountFileFlags();
             updateFooterState();
             applyGlass(resolveGlass(_cachedStatus, _hasError));
@@ -564,35 +633,30 @@
 
         xhr.upload.addEventListener('progress', e => {
             if (!e.lengthComputable) return;
-            const pct    = Math.round((e.loaded / e.total) * 100);
+            // Map real byte progress onto 0–60 % range
+            const pct    = Math.round((e.loaded / e.total) * UPLOAD_CAP);
             const loaded = formatSize(e.loaded);
             const total  = formatSize(totalBytes);
-            fill.style.width = pct + '%';
-            bar.setAttribute('aria-valuenow', pct);
+            _setPct(pct);
             sizeEl.textContent = loaded + ' of ' + total;
             label.textContent  = 'Uploading ...';
+        });
+
+        xhr.upload.addEventListener('load', () => {
+            // All bytes sent — lock bar at 60 % and start the slow crawl
+            // while we wait for the server to finish processing / converting.
+            _setPct(UPLOAD_CAP);
+            sizeEl.textContent = formatSize(totalBytes) + ' of ' + formatSize(totalBytes);
+            _startCrawl();
         });
 
         xhr.addEventListener('load', () => {
             activeUploads = Math.max(0, activeUploads - 1);
 
             if (xhr.status >= 200 && xhr.status < 300) {
-                fill.style.width = '100%';
-                fill.classList.add('upload-progress-bar__fill--complete');
-                bar.setAttribute('aria-valuenow', 100);
-                dot.classList.remove('upload-status-dot--uploading');
-                dot.classList.add('upload-status-dot--done');
-                sizeEl.textContent = formatSize(totalBytes) + ' of ' + formatSize(totalBytes);
-                label.textContent  = 'Uploaded';
-                item.dataset.state = 'done';
-                hasUploadedFile = true;   // keep purple until Send is clicked
+                _finishSuccess();
             } else {
-                fill.classList.add('upload-progress-bar__fill--error');
-                dot.classList.remove('upload-status-dot--uploading');
-                dot.classList.add('upload-status-dot--error');
-                label.textContent  = 'Upload failed (' + xhr.status + ')';
-                item.dataset.state = 'error';
-                hasFileError = true;      // XHR-level error — NOT a poll error
+                _finishError('Upload failed (' + xhr.status + ')');
             }
 
             updateFooterState();
@@ -601,18 +665,13 @@
 
         xhr.addEventListener('error', () => {
             activeUploads = Math.max(0, activeUploads - 1);
-            fill.classList.add('upload-progress-bar__fill--error');
-            dot.classList.remove('upload-status-dot--uploading');
-            dot.classList.add('upload-status-dot--error');
-            label.textContent  = 'Upload failed — check your connection';
-            item.dataset.state = 'error';
-            hasFileError = true;          // XHR-level error — NOT a poll error
+            _finishError('Upload failed — check your connection');
             updateFooterState();
             applyGlass(resolveGlass(_cachedStatus, _hasError));
         });
 
         xhr.addEventListener('abort', () => {
-            // Item already removed by deleteBtn handler; nothing extra needed
+            _stopCrawl();
         });
 
         xhr.open('POST', '/dashboard/api/upload-resume/');
