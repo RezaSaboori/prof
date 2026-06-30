@@ -52,6 +52,20 @@
         </div>
         <div class="info-section__body" id="section-search-pref-body">
             <div class="info-field-grid">
+                
+                <div class="form-field glass">
+                    <label class="form-label" for="sp-work-style-input">Work Style</label>
+                    <div class="tag-wrapper grid" id="sp-work-style-tag-wrapper" role="list" aria-label="Work style">
+                        <div class="tag-list" id="sp-work-style-tags" role="list" aria-label="Work style tags"></div>
+                        <div class="tag-input-row">
+                            <input class="tag-input" type="text" id="sp-work-style-input" placeholder="+ add preference  e.g. On-site, Night shifts …" autocomplete="off" aria-label="Add a work style preference">
+                            <button type="button" class="tag-send-btn" aria-label="Add tag" tabindex="-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                            </button>
+                        </div>
+                        <input type="hidden" name="work_style" id="sp-work-style-hidden">
+                    </div>
+                </div>
 
                 <div class="form-field glass">
                     <label class="form-label" for="sp-blocked-industries-input">Blocked Industries</label>
@@ -67,19 +81,7 @@
                     </div>
                 </div>
 
-                <div class="form-field glass">
-                    <label class="form-label" for="sp-work-style-input">Work Style</label>
-                    <div class="tag-wrapper grid" id="sp-work-style-tag-wrapper" role="list" aria-label="Work style">
-                        <div class="tag-list" id="sp-work-style-tags" role="list" aria-label="Work style tags"></div>
-                        <div class="tag-input-row">
-                            <input class="tag-input" type="text" id="sp-work-style-input" placeholder="+ add preference  e.g. On-site, Night shifts …" autocomplete="off" aria-label="Add a work style preference">
-                            <button type="button" class="tag-send-btn" aria-label="Add tag" tabindex="-1">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-                            </button>
-                        </div>
-                        <input type="hidden" name="work_style" id="sp-work-style-hidden">
-                    </div>
-                </div>
+
 
                 <div class="form-field glass">
                     <label class="form-label" for="sp-blocked-companies-input">Blocked Companies</label>

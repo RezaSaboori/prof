@@ -118,11 +118,13 @@
 .search-pref-form #searchPrefUndoBtn {
     display: none;
     align-items: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-sm) var(--spacing-md);
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-2xl);
+    min-width: 180px;
     border: none;
     border-radius: var(--border-radius-pill);
-    font-size: var(--font-size-sm);
+    font-family: var(--font-family-base);
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.15s ease;
@@ -130,13 +132,6 @@
 
 .search-pref-form #searchPrefUndoBtn.undo-visible {
     display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-sm) var(--spacing-md) !important;
-    border: none;
-    border-radius: var(--border-radius-pill);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
 }
 
 .search-pref-form .undo-btn__icon {
