@@ -36,11 +36,6 @@
     // These are initialised lazily after clearSectionSkeletons() restores the DOM.
     // Declaring as let so they can be reassigned each time loadUserInfo() runs.
     let skillsWrapper             = null;
-    let blockedIndustriesWrapper  = null;
-    let workStyleWrapper          = null;
-    let blockedCompaniesWrapper   = null;
-    let blockedTitlesWrapper      = null;
-    let blockedDetailsWrapper     = null;
     // True while loadUserInfo() is in flight — blocks Save to prevent overwriting DB with empty DOM
     let _isLoading = false;
 
@@ -251,12 +246,7 @@
         'section-skills-body': {
             type: 'tags',
             count: 1,
-        },
-        // Blocked — 5 tag inputs
-        'section-blocked-body': {
-            type: 'blocked',
-            count: 1,
-        },
+        }
     };
 
     // Inline skeleton HTML per custom type
@@ -507,11 +497,6 @@
             if (_expContainer)  _expContainer.innerHTML  = '';
 
             skillsWrapper             = initStaticTagInput('skills-tag-wrapper',             'skills-input',             'skills-hidden');
-            blockedIndustriesWrapper  = initStaticTagInput('blocked-industries-tag-wrapper',  'blocked-industries-input', 'blocked-industries-hidden');
-            workStyleWrapper          = initStaticTagInput('work-style-tag-wrapper',          'work-style-input',         'work-style-hidden');
-            blockedCompaniesWrapper   = initStaticTagInput('blocked-companies-tag-wrapper',   'blocked-companies-input',  'blocked-companies-hidden');
-            blockedTitlesWrapper      = initStaticTagInput('blocked-titles-tag-wrapper',      'blocked-titles-input',     'blocked-titles-hidden');
-            blockedDetailsWrapper     = initStaticTagInput('blocked-details-tag-wrapper',     'blocked-details-input',    'blocked-details-hidden');
 
             _applyArrayData(data);
 
@@ -577,11 +562,6 @@
 
         // Tag inputs — wrappers must already be re-initialised before calling _setTags
         if (skillsWrapper && skillsWrapper._setTags)            skillsWrapper._setTags(data.skills             || []);
-        if (blockedIndustriesWrapper && blockedIndustriesWrapper._setTags) blockedIndustriesWrapper._setTags(data.blocked_industries || []);
-        if (workStyleWrapper && workStyleWrapper._setTags)         workStyleWrapper._setTags(data.work_style        || []);
-        if (blockedCompaniesWrapper && blockedCompaniesWrapper._setTags)  blockedCompaniesWrapper._setTags(data.blocked_companies  || []);
-        if (blockedTitlesWrapper && blockedTitlesWrapper._setTags)     blockedTitlesWrapper._setTags(data.blocked_titles    || []);
-        if (blockedDetailsWrapper && blockedDetailsWrapper._setTags)    blockedDetailsWrapper._setTags(data.blocked_details   || []);
     }
 
     function setFieldValue(id, value) {
@@ -651,11 +631,6 @@
             education:          education,
             certifications:     certifications,
             experience:         experience,
-            blocked_industries: getTagsFrom(blockedIndustriesWrapper),
-            work_style:         getTagsFrom(workStyleWrapper),
-            blocked_companies:  getTagsFrom(blockedCompaniesWrapper),
-            blocked_titles:     getTagsFrom(blockedTitlesWrapper),
-            blocked_details:    getTagsFrom(blockedDetailsWrapper),
         };
     }
 
@@ -867,11 +842,6 @@
 
         // Re-wire static tag inputs (they reference wrapper elements by id)
         skillsWrapper            = initStaticTagInput('skills-tag-wrapper',             'skills-tag-input',             'id_skills');
-        blockedIndustriesWrapper = initStaticTagInput('blocked-industries-tag-wrapper', 'blocked-industries-tag-input', 'id_blocked_industries');
-        workStyleWrapper         = initStaticTagInput('work-style-tag-wrapper',         'work-style-tag-input',         'id_work_style');
-        blockedCompaniesWrapper  = initStaticTagInput('blocked-companies-tag-wrapper',  'blocked-companies-tag-input',  'id_blocked_companies');
-        blockedTitlesWrapper     = initStaticTagInput('blocked-titles-tag-wrapper',     'blocked-titles-tag-input',     'id_blocked_titles');
-        blockedDetailsWrapper    = initStaticTagInput('blocked-details-tag-wrapper',    'blocked-details-tag-input',    'id_blocked_details');
 
         // Sync button state — form is now clean again
         _syncSaveBtn();

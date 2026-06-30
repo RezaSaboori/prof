@@ -3,6 +3,8 @@
 {% block extra_css %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/dashboard-home.css' %}">
+<link rel="stylesheet" href="{% static 'css/tags.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard-search-preferences.css' %}">
 {% endblock %}
 
 {% block dashboard_title %}Home{% endblock %}
@@ -26,6 +28,7 @@
         <p>Coming soon — AI-powered career insights.</p>
     </div>
 </div>
+
 <div class="webhook-test-wrapper">
   <button
     id="webhookTestBtn"
@@ -37,8 +40,114 @@
   </button>
   <div id="webhookTestOutput" class="webhook-test-output" hidden></div>
 </div>
+
+<!-- ── SEARCH PREFERENCES ── -->
+<form class="search-pref-form" id="searchPrefForm" novalidate>
+    {% csrf_token %}
+
+    <section class="info-section glass" aria-labelledby="section-search-pref">
+        <div class="info-section__header">
+            <h2 class="info-section__title" id="section-search-pref">Search Preferences</h2>
+            <p class="info-section__desc">Items included or excluded from AI inference and job matching. Do not forget to save your changes.</p>
+        </div>
+        <div class="info-section__body" id="section-search-pref-body">
+            <div class="info-field-grid">
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="sp-blocked-industries-input">Blocked Industries</label>
+                    <div class="tag-wrapper grid" id="sp-blocked-industries-tag-wrapper" role="list" aria-label="Blocked industries">
+                        <div class="tag-list" id="sp-blocked-industries-tags" role="list" aria-label="Blocked industries tags"></div>
+                        <div class="tag-input-row">
+                            <input class="tag-input" type="text" id="sp-blocked-industries-input" placeholder="+ add industry  e.g. Medical, Batteries …" autocomplete="off" aria-label="Add a blocked industry">
+                            <button type="button" class="tag-send-btn" aria-label="Add tag" tabindex="-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                            </button>
+                        </div>
+                        <input type="hidden" name="blocked_industries" id="sp-blocked-industries-hidden">
+                    </div>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="sp-work-style-input">Work Style</label>
+                    <div class="tag-wrapper grid" id="sp-work-style-tag-wrapper" role="list" aria-label="Work style">
+                        <div class="tag-list" id="sp-work-style-tags" role="list" aria-label="Work style tags"></div>
+                        <div class="tag-input-row">
+                            <input class="tag-input" type="text" id="sp-work-style-input" placeholder="+ add preference  e.g. On-site, Night shifts …" autocomplete="off" aria-label="Add a work style preference">
+                            <button type="button" class="tag-send-btn" aria-label="Add tag" tabindex="-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                            </button>
+                        </div>
+                        <input type="hidden" name="work_style" id="sp-work-style-hidden">
+                    </div>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="sp-blocked-companies-input">Blocked Companies</label>
+                    <div class="tag-wrapper grid" id="sp-blocked-companies-tag-wrapper" role="list" aria-label="Blocked companies">
+                        <div class="tag-list" id="sp-blocked-companies-tags" role="list" aria-label="Blocked companies tags"></div>
+                        <div class="tag-input-row">
+                            <input class="tag-input" type="text" id="sp-blocked-companies-input" placeholder="+ add company  e.g. Acme Corp …" autocomplete="off" aria-label="Add a blocked company">
+                            <button type="button" class="tag-send-btn" aria-label="Add tag" tabindex="-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                            </button>
+                        </div>
+                        <input type="hidden" name="blocked_companies" id="sp-blocked-companies-hidden">
+                    </div>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="sp-blocked-titles-input">Blocked Titles</label>
+                    <div class="tag-wrapper grid" id="sp-blocked-titles-tag-wrapper" role="list" aria-label="Blocked titles">
+                        <div class="tag-list" id="sp-blocked-titles-tags" role="list" aria-label="Blocked titles tags"></div>
+                        <div class="tag-input-row">
+                            <input class="tag-input" type="text" id="sp-blocked-titles-input" placeholder="+ add job title  e.g. Sales Manager …" autocomplete="off" aria-label="Add a blocked job title">
+                            <button type="button" class="tag-send-btn" aria-label="Add tag" tabindex="-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                            </button>
+                        </div>
+                        <input type="hidden" name="blocked_titles" id="sp-blocked-titles-hidden">
+                    </div>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label class="form-label" for="sp-blocked-details-input">Blocked Details</label>
+                    <div class="tag-wrapper grid" id="sp-blocked-details-tag-wrapper" role="list" aria-label="Blocked details">
+                        <div class="tag-list" id="sp-blocked-details-tags" role="list" aria-label="Blocked details tags"></div>
+                        <div class="tag-input-row">
+                            <input class="tag-input" type="text" id="sp-blocked-details-input" placeholder="+ add detail  e.g. Relocation required …" autocomplete="off" aria-label="Add a blocked detail">
+                            <button type="button" class="tag-send-btn" aria-label="Add tag" tabindex="-1">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                            </button>
+                        </div>
+                        <input type="hidden" name="blocked_details" id="sp-blocked-details-hidden">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ── SAVE BUTTON ── -->
+    <div class="info-form__actions">
+        <button type="submit" id="searchPrefSaveBtn" class="glass" data-state="idle" disabled>
+            <span class="save-btn__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            </span>
+            <span class="save-btn__text">Save Changes</span>
+        </button>
+        <button type="button" id="searchPrefUndoBtn" class="orange-glass" aria-label="Undo all changes">
+            <span class="undo-btn__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+            </span>
+            <span class="undo-btn__text">Undo Changes</span>
+        </button>
+    </div>
+
+</form>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/webhook_test.js' %}" defer></script>
+<script src="{% static 'js/tags.js' %}" defer></script>
+<script src="{% static 'js/dashboard-search-preferences.js' %}" defer></script>
 {% endblock %}

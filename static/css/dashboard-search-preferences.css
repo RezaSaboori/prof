@@ -1,0 +1,181 @@
+/* ============================================
+   DASHBOARD SEARCH PREFERENCES
+   All variables from base.css / style.css.
+   Shared selectors (info-section, form-field,
+   save-btn, undo-btn, info-load-error, skeleton)
+   are duplicated here because dashboard-info.css
+   is page-scoped to infos.html only.
+   ============================================ */
+
+/* ── Form wrapper ──────────────────────────────── */
+.search-pref-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+/* ── Section shell ─────────────────────────────── */
+.search-pref-form .info-section {
+    border-radius: var(--border-radius-container-lg);
+    padding: var(--spacing-lg);
+}
+
+.search-pref-form .info-section__header {
+    margin-bottom: var(--spacing-md);
+}
+
+.search-pref-form .info-section__title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-xs);
+}
+
+.search-pref-form .info-section__desc {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ── Field grid ────────────────────────────────── */
+.search-pref-form .info-field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.search-pref-form .form-field--full {
+    grid-column: 1 / -1;
+}
+
+.search-pref-form .form-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* ── Actions row ───────────────────────────────── */
+.search-pref-form .info-form__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-bottom: var(--spacing-lg);
+}
+
+/* ── Save button ───────────────────────────────── */
+.search-pref-form #searchPrefSaveBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-pill);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.search-pref-form #searchPrefSaveBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.search-pref-form .save-btn__icon {
+    display: flex;
+    align-items: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.search-pref-form .save-btn__icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ── Undo button ───────────────────────────────── */
+.search-pref-form #searchPrefUndoBtn {
+    display: none;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-pill);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.search-pref-form #searchPrefUndoBtn.undo-visible {
+    display: inline-flex;
+}
+
+.search-pref-form .undo-btn__icon {
+    display: flex;
+    align-items: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.search-pref-form .undo-btn__icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ── Save button icon/text transitions ─────────── */
+.search-pref-form .save-btn__icon--exit,
+.search-pref-form .save-btn__text--exit {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.search-pref-form .save-btn__icon--enter,
+.search-pref-form .save-btn__text--enter {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* ── Load error banner ─────────────────────────── */
+.search-pref-form .info-load-error {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-container-md);
+    background: var(--color-error-bg, rgba(239,68,68,0.12));
+    color: var(--color-error, #ef4444);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.search-pref-form .info-load-error svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.search-pref-form .info-load-error button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    margin-left: var(--spacing-xs);
+}
+
+/* ── Skeleton ──────────────────────────────────── */
+.search-pref-form .skeleton-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
