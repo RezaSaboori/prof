@@ -906,6 +906,7 @@
 
             clearInterval(msgTimer);
             _captureSnapshot();
+            _hideUndoBtn();
             _btnSaving = false;
 
             if (!webhookOk) {
@@ -965,6 +966,7 @@
             clearInterval(msgTimer);
             // Snapshot the newly saved state so future comparisons are against this
             _captureSnapshot();
+            _hideUndoBtn();
             _btnSaving = false;
             saveBtn.setAttribute('data-state', 'success');
             _setBtnGlass(saveBtn, 'success');

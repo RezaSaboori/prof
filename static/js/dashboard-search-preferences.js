@@ -368,6 +368,7 @@
 
             clearInterval(msgTimer);
             _captureSnapshot();
+            _hideUndoBtn();
             _btnSaving = false;
 
             saveBtn.setAttribute('data-state', 'success');
