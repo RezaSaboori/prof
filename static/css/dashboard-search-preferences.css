@@ -29,8 +29,23 @@
     display: none;
 }
 
-.search-pref-form .info-section__header {
-    margin-bottom: var(--spacing-lg);
+/* ── Field header (label + subtitle grouped) ────── */
+.search-pref-form .form-field__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: 0 var(--spacing-sm) var(--spacing-md) var(--spacing-sm);
+}
+
+/* ── Field subtitle ─────────────────────────────── */
+.search-pref-form .form-field__subtitle {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-gray6);
+    text-align: left;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    margin: 0;
 }
 
 .search-pref-form .info-section__title {
@@ -46,6 +61,7 @@
 
 /* ── Field grid ────────────────────────────────── */
 .search-pref-form .info-field-grid {
+    margin-top: var(--spacing-lg);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-md);
@@ -62,11 +78,11 @@
 
 .search-pref-form .form-label {
     display: block;
-    font-size: var(--font-size-sm);
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-secondary);
-    margin-bottom: var(--spacing-lg);
-    text-align: center;
+    margin-bottom: 0;
+    text-align: left;
 }
 
 /* ── Actions row ───────────────────────────────── */
