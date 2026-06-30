@@ -262,7 +262,7 @@
         inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
         0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
         0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
-    transition: background-image 200ms ease, box-shadow 200ms ease, backdrop-filter 200ms ease;
+    transition: color 200ms ease, background-image 200ms ease, box-shadow 200ms ease, backdrop-filter 200ms ease;
     white-space: nowrap;
 }
 
@@ -291,6 +291,7 @@
         color-mix(in srgb, var(--color-gray1) 100%, transparent) 20%,
         color-mix(in srgb, var(--color-gray6) 75%, transparent) 100%
     );
+    color:#248277;
     backdrop-filter: saturate(220%)  brightness(2.3);
     -webkit-backdrop-filter: saturate(220%)  brightness(2.3);
     box-shadow:
