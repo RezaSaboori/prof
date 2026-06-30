@@ -29,17 +29,7 @@
     </div>
 </div>
 
-<div class="webhook-test-wrapper">
-  <button
-    id="webhookTestBtn"
-    class="btn btn-webhook-test"
-    type="button"
-    data-url="{% url 'dashboard:webhook_trigger' %}"
-  >
-    Test Btn
-  </button>
-  <div id="webhookTestOutput" class="webhook-test-output" hidden></div>
-</div>
+
 
 <!-- ── SEARCH PREFERENCES ── -->
 <form class="search-pref-form" id="searchPrefForm" novalidate>
@@ -161,6 +151,17 @@
     </div>
 
 </form>
+<div class="webhook-test-wrapper">
+  <button
+    id="webhookTestBtn"
+    class="btn btn-webhook-test"
+    type="button"
+    data-url="{% url 'dashboard:webhook_trigger' %}"
+  >
+    Test Btn
+  </button>
+  <div id="webhookTestOutput" class="webhook-test-output" hidden></div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
