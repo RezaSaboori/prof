@@ -553,3 +553,34 @@ def api_set_resume_status(request):
     except requests.RequestException as exc:
         logger.error('set_resume_status failed for %s: %s', email, exc)
         return JsonResponse({'error': str(exc)}, status=502)
+
+@login_required
+@require_http_methods(['GET'])
+def api_balance_get(request):
+    """Fetch only the Balance column for the logged-in user."""
+    email = request.user.email
+    try:
+        resp = _session.get(
+            f'{settings.SUPABASE_URL}/rest/v1/user_info',
+            params={
+                'email':  f'eq.{email}',
+                'select': 'Balance',
+                'limit':  1,
+            },
+            headers=_supabase_headers(),
+            timeout=(5, 8),
+        )
+        if not resp.ok:
+            logger.error('Supabase balance GET error %s: %s', resp.status_code, resp.text)
+            return JsonResponse({'error': f'Supabase {resp.status_code}'}, status=502)
+        rows = resp.json()
+        return JsonResponse({'balance': rows[0].get('Balance', 0) if rows else 0})
+    except requests.exceptions.Timeout:
+        logger.error('Supabase balance GET timed out for %s', email)
+        return JsonResponse({'error': 'timeout'}, status=504)
+    except requests.exceptions.ConnectionError as e:
+        logger.error('Supabase balance GET connection error for %s: %s', email, e)
+        return JsonResponse({'error': 'connection_error'}, status=502)
+    except requests.RequestException as e:
+        logger.error('balance GET failed for %s: %s', email, e)
+        return JsonResponse({'error': str(e)}, status=502)

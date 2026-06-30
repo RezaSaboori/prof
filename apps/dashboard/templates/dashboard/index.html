@@ -9,9 +9,23 @@
 
 {% block dashboard_title %}Home{% endblock %}
 
-{% block dashboard_content %}
+ {% block dashboard_content %}
 <div class="dashboard-header">
     <h1>Hi {{ display_name }} 👋</h1>
+</div>
+
+<div class="balance-card green-glass" id="balanceCard">
+    <div class="balance-card__header">
+        <span class="balance-card__label">Your balance</span>
+        <button class="balance-card__add-btn glass" id="addFundsBtn" type="button">Add Funds +</button>
+    </div>
+    <div class="balance-card__body">
+        <span class="balance-card__currency">$</span>
+        <span class="balance-card__value" id="balanceValue">
+            <span class="skeleton skeleton-heading--lg"></span>
+        </span>
+    </div>
+    <div class="balance-card__decoration" aria-hidden="true"></div>
 </div>
 
 <div class="dashboard-stats">
@@ -165,6 +179,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/balance-card.js' %}" defer></script>
 <script src="{% static 'js/webhook_test.js' %}" defer></script>
 <script src="{% static 'js/tags.js' %}" defer></script>
 <script src="{% static 'js/dashboard-search-preferences.js' %}" defer></script>

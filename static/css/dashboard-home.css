@@ -232,3 +232,147 @@
 
 
 
+/* ============================================
+   BALANCE CARD — Credit-card style
+   ============================================ */
+.balance-card {
+    position: relative;
+    border-radius: var(--border-radius-container-sm);
+    padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-2xl);
+    margin-bottom: var(--spacing-xl);
+    overflow: hidden;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    max-width: 420px;
+}
+
+.balance-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+}
+
+.balance-card__label {
+    font-family: var(--font-family-variable);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-gray1) 80%, transparent);
+}
+
+.balance-card__add-btn {
+    border: none;
+    border-radius: var(--border-radius-pill);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-family: var(--font-family-base);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-gray1);
+    cursor: pointer;
+    background-image: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-gray1) 18%, transparent) 0%,
+        color-mix(in srgb, var(--color-gray1) 8%, transparent) 100%
+    );
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--color-gray1) 30%, transparent),
+        inset 1px 1px 0px -1px color-mix(in srgb, var(--color-gray1) 70%, transparent),
+        0 2px 8px color-mix(in srgb, var(--color-gray12) 15%, transparent);
+    transition: all 200ms ease;
+    white-space: nowrap;
+}
+
+.balance-card__add-btn:hover {
+    background-image: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-gray1) 28%, transparent) 0%,
+        color-mix(in srgb, var(--color-gray1) 14%, transparent) 100%
+    );
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--color-gray1) 45%, transparent),
+        inset 1px 1px 0px -1px color-mix(in srgb, var(--color-gray1) 80%, transparent),
+        0 4px 12px color-mix(in srgb, var(--color-gray12) 20%, transparent);
+    transform: translateY(-1px);
+}
+
+.balance-card__body {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--spacing-xs);
+    position: relative;
+    z-index: 1;
+    line-height: 1;
+}
+
+.balance-card__currency {
+    font-family: var(--font-family-variable);
+    font-size: 28px;
+    font-weight: 700;
+    color: color-mix(in srgb, var(--color-gray1) 75%, transparent);
+    align-self: flex-start;
+    padding-top: 6px;
+}
+
+.balance-card__value {
+    font-family: var(--font-family-variable);
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--color-gray1);
+    min-width: 160px;
+}
+
+.balance-card__value .skeleton {
+    display: inline-block;
+    width: 160px;
+    height: 52px;
+    border-radius: var(--border-radius-item-md);
+    background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-gray1) 15%, transparent) 25%,
+        color-mix(in srgb, var(--color-gray1) 30%, transparent) 50%,
+        color-mix(in srgb, var(--color-gray1) 15%, transparent) 75%
+    );
+    background-size: 800px 100%;
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+/* Decorative background circle */
+.balance-card__decoration {
+    position: absolute;
+    bottom: -40px;
+    right: -40px;
+    width: 180px;
+    height: 180px;
+    border-radius: var(--border-radius-pill);
+    background: color-mix(in srgb, var(--color-gray1) 6%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-gray1) 10%, transparent);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.balance-card__decoration::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    left: -80px;
+    width: 120px;
+    height: 120px;
+    border-radius: var(--border-radius-pill);
+    background: color-mix(in srgb, var(--color-gray1) 5%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-gray1) 8%, transparent);
+}
+
+/* Error state */
+.balance-card__value--error {
+    font-size: 18px;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--color-gray1) 60%, transparent);
+}

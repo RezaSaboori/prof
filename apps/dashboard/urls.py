@@ -29,4 +29,6 @@ urlpatterns = [
     path('api/upload-resume/',    views.api_upload_resume,    name='api_upload_resume'),
     path('api/resume-status/',    views.api_resume_status,    name='api_resume_status'),
     path('api/resume-status/set/', views.api_set_resume_status, name='api_set_resume_status'),
+
+    path('api/balance/',          views.api_balance_get,      name='api_balance_get'),
 ]
