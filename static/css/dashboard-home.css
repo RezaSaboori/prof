@@ -204,7 +204,7 @@
    ============================================ */
 .balance-card {
     position: relative;
-    border-radius: var(--border-radius-container-sm);
+    border-radius: var(--border-radius-container-md);
     padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-2xl);
     margin-bottom: var(--spacing-xl);
     overflow: hidden;
@@ -352,14 +352,16 @@
 /* Decorative dot pattern image */
 .balance-card__decoration {
     position: absolute;
-    top: var(--spacing-xs);
-    right: var(--spacing-xs);
-    height: calc(100% - 2* var(--spacing-xs));
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    height: calc(100% - 2* var(--spacing-sm));
     width: auto;
-    opacity: 0.2;
+    opacity: 0.1;
     pointer-events: none;
     z-index: 0;
     display: block;
+    /* filter: brightness(0) invert(1) sepia(1) hue-rotate(135deg) saturate(57%) brightness(65%); */
+    /* mix-blend-mode: multiply; */
 }
 
 /* Error state */
