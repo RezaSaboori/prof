@@ -349,30 +349,17 @@
     animation: skeleton-shimmer 1.6s ease-in-out infinite;
 }
 
-/* Decorative background circle */
+/* Decorative dot pattern image */
 .balance-card__decoration {
     position: absolute;
-    bottom: -40px;
-    right: -40px;
-    width: 180px;
-    height: 180px;
-    border-radius: var(--border-radius-pill);
-    background: color-mix(in srgb, var(--color-gray1) 6%, transparent);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-gray1) 10%, transparent);
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    height: calc(100% - 2* var(--spacing-xs));
+    width: auto;
+    opacity: 0.2;
     pointer-events: none;
     z-index: 0;
-}
-
-.balance-card__decoration::before {
-    content: "";
-    position: absolute;
-    top: -60px;
-    left: -80px;
-    width: 120px;
-    height: 120px;
-    border-radius: var(--border-radius-pill);
-    background: color-mix(in srgb, var(--color-gray1) 5%, transparent);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-gray1) 8%, transparent);
+    display: block;
 }
 
 /* Error state */
