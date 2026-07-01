@@ -11,6 +11,8 @@ from django.conf import settings
 import os
 from django.views.decorators.http import require_POST
 from django.conf import settings
+import tempfile
+import pymupdf4llm
 
 logger = logging.getLogger(__name__)
 
@@ -368,8 +370,7 @@ def api_upload_resume(request):
     Supabase user_info.original_resume, and sets original_resume_status = 1.
     Returns JSON { "status": "ok" } or { "error": "..." }.
     """
-    import tempfile
-    import pymupdf4llm
+
 
     resume = request.FILES.get('resume')
     if not resume:
