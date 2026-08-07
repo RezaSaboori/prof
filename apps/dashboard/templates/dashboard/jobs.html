@@ -1,0 +1,156 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dashboard-jobs.css' %}">
+{% endblock %}
+
+{% block dashboard_title %}{{ page_title }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="jobs-container">
+    <div class="jobs-header">
+        <h1 class="jobs-title">{{ page_title }}</h1>
+        <p class="jobs-subtitle">Your processed job applications</p>
+    </div>
+    
+    {% if jobs %}
+    <div class="jobs-grid">
+        {% for job in jobs %}
+        <div class="job-card glass">
+            <div class="job-card__header">
+                <div class="job-card__title-group">
+                    <h2 class="job-card__title">{{ job.title }}</h2>
+                    <p class="job-card__company">{{ job.company }}</p>
+                </div>
+                <div class="job-card__score">
+                    <span class="job-card__score-value">{{ job.score }}</span>
+                    <span class="job-card__score-label">Score</span>
+                </div>
+            </div>
+            
+            <div class="job-card__body">
+                <div class="job-card__info-row">
+                    <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span class="job-card__location">{{ job.location }}</span>
+                </div>
+                
+                <div class="job-card__info-row">
+                    <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    <span class="job-card__salary">{{ job.salary|default:"Not specified" }}</span>
+                </div>
+                
+                <div class="job-card__info-row">
+                    <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span class="job-card__date">{{ job.created_at|slice:":10" }}</span>
+                </div>
+                
+                <div class="job-card__qualifications">
+                    <h3 class="job-card__section-title">Qualifications</h3>
+                    <p class="job-card__text">{{ job.qualifications|truncatechars:200 }}</p>
+                </div>
+                
+                <div class="job-card__tasks">
+                    <h3 class="job-card__section-title">Tasks</h3>
+                    <p class="job-card__text">{{ job.tasks|truncatechars:150 }}</p>
+                </div>
+            </div>
+            
+            <div class="job-card__footer">
+                <a href="{{ job.link }}" target="_blank" rel="noopener noreferrer" class="job-card__btn job-card__btn--primary">
+                    <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    View Job
+                </a>
+                
+                <button class="job-card__btn job-card__btn--secondary" data-modal="cover-letter" data-job-id="{{ forloop.counter }}">
+                    <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    Cover Letter
+                </button>
+                
+                <button class="job-card__btn job-card__btn--secondary" data-modal="resume" data-job-id="{{ forloop.counter }}">
+                    <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    Resume
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="jobs-empty glass">
+        <div class="jobs-empty__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2"/>
+                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+        </div>
+        <h2 class="jobs-empty__title">No Jobs Found</h2>
+        <p class="jobs-empty__text">You don't have any processed job applications yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modals -->
+<div class="job-modal" id="cover-letter-modal">
+    <div class="job-modal__overlay"></div>
+    <div class="job-modal__content glass">
+        <div class="job-modal__header">
+            <h2 class="job-modal__title">Cover Letter</h2>
+            <button class="job-modal__close" data-close-modal>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="job-modal__body">
+            <div class="job-modal__content-text" id="cover-letter-content"></div>
+        </div>
+    </div>
+</div>
+
+<div class="job-modal" id="resume-modal">
+    <div class="job-modal__overlay"></div>
+    <div class="job-modal__content glass">
+        <div class="job-modal__header">
+            <h2 class="job-modal__title">Resume</h2>
+            <button class="job-modal__close" data-close-modal>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="job-modal__body">
+            <div class="job-modal__content-text" id="resume-content"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="jobs-data" type="application/json">{{ jobs|safe }}</script>
+<script src="{% static 'js/dashboard-jobs.js' %}" defer></script>
+{% endblock %}

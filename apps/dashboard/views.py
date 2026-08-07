@@ -353,10 +353,36 @@ def api_user_info_save(request):
 
 @login_required
 def jobs(request):
-    return render(request, 'dashboard/placeholder.html', {
+    """Fetch user's processed jobs from Supabase."""
+    user_id = request.user.id
+    jobs_data = []
+    
+    try:
+        resp = _session.get(
+            f'{settings.SUPABASE_URL}/rest/v1/jobs_processed',
+            params={
+                'user_id': f'eq.{user_id}',
+                'order': 'created_at.desc',
+            },
+            headers=_supabase_headers(),
+            timeout=(10, 20),
+        )
+        if resp.ok:
+            jobs_data = resp.json()
+        else:
+            logger.error(f'Supabase jobs fetch error {resp.status_code}: {resp.text}')
+    except requests.exceptions.Timeout:
+        logger.error('Supabase jobs GET timed out for user %s', user_id)
+    except requests.exceptions.ConnectionError as e:
+        logger.error('Supabase jobs GET connection error for user %s: %s', user_id, e)
+    except requests.RequestException as e:
+        logger.error('jobs GET failed for user %s: %s', user_id, e)
+    
+    return render(request, 'dashboard/jobs.html', {
         'display_name': request.user.first_name or request.user.username,
         'active_tab': 'jobs',
         'page_title': "Job's",
+        'jobs': jobs_data,
     })
 
 
