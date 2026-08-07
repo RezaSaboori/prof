@@ -355,9 +355,13 @@ def api_user_info_save(request):
 def jobs(request):
     """Fetch user's processed jobs from Supabase."""
     user_id = request.user.id
+    email = request.user.email
     jobs_data = []
     
+    logger.info(f'Jobs view: Django user_id={user_id}, email={email}')
+    
     try:
+        # First try with Django user ID
         resp = _session.get(
             f'{settings.SUPABASE_URL}/rest/v1/jobs_processed',
             params={
@@ -367,10 +371,44 @@ def jobs(request):
             headers=_supabase_headers(),
             timeout=(10, 20),
         )
+        
         if resp.ok:
             jobs_data = resp.json()
+            logger.info(f'Found {len(jobs_data)} jobs for user_id={user_id}')
+            
+            # If no jobs found with Django user ID, try looking up by user_info table
+            if not jobs_data:
+                logger.info(f'No jobs found with user_id={user_id}, trying email-based lookup')
+                
+                # Get the user_info row to find the associated user_id in jobs_processed
+                info_resp = _session.get(
+                    f'{settings.SUPABASE_URL}/rest/v1/user_info',
+                    params={'email': f'eq.{email}', 'select': 'id', 'limit': 1},
+                    headers=_supabase_headers(),
+                    timeout=(5, 10),
+                )
+                
+                if info_resp.ok and info_resp.json():
+                    user_info_id = info_resp.json()[0].get('id')
+                    logger.info(f'Found user_info id={user_info_id}, retrying jobs query')
+                    
+                    # Retry with user_info table ID
+                    retry_resp = _session.get(
+                        f'{settings.SUPABASE_URL}/rest/v1/jobs_processed',
+                        params={
+                            'user_id': f'eq.{user_info_id}',
+                            'order': 'created_at.desc',
+                        },
+                        headers=_supabase_headers(),
+                        timeout=(10, 20),
+                    )
+                    
+                    if retry_resp.ok:
+                        jobs_data = retry_resp.json()
+                        logger.info(f'Found {len(jobs_data)} jobs with user_info id={user_info_id}')
         else:
             logger.error(f'Supabase jobs fetch error {resp.status_code}: {resp.text}')
+            
     except requests.exceptions.Timeout:
         logger.error('Supabase jobs GET timed out for user %s', user_id)
     except requests.exceptions.ConnectionError as e:
