@@ -17,16 +17,14 @@
 
     // Initialize jobs data from template
     function initJobsData() {
-        const scripts = document.querySelectorAll('script[type="application/json"]');
-        scripts.forEach(script => {
-            if (script.id === 'jobs-data') {
-                try {
-                    window.JOBS_DATA = JSON.parse(script.textContent);
-                } catch (e) {
-                    console.error('Failed to parse jobs data:', e);
-                }
+        const dataScript = document.getElementById('jobs-data');
+        if (dataScript) {
+            try {
+                window.JOBS_DATA = JSON.parse(dataScript.textContent);
+            } catch (e) {
+                console.error('Failed to parse jobs data:', e);
             }
-        });
+        }
     }
 
     // Open modal

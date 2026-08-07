@@ -36,7 +36,7 @@
 }
 
 /* Job Card */
-.job-card {
+.jobs-grid .job-card {
     display: flex;
     flex-direction: column;
     border-radius: var(--border-radius-container-lg);

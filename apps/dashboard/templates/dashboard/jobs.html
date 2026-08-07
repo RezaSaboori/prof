@@ -151,6 +151,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script id="jobs-data" type="application/json">{{ jobs|safe }}</script>
+{{ jobs|json_script:"jobs-data" }}
 <script src="{% static 'js/dashboard-jobs.js' %}" defer></script>
 {% endblock %}
