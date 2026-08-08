@@ -37,7 +37,7 @@
     </div>
     <div class="jobs-grid" data-logo-endpoint="{% url 'dashboard:api_company_logo' %}" data-unlock-endpoint="{% url 'dashboard:api_job_unlock' %}">
         {% for job in jobs %}
-        <div class="job-card glass">
+        <div class="job-card {% if job.paid %}opal-glass{% else %}glass{% endif %}">
             <div class="job-card__header">
                 <div class="job-card__identity">
                     {% if job.paid %}
@@ -140,7 +140,7 @@
                     Resume
                 </button>
                 {% else %}
-                <button type="button" class="job-card__btn job-card__btn--unlock glass" data-unlock-job="{{ job.id }}">
+                <button type="button" class="job-card__btn job-card__btn--unlock opal-glass" data-unlock-job="{{ job.id }}">
                     <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2"/>
                         <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
