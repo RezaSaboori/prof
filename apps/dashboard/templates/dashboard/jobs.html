@@ -106,10 +106,11 @@
                 </div>
                 
                 <div class="job-card__qualifications">
-                    <h3 class="job-card__section-title">Qualifications</h3>
                     {% if job.paid %}
+                    <h3 class="job-card__section-title">Qualifications</h3>
                     <p class="job-card__text">{{ job.qualifications|truncatechars:200 }}</p>
                     {% else %}
+                    <span class="job-card__placeholder job-card__placeholder--short"></span>
                     <span class="job-card__placeholder job-card__placeholder--long"></span>
                     <span class="job-card__placeholder job-card__placeholder--medium"></span>
                     <span class="job-card__placeholder job-card__placeholder--short"></span>
