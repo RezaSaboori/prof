@@ -1,5 +1,6 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
+{% load company_logo %}
 
 {% block extra_css %}
 {{ block.super }}
@@ -20,6 +21,14 @@
         {% for job in jobs %}
         <div class="job-card glass">
             <div class="job-card__header">
+                <div class="job-card__logo">
+                    {% with job.link|company_logo_url as logo_url %}
+                    {% if logo_url %}
+                    <img class="job-card__logo-img" src="{{ logo_url }}" alt="{{ job.company }} logo" loading="lazy">
+                    {% endif %}
+                    {% endwith %}
+                    <span class="job-card__logo-fallback">{{ job.company|first|upper }}</span>
+                </div>
                 <div class="job-card__title-group">
                     <h2 class="job-card__title">{{ job.title }}</h2>
                     <p class="job-card__company">{{ job.company }}</p>

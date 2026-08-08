@@ -73,6 +73,18 @@
         }
     }
 
+    function initCompanyLogos() {
+        document.querySelectorAll('.job-card__logo-img').forEach(function(img) {
+            if (img.complete && img.naturalWidth === 0) {
+                img.classList.add('job-card__logo-img--error');
+                return;
+            }
+            img.addEventListener('error', function() {
+                img.classList.add('job-card__logo-img--error');
+            });
+        });
+    }
+
     // Event delegation for modal triggers
     document.addEventListener('click', function(e) {
         const trigger = e.target.closest('[data-modal]');
@@ -111,9 +123,14 @@
     });
 
     // Initialize on DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initJobsData);
-    } else {
+    function init() {
         initJobsData();
+        initCompanyLogos();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
 })();
