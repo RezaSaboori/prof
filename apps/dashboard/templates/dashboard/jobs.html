@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'css/dropdown.css' %}">
 <link rel="stylesheet" href="{% static 'css/dashboard-jobs.css' %}">
 {% endblock %}
 
@@ -16,6 +17,23 @@
     </div>
     
     {% if jobs %}
+    <div class="jobs-toolbar">
+        <div class="dropdown-menu jobs-sort" id="jobs-sort-dropdown">
+            <button type="button" class="dropdown-menu__trigger" aria-expanded="false" aria-haspopup="listbox">
+                <span class="dropdown-menu__text">Sort by: Score</span>
+                <svg class="dropdown-menu__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </button>
+            <div class="dropdown-menu__panel">
+                <div class="dropdown-menu__list" role="listbox">
+                    <div class="dropdown-menu__item is-selected" data-sort="score" role="option">Score</div>
+                    <div class="dropdown-menu__item" data-sort="salary" role="option">Average Salary</div>
+                    <div class="dropdown-menu__item" data-sort="date" role="option">Date</div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="jobs-grid" data-logo-endpoint="{% url 'dashboard:api_company_logo' %}">
         {% for job in jobs %}
         <div class="job-card glass">

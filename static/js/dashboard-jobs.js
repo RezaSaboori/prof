@@ -189,10 +189,118 @@
         }
     });
 
+    // Sort jobs grid via the shared dropdown component (default: score)
+    function initJobSort() {
+        const dropdown = document.getElementById('jobs-sort-dropdown');
+        const grid = document.querySelector('.jobs-grid');
+        if (!dropdown || !grid) {
+            return;
+        }
+
+        const trigger = dropdown.querySelector('.dropdown-menu__trigger');
+        const triggerText = dropdown.querySelector('.dropdown-menu__text');
+        const panel = dropdown.querySelector('.dropdown-menu__panel');
+        const items = Array.prototype.slice.call(
+            dropdown.querySelectorAll('.dropdown-menu__item')
+        );
+
+        function closeDropdown() {
+            panel.classList.remove('is-open');
+            trigger.setAttribute('aria-expanded', 'false');
+        }
+
+        function openDropdown() {
+            panel.classList.add('is-open');
+            trigger.setAttribute('aria-expanded', 'true');
+        }
+
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (panel.classList.contains('is-open')) {
+                closeDropdown();
+            } else {
+                openDropdown();
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target)) {
+                closeDropdown();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDropdown();
+            }
+        });
+
+        // Average of all numeric values in a salary string.
+        // Handles "$120,000 - $150,000", "100k-150k", "Not specified".
+        function averageSalary(text) {
+            if (!text) {
+                return 0;
+            }
+            const matches = text.replace(/,/g, '').match(/\d+(\.\d+)?\s*[kK]?/g);
+            if (!matches || !matches.length) {
+                return 0;
+            }
+            let total = 0;
+            matches.forEach(function(token) {
+                let value = parseFloat(token);
+                if (/[kK]\s*$/.test(token)) {
+                    value *= 1000;
+                }
+                total += value;
+            });
+            return total / matches.length;
+        }
+
+        function cardValue(card, key) {
+            if (key === 'score') {
+                const el = card.querySelector('.job-card__score-value');
+                return el ? parseFloat(el.textContent) || 0 : 0;
+            }
+            if (key === 'salary') {
+                const el = card.querySelector('.job-card__salary');
+                return averageSalary(el ? el.textContent : '');
+            }
+            if (key === 'date') {
+                const el = card.querySelector('.job-card__date');
+                const time = el ? Date.parse(el.textContent.trim()) : NaN;
+                return isNaN(time) ? 0 : time;
+            }
+            return 0;
+        }
+
+        function sortGrid(key) {
+            const cards = Array.prototype.slice.call(grid.querySelectorAll('.job-card'));
+            cards.sort(function(a, b) {
+                return cardValue(b, key) - cardValue(a, key);
+            });
+            cards.forEach(function(card) {
+                grid.appendChild(card);
+            });
+        }
+
+        items.forEach(function(item) {
+            item.addEventListener('click', function() {
+                items.forEach(function(i) { i.classList.remove('is-selected'); });
+                item.classList.add('is-selected');
+                triggerText.textContent = 'Sort by: ' + item.textContent;
+                sortGrid(item.dataset.sort);
+                closeDropdown();
+            });
+        });
+
+        sortGrid('score');
+    }
+
     // Initialize on DOM ready
     function init() {
         initJobsData();
         initCompanyLogos();
+        initJobSort();
     }
 
     if (document.readyState === 'loading') {
