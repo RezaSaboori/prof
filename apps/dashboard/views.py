@@ -354,6 +354,10 @@ def api_user_info_save(request):
 @login_required
 def jobs(request):
     """Fetch user's processed jobs from Supabase."""
+    SELECT_COLS = (
+        'created_at', 'link', 'title', 'company', 'location',
+        'qualifications', 'score', 'salary', 'cover_letter', 'resume',
+    )
     user_id = request.user.id
     email = request.user.email
     jobs_data = []
@@ -366,6 +370,7 @@ def jobs(request):
             f'{settings.SUPABASE_URL}/rest/v1/jobs_processed',
             params={
                 'user_id': f'eq.{user_id}',
+                'select': ','.join(SELECT_COLS),
                 'order': 'created_at.desc',
             },
             headers=_supabase_headers(),
@@ -397,6 +402,7 @@ def jobs(request):
                         f'{settings.SUPABASE_URL}/rest/v1/jobs_processed',
                         params={
                             'user_id': f'eq.{user_info_id}',
+                            'select': ','.join(SELECT_COLS),
                             'order': 'created_at.desc',
                         },
                         headers=_supabase_headers(),

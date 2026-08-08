@@ -41,13 +41,8 @@
     flex-direction: column;
     border-radius: var(--border-radius-container-lg);
     overflow: hidden;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.job-card:hover {
-    transform: translateY(-4px);
-}
 
 /* Card Header */
 .job-card__header {
@@ -138,8 +133,7 @@
     font-weight: 400;
 }
 
-.job-card__qualifications,
-.job-card__tasks {
+.job-card__qualifications {
     margin-top: var(--spacing-lg);
 }
 
@@ -169,8 +163,6 @@
     display: flex;
     gap: var(--spacing-sm);
     padding: var(--spacing-lg) var(--spacing-xl);
-    border-top: 1px solid color-mix(in srgb, var(--color-gray12) 8%, transparent);
-    background: color-mix(in srgb, var(--color-gray1) 30%, transparent);
 }
 
 .job-card__btn {
@@ -204,8 +196,7 @@
 
 .job-card__btn--primary:hover {
     background: var(--color-gray12);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-gray12) 20%, transparent);
+    box-shadow: var(--elevation-3);
 }
 
 .job-card__btn--secondary {
@@ -218,7 +209,7 @@
 .job-card__btn--secondary:hover {
     background: var(--color-gray2);
     border-color: var(--color-gray5);
-    transform: translateY(-1px);
+    box-shadow: var(--elevation-3);
 }
 
 /* Empty State */
