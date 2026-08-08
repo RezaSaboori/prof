@@ -177,6 +177,29 @@
     height: 20px;
 }
 
+.job-card__placeholder {
+    display: block;
+    height: 1em;
+    width: 100%;
+    margin-bottom: var(--spacing-xs);
+    background: var(--color-gray3);
+    border-radius: var(--border-radius-item-sm);
+    pointer-events: none;
+    user-select: none;
+}
+
+.job-card__placeholder--short {
+    width: 40%;
+}
+
+.job-card__placeholder--medium {
+    width: 65%;
+}
+
+.job-card__placeholder--long {
+    width: 90%;
+}
+
 /* Card Body */
 .job-card__body {
     flex: 1;
@@ -212,7 +235,7 @@
 
 .job-card__location,
 .job-card__salary {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--color-gray8);
     font-weight: 400;
 }
@@ -277,11 +300,11 @@
 }
 
 .job-card__btn--unlock {
-    color: var(--color-blue);
+    color: var(--color-gray12);
 }
 
 .job-card__btn--unlock:hover {
-    color: var(--accent-dark);
+    color: var(--color-blue);
 }
 
 .job-card__btn--unlock:disabled {

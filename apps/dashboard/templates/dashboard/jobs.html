@@ -56,7 +56,7 @@
                         {% if job.paid %}
                         <h2 class="job-card__company">{{ job.company }}</h2>
                         {% else %}
-                        <span class="skeleton skeleton-line skeleton-line--medium"></span>
+                        <span class="job-card__placeholder job-card__placeholder--medium"></span>
                         {% endif %}
                         <p class="job-card__date">{{ job.created_at|relative_date }}</p>
                     </div>
@@ -89,7 +89,7 @@
                     </svg>
                     <span class="job-card__location">{{ job.location }}</span>
                     {% else %}
-                    <span class="skeleton skeleton-line skeleton-line--short"></span>
+                    <span class="job-card__placeholder job-card__placeholder--short"></span>
                     {% endif %}
                 </div>
                 
@@ -101,7 +101,7 @@
                     </svg>
                     <span class="job-card__salary">{{ job.salary|default:"Not specified" }}</span>
                     {% else %}
-                    <span class="skeleton skeleton-line skeleton-line--short"></span>
+                    <span class="job-card__placeholder job-card__placeholder--short"></span>
                     {% endif %}
                 </div>
                 
@@ -110,9 +110,9 @@
                     {% if job.paid %}
                     <p class="job-card__text">{{ job.qualifications|truncatechars:200 }}</p>
                     {% else %}
-                    <span class="skeleton skeleton-line skeleton-line--long"></span>
-                    <span class="skeleton skeleton-line skeleton-line--medium"></span>
-                    <span class="skeleton skeleton-line skeleton-line--short"></span>
+                    <span class="job-card__placeholder job-card__placeholder--long"></span>
+                    <span class="job-card__placeholder job-card__placeholder--medium"></span>
+                    <span class="job-card__placeholder job-card__placeholder--short"></span>
                     {% endif %}
                 </div>
 
