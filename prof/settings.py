@@ -66,6 +66,9 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+# ──  developers.brandfetch.com client id (logo retrieval)───────────────────────────────────────────────
+BRANDFETCH_CLIENT_ID = "1idEEGGN6lu7WKnQYIe"
+
 # ── Google OAuth 2.0 ───────────────────────────────────────────────
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'prompt': 'select_account'}
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY    = os.getenv('GOOGLE_CLIENT_ID', '')
