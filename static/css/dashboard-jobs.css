@@ -129,7 +129,8 @@
 
 /* Transparent glass buttons — same treatment as .header-container */
 .jobs-grid .job-card__source-btn.glass,
-.jobs-grid .job-card__btn.glass {
+.jobs-grid .job-card__btn.glass,
+.jobs-grid .job-card__logo.glass {
     background-image: linear-gradient(
         135deg,
         color-mix(in srgb, var(--color-gray1) 50%, transparent) 0%,
