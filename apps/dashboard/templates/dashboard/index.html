@@ -151,14 +151,6 @@
 </form>
 <div class="webhook-test-wrapper">
   <div class="webhook-test-controls">
-    <button
-      id="webhookTestBtn"
-      class="btn btn-webhook-test"
-      type="button"
-      data-url="{% url 'dashboard:webhook_trigger' %}"
-    >
-      Test Btn
-    </button>
     <input
       id="webhookTestIdInput"
       class="webhook-test-input"
@@ -183,6 +175,14 @@
       aria-label="Webhook payload input"
       autocomplete="off"
     >
+    <button
+      id="webhookTestBtn"
+      class="btn btn-webhook-test"
+      type="button"
+      data-url="{% url 'dashboard:webhook_trigger' %}"
+    >
+      Test Btn
+    </button>
   </div>
   <div id="webhookTestOutput" class="webhook-test-output" hidden></div>
 </div>
