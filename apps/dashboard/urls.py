@@ -33,4 +33,6 @@ urlpatterns = [
     path('api/balance/',          views.api_balance_get,      name='api_balance_get'),
 
     path('api/company-logo/',     views.api_company_logo,     name='api_company_logo'),
+
+    path('api/jobs/unlock/',      views.api_job_unlock,       name='api_job_unlock'),
 ]

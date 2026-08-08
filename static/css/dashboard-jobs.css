@@ -3,7 +3,6 @@
    ============================================ */
 
 .jobs-container {
-    padding: var(--spacing-2xl);
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -122,6 +121,12 @@
     stroke: var(--color-blue);
 }
 
+.job-card__source-btn--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 
 
 .job-card__logo {
@@ -161,6 +166,15 @@
     font-weight: 700;
     color: var(--color-blue);
     text-transform: uppercase;
+}
+
+.job-card__logo--locked {
+    color: var(--color-gray6);
+}
+
+.job-card__lock-icon {
+    width: 20px;
+    height: 20px;
 }
 
 /* Card Body */
@@ -260,6 +274,19 @@
 
 .job-card__btn:hover{
     color:var(--color-gray10)
+}
+
+.job-card__btn--unlock {
+    color: var(--color-blue);
+}
+
+.job-card__btn--unlock:hover {
+    color: var(--accent-dark);
+}
+
+.job-card__btn--unlock:disabled {
+    opacity: 0.6;
+    cursor: wait;
 }
 
 

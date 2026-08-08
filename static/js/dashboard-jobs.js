@@ -296,11 +296,81 @@
         sortGrid('score');
     }
 
+    // CSRF token (meta tag first, cookie fallback — same pattern as upload.js)
+    function getCsrfToken() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        if (meta) {
+            return meta.getAttribute('content');
+        }
+        const match = document.cookie.match(/csrftoken=([^;]+)/);
+        return match ? match[1] : '';
+    }
+
+    // Unlock flow: POST the job id to the unlock endpoint, which sets
+    // paid = 1 in Supabase; on success reload so the card renders unlocked.
+    function initJobUnlock() {
+        const grid = document.querySelector('.jobs-grid');
+        if (!grid) {
+            return;
+        }
+        const endpoint = grid.dataset.unlockEndpoint || '/dashboard/api/jobs/unlock/';
+
+        grid.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-unlock-job]');
+            if (!btn || btn.disabled) {
+                return;
+            }
+
+            const label = btn.querySelector('span');
+            btn.disabled = true;
+            if (label) {
+                label.textContent = 'Unlocking...';
+            }
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ id: btn.dataset.unlockJob }),
+            })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data && data.ok) {
+                        window.location.reload();
+                        return;
+                    }
+                    throw new Error((data && data.error) || 'unlock failed');
+                })
+                .catch(function() {
+                    btn.disabled = false;
+                    if (label) {
+                        label.textContent = 'Unlock';
+                    }
+                    if (typeof window.notify === 'function') {
+                        window.notify({
+                            type: 'error',
+                            category: 'Error',
+                            body: 'Could not unlock this job right now. Please try again.',
+                        });
+                    }
+                });
+        });
+    }
+
     // Initialize on DOM ready
     function init() {
         initJobsData();
         initCompanyLogos();
         initJobSort();
+        initJobUnlock();
     }
 
     if (document.readyState === 'loading') {
