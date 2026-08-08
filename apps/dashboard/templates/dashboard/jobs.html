@@ -1,5 +1,6 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
+{% load relative_date %}
 
 {% block extra_css %}
 {{ block.super }}
@@ -38,20 +39,26 @@
         {% for job in jobs %}
         <div class="job-card glass">
             <div class="job-card__header">
-                <div class="job-card__logo glass" data-logo-link="{{ job.link }}">
-                    <span class="job-card__logo-fallback">{{ job.company|first|upper }}</span>
+                <div class="job-card__identity">
+                    <div class="job-card__logo glass" data-logo-link="{{ job.link }}">
+                        <span class="job-card__logo-fallback">{{ job.company|first|upper }}</span>
+                    </div>
+                    <div class="job-card__title-group">
+                        <h2 class="job-card__company">{{ job.company }}</h2>
+                        <p class="job-card__date">{{ job.created_at|relative_date }}</p>
+                    </div>
                 </div>
-                <div class="job-card__title-group">
-                    <h2 class="job-card__title">{{ job.title }}</h2>
-                    <p class="job-card__company">{{ job.company }}</p>
-                </div>
-                <div class="job-card__score">
-                    <span class="job-card__score-value">{{ job.score }}</span>
-                    <span class="job-card__score-label">Score</span>
-                </div>
+                    <a href="{{ job.link }}" target="_blank" rel="noopener noreferrer" class="job-card__source-btn glass">
+                        <span>Source</span>
+                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 13.5V9M15 9H10.5M15 9L9.00019 14.9999M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
             </div>
             
             <div class="job-card__body">
+                <h2 class="job-card__title">{{ job.title }}</h2>
+
                 <div class="job-card__info-row">
                     <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
@@ -68,14 +75,6 @@
                     <span class="job-card__salary">{{ job.salary|default:"Not specified" }}</span>
                 </div>
                 
-                <div class="job-card__info-row">
-                    <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12 6 12 12 16 14"/>
-                    </svg>
-                    <span class="job-card__date">{{ job.created_at|slice:":10" }}</span>
-                </div>
-                
                 <div class="job-card__qualifications">
                     <h3 class="job-card__section-title">Qualifications</h3>
                     <p class="job-card__text">{{ job.qualifications|truncatechars:200 }}</p>
@@ -84,16 +83,7 @@
             </div>
             
             <div class="job-card__footer">
-                <a href="{{ job.link }}" target="_blank" rel="noopener noreferrer" class="job-card__btn job-card__btn--primary">
-                    <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                        <polyline points="15 3 21 3 21 9"/>
-                        <line x1="10" y1="14" x2="21" y2="3"/>
-                    </svg>
-                    View Job
-                </a>
-                
-                <button class="job-card__btn job-card__btn--secondary" data-modal="cover-letter" data-job-id="{{ forloop.counter }}">
+                <button class="job-card__btn job-card__btn--secondary glass" data-modal="cover-letter" data-job-id="{{ forloop.counter }}">
                     <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
@@ -104,7 +94,7 @@
                     Cover Letter
                 </button>
                 
-                <button class="job-card__btn job-card__btn--secondary" data-modal="resume" data-job-id="{{ forloop.counter }}">
+                <button class="job-card__btn job-card__btn--secondary glass" data-modal="resume" data-job-id="{{ forloop.counter }}">
                     <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
