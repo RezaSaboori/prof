@@ -150,14 +150,40 @@
 
 </form>
 <div class="webhook-test-wrapper">
-  <button
-    id="webhookTestBtn"
-    class="btn btn-webhook-test"
-    type="button"
-    data-url="{% url 'dashboard:webhook_trigger' %}"
-  >
-    Test Btn
-  </button>
+  <div class="webhook-test-controls">
+    <button
+      id="webhookTestBtn"
+      class="btn btn-webhook-test"
+      type="button"
+      data-url="{% url 'dashboard:webhook_trigger' %}"
+    >
+      Test Btn
+    </button>
+    <input
+      id="webhookTestIdInput"
+      class="webhook-test-input"
+      type="text"
+      placeholder="ID"
+      aria-label="Webhook payload ID"
+      autocomplete="off"
+    >
+    <input
+      id="webhookTestRouteInput"
+      class="webhook-test-input"
+      type="text"
+      placeholder="Route"
+      aria-label="Webhook payload route"
+      autocomplete="off"
+    >
+    <input
+      id="webhookTestInputInput"
+      class="webhook-test-input"
+      type="text"
+      placeholder="Input"
+      aria-label="Webhook payload input"
+      autocomplete="off"
+    >
+  </div>
   <div id="webhookTestOutput" class="webhook-test-output" hidden></div>
 </div>
 {% endblock %}

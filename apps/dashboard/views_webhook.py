@@ -1,5 +1,7 @@
 # apps/dashboard/views_webhook.py
 
+import json
+
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
@@ -20,13 +22,19 @@ _GATEWAY_CONFIG = WebhookConfig(
 _GATEWAY_CLIENT = WebhookClient(_GATEWAY_CONFIG)
 
 # ── Test payload (dashboard home webhook test btn) ─────────────────────────────
-_TEST_PAYLOAD = [
-    {
-        "id": "123",
-        "route": "resume",
-        "input": "a dude",
-    }
-]
+def _build_test_payload(request):
+    """Build the n8n payload from the values entered beside the test button."""
+    try:
+        data = json.loads(request.body) if request.body else {}
+    except json.JSONDecodeError:
+        data = {}
+    return [
+        {
+            "id": str(data.get("id", "")).strip(),
+            "route": str(data.get("route", "")).strip(),
+            "input": str(data.get("input", "")).strip(),
+        }
+    ]
 
 
 def _send_webhook(payload):
@@ -52,7 +60,7 @@ def _send_webhook(payload):
 @require_POST
 def trigger_webhook(request):
     """Dashboard home — webhook test button."""
-    _, body, status = _send_webhook(_TEST_PAYLOAD)
+    _, body, status = _send_webhook(_build_test_payload(request))
     return JsonResponse(body, status=status)
 
 

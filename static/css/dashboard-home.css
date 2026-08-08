@@ -56,6 +56,37 @@
     margin-top: var(--spacing-xl);
 }
 
+.webhook-test-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.webhook-test-input {
+    width: 160px;
+    height: 40px;
+    padding: 0 var(--spacing-md);
+    border-radius: var(--border-radius-item-xl);
+    border: var(--border-width-thin) solid
+        color-mix(in srgb, var(--color-gray12) 14%, transparent);
+    background: color-mix(in srgb, var(--color-gray1) 100%, transparent);
+    font-size: 14px;
+    color: var(--color-gray11);
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    font-family: var(--font-family-base);
+}
+
+.webhook-test-input::placeholder {
+    color: var(--color-gray5);
+}
+
+.webhook-test-input:focus {
+    border-color: var(--color-blue);
+    box-shadow: var(--elevation-2);
+}
+
 .btn-webhook-test {
     display: inline-flex;
     align-items: center;

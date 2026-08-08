@@ -151,8 +151,6 @@
         0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
 }
 
-
-
 .job-card__logo {
     position: relative;
     width: 48px;

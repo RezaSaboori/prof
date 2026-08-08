@@ -20,18 +20,31 @@
   function handleClick() {
     const btn = document.getElementById("webhookTestBtn");
     const output = document.getElementById("webhookTestOutput");
+    const idInput = document.getElementById("webhookTestIdInput");
+    const routeInput = document.getElementById("webhookTestRouteInput");
+    const inputInput = document.getElementById("webhookTestInputInput");
     if (!btn || btn.disabled) return;
 
     clearTimeout(resetTimer);
     setLoading(btn, output);
+
+    const payload = [
+      {
+        id: idInput ? idInput.value.trim() : "",
+        route: routeInput ? routeInput.value.trim() : "",
+        input: inputInput ? inputInput.value.trim() : "",
+      },
+    ];
 
     fetch(btn.dataset.url, {
       method: "POST",
       headers: {
         "X-CSRFToken": getCookie("csrftoken"),
         "Accept": "application/json",
+        "Content-Type": "application/json",
       },
       credentials: "same-origin",
+      body: JSON.stringify(payload[0]),
     })
       .then(function (res) {
         return res.json().then(function (data) {
