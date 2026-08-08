@@ -100,7 +100,7 @@
     color: #ffffff;
     background-color: var(--color-blue);
     border: none;
-    border-radius: var(--border-radius-item-md);
+    border-radius: var(--border-radius-container-md);
     cursor: pointer;
     transition: background-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
     box-shadow: var(--elevation-1);
