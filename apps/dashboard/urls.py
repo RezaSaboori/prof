@@ -31,4 +31,6 @@ urlpatterns = [
     path('api/resume-status/set/', views.api_set_resume_status, name='api_set_resume_status'),
 
     path('api/balance/',          views.api_balance_get,      name='api_balance_get'),
+
+    path('api/company-logo/',     views.api_company_logo,     name='api_company_logo'),
 ]

@@ -53,6 +53,26 @@ The project is configured for development by default. Key settings:
 
 - **core**: Core application with base functionality
 
+## Maintenance
+
+### Company logo cache cleanup
+
+The dashboard stores resolved company logos in the `CompanyLogo` table as a
+persistent, frequency-aware cache (Layer 2; Layer 1 is the Django cache).
+To keep the store fast, evict rows that are **both** old (not requested
+within the last 60 days) **and** rarely used (fewer than 5 hits) — frequently
+used logos are always kept:
+
+```bash
+python manage.py cleanup_company_logos
+```
+
+Run it on a schedule (e.g. daily at 03:00) via cron or a Render Cron Job:
+
+```cron
+0 3 * * * cd /path/to/project && /path/to/venv/bin/python manage.py cleanup_company_logos
+```
+
 ## License
 
 MIT License

@@ -98,6 +98,12 @@
     height: 100%;
     object-fit: cover;
     background: var(--color-gray1);
+    opacity: 0;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.job-card__logo-img--loaded {
+    opacity: 1;
 }
 
 .job-card__logo-img--error {

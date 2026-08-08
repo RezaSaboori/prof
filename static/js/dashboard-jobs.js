@@ -73,16 +73,83 @@
         }
     }
 
+    // Progressive logo loader: the page paints the letter fallback instantly,
+    // then logos are resolved one by one (first card to last) via the API and
+    // faded in. Server-side misses are resolved asynchronously and re-polled.
     function initCompanyLogos() {
-        document.querySelectorAll('.job-card__logo-img').forEach(function(img) {
-            if (img.complete && img.naturalWidth === 0) {
-                img.classList.add('job-card__logo-img--error');
+        const grid = document.querySelector('.jobs-grid');
+        const containers = Array.prototype.slice.call(
+            document.querySelectorAll('[data-logo-link]')
+        );
+        if (!containers.length) {
+            return;
+        }
+
+        const endpoint = (grid && grid.dataset.logoEndpoint) || '/dashboard/api/company-logo/';
+        const pending = [];
+        const POLL_INTERVAL_MS = 2500;
+        const POLL_TIMEOUT_MS = 60000;
+        const pollStartedAt = Date.now();
+
+        function revealLogo(container, url) {
+            if (container.querySelector('.job-card__logo-img')) {
                 return;
             }
+            const img = document.createElement('img');
+            img.className = 'job-card__logo-img';
+            img.alt = '';
+            img.src = url;
+            img.addEventListener('load', function() {
+                img.classList.add('job-card__logo-img--loaded');
+            });
             img.addEventListener('error', function() {
                 img.classList.add('job-card__logo-img--error');
             });
-        });
+            container.insertBefore(img, container.firstChild);
+        }
+
+        function requestLogo(container) {
+            if (container.dataset.logoBusy === '1') {
+                return Promise.resolve();
+            }
+            container.dataset.logoBusy = '1';
+            const link = container.getAttribute('data-logo-link');
+            return fetch(endpoint + '?link=' + encodeURIComponent(link), {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(function(response) { return response.ok ? response.json() : null; })
+                .then(function(data) {
+                    if (!data) {
+                        return;
+                    }
+                    if (data.status === 'resolved' && data.url) {
+                        revealLogo(container, data.url);
+                    } else if (data.status === 'pending') {
+                        pending.push(container);
+                    }
+                })
+                .catch(function() { /* network error: keep the letter fallback */ })
+                .finally(function() { container.dataset.logoBusy = '0'; });
+        }
+
+        // Sequential queue: first card to last, one request at a time.
+        (function processQueue(index) {
+            if (index >= containers.length) {
+                return;
+            }
+            requestLogo(containers[index]).finally(function() {
+                processQueue(index + 1);
+            });
+        })(0);
+
+        // Re-check logos still resolving server-side, until the cap is reached.
+        const pendingTimer = setInterval(function() {
+            if (!pending.length || Date.now() - pollStartedAt > POLL_TIMEOUT_MS) {
+                clearInterval(pendingTimer);
+                return;
+            }
+            requestLogo(pending.shift());
+        }, POLL_INTERVAL_MS);
     }
 
     // Event delegation for modal triggers

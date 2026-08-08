@@ -14,6 +14,8 @@ from django.conf import settings
 import tempfile
 import pymupdf4llm
 
+from apps.dashboard.services import logo_service
+
 logger = logging.getLogger(__name__)
 
 # ── Module-level Session with retry + connection pooling ──────────────────────
@@ -655,3 +657,22 @@ def api_balance_get(request):
     except requests.RequestException as e:
         logger.error('balance GET failed for %s: %s', email, e)
         return JsonResponse({'error': str(e)}, status=502)
+
+
+@login_required
+@require_http_methods(['GET'])
+def api_company_logo(request):
+    """
+    Non-blocking logo endpoint for the progressive loader in dashboard-jobs.js.
+
+    Returns one of:
+      {"status": "resolved",    "url": "<logo url>"}
+      {"status": "pending",     "url": ""}  — resolution queued, poll again
+      {"status": "unavailable", "url": ""}  — no logo; keep the letter fallback
+    """
+    link = request.GET.get('link', '').strip()
+    if not link:
+        return JsonResponse({'status': 'unavailable', 'url': ''})
+
+    status, logo_url = logo_service.get_logo(link)
+    return JsonResponse({'status': status, 'url': logo_url})
