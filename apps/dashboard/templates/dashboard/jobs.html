@@ -21,7 +21,7 @@
         {% for job in jobs %}
         <div class="job-card glass">
             <div class="job-card__header">
-                <div class="job-card__logo">
+                <div class="job-card__logo glass">
                     {% with job.link|company_logo_url as logo_url %}
                     {% if logo_url %}
                     <img class="job-card__logo-img" src="{{ logo_url }}" alt="{{ job.company }} logo" loading="lazy">

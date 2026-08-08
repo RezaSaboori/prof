@@ -89,8 +89,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: color-mix(in srgb, var(--color-blue) 12%, transparent);
-    border: var(--border-width-thin) solid var(--color-gray3);
 }
 
 .job-card__logo-img {
