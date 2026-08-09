@@ -46,6 +46,20 @@
     column-gap: var(--spacing-xl);
 }
 
+/* JS masonry — row-major order with independent column heights.
+   Applied by dashboard-jobs.js; plain grid above remains the no-JS fallback. */
+.jobs-grid--masonry {
+    display: block;
+    position: relative;
+}
+
+.jobs-grid--masonry .job-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Job Card */
 .jobs-grid .job-card {
     display: flex;

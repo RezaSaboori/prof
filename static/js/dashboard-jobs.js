@@ -189,6 +189,71 @@
         }
     });
 
+    // Row-major masonry: cards are absolutely positioned so each column
+    // grows independently while the left-to-right row order is preserved
+    // (card i always lands in column i mod n). Gaps read from base.css vars.
+    function initJobsMasonry() {
+        const grid = document.querySelector('.jobs-grid');
+        if (!grid) {
+            return;
+        }
+
+        const MIN_CARD_WIDTH = 380;
+        const MOBILE_BREAKPOINT = 768;
+
+        function currentGap() {
+            const name = window.innerWidth <= MOBILE_BREAKPOINT ? '--spacing-lg' : '--spacing-xl';
+            const value = getComputedStyle(document.documentElement).getPropertyValue(name);
+            return parseFloat(value) || 32;
+        }
+
+        function layoutJobsGrid() {
+            const cards = Array.prototype.slice.call(grid.querySelectorAll('.job-card'));
+            if (!cards.length) {
+                grid.style.height = '';
+                return;
+            }
+            const gap = currentGap();
+            const gridWidth = grid.clientWidth;
+            const columns = Math.max(1, Math.floor((gridWidth + gap) / (MIN_CARD_WIDTH + gap)));
+            const cardWidth = (gridWidth - (columns - 1) * gap) / columns;
+            const columnHeights = [];
+            for (let i = 0; i < columns; i++) {
+                columnHeights.push(0);
+            }
+
+            cards.forEach(function(card, index) {
+                const col = index % columns;
+                card.style.width = cardWidth + 'px';
+                card.style.transform =
+                    'translate(' + (col * (cardWidth + gap)) + 'px, ' + columnHeights[col] + 'px)';
+                columnHeights[col] += card.offsetHeight + gap;
+            });
+
+            grid.style.height = (Math.max.apply(null, columnHeights) - gap) + 'px';
+        }
+
+        // Re-layout every frame while a card height transition is running,
+        // so the card below follows the growing card smoothly.
+        function animateJobsLayout(duration) {
+            const start = performance.now();
+            (function frame(now) {
+                layoutJobsGrid();
+                if (now - start < duration) {
+                    requestAnimationFrame(frame);
+                }
+            })(performance.now());
+        }
+
+        grid.classList.add('jobs-grid--masonry');
+        grid.layoutJobsGrid = layoutJobsGrid;
+        grid.animateJobsLayout = animateJobsLayout;
+
+        layoutJobsGrid();
+        window.addEventListener('resize', layoutJobsGrid);
+        window.addEventListener('load', layoutJobsGrid);
+    }
+
     // Sort jobs grid via the shared dropdown component (default: score)
     function initJobSort() {
         const dropdown = document.getElementById('jobs-sort-dropdown');
@@ -279,6 +344,9 @@
             cards.forEach(function(card) {
                 grid.appendChild(card);
             });
+            if (typeof grid.layoutJobsGrid === 'function') {
+                grid.layoutJobsGrid();
+            }
         }
 
         items.forEach(function(item) {
@@ -363,6 +431,7 @@
         });
     }
 
+
     // Expand/collapse job card qualifications with a smooth height transition.
     // The "More" button is only shown when the clamped text actually overflows.
     function initJobCardExpand() {
@@ -406,12 +475,17 @@
                 btn.textContent = 'Less';
                 btn.setAttribute('aria-expanded', 'true');
             }
+
+            if (typeof grid.animateJobsLayout === 'function') {
+                grid.animateJobsLayout(350);
+            }
         });
     }
 
     // Initialize on DOM ready
     function init() {
         initJobsData();
+        initJobsMasonry();
         initCompanyLogos();
         initJobSort();
         initJobUnlock();
