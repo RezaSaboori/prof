@@ -345,6 +345,11 @@
     font-weight: 400;
 }
 
+.job-card__icon,
+.job-card__icon{
+    margin-bottom: 1px !important;
+}
+
 .job-card__qualifications {
     margin-top: var(--spacing-lg);
 }
