@@ -462,13 +462,25 @@
             }
 
             if (text.classList.contains('job-card__text--expanded')) {
-                // Collapse: freeze current height, then release to the clamped value
+                // Collapse: keep the clamp off during the animation — re-applying
+                // it now would snap the box to 3 lines instantly. Animate max-height
+                // down to the exact clamped height, then restore the clamp.
+                const collapsedHeight = parseFloat(getComputedStyle(text).fontSize) * 4.8;
                 text.style.maxHeight = text.scrollHeight + 'px';
                 void text.offsetHeight;
-                text.classList.remove('job-card__text--expanded');
-                text.style.maxHeight = '';
+                text.style.maxHeight = collapsedHeight + 'px';
                 btn.textContent = 'More';
                 btn.setAttribute('aria-expanded', 'false');
+
+                const onCollapseEnd = function(e) {
+                    if (e.target !== text || e.propertyName !== 'max-height') {
+                        return;
+                    }
+                    text.removeEventListener('transitionend', onCollapseEnd);
+                    text.classList.remove('job-card__text--expanded');
+                    text.style.maxHeight = '';
+                };
+                text.addEventListener('transitionend', onCollapseEnd);
             } else {
                 // Expand: freeze clamped height, drop the clamp, grow to full height
                 text.style.maxHeight = text.clientHeight + 'px';
