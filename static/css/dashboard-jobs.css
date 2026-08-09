@@ -508,7 +508,7 @@
 .job-modal__overlay {
     position: absolute;
     inset: 0;
-    background: color-mix(in srgb, var(--color-gray12) 60%, transparent);
+    background: color-mix(in srgb, var(--color-gray12) 40%, transparent);
     backdrop-filter: blur(4px);
 }
 
@@ -522,6 +522,34 @@
     flex-direction: column;
     overflow: hidden;
     animation: modal-enter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.job-modal__content {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    background-image: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-gray1) 30%, transparent) 0%,
+        color-mix(in srgb, var(--color-gray6) 15%, transparent) 100%
+    );
+    backdrop-filter: saturate(200%) blur(10px) brightness(1.8);
+    -webkit-backdrop-filter: saturate(200%) blur(10px) brightness(1.8);
+    box-shadow:
+        inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray1) 18%, transparent),
+        inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-gray1) 90%, transparent),
+        inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray1) 30%, transparent),
+        inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray1) 10%, transparent),
+        inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
+        inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+        inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+        inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
+        0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
+        0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    transition:
+        background-image 0.5s ease,
+        box-shadow 0.5s ease,
+        backdrop-filter 0.5s ease !important;
 }
 
 @keyframes modal-enter {
@@ -556,20 +584,44 @@
     align-items: center;
     justify-content: center;
     border: none;
-    background: color-mix(in srgb, var(--color-gray12) 8%, transparent);
-    border-radius: var(--border-radius-item-md);
+    border-radius: var(--border-radius-container-md);
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .job-modal__close:hover {
-    background: color-mix(in srgb, var(--color-gray12) 15%, transparent);
+    background-image:
+        radial-gradient(
+            circle at 30% 18%,
+            color-mix(in srgb, var(--color-yellow) 45%, transparent) 0%,
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-yellow) 60%, var(--color-orange)) 0%,
+            color-mix(in srgb, var(--color-orange) 90%, var(--color-red)) 58%,
+            color-mix(in srgb, var(--color-orange) 70%, var(--color-gray12)) 100%
+        );
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--color-yellow) 22%, transparent),
+        inset 2px 1px 0px -1px color-mix(in srgb, var(--color-yellow) 90%, transparent),
+        inset -1.5px -1px 0px -1px color-mix(in srgb, var(--color-yellow) 80%, transparent),
+        inset -2px -6px 1px -5px color-mix(in srgb, var(--color-yellow) 60%, transparent),
+        inset -1px 2px 3px -1px color-mix(in srgb, var(--color-orange) 25%, transparent),
+        inset 0px -4px 1px -2px color-mix(in srgb, var(--color-gray12) 15%, transparent),
+        inset 0px 3px 6px 0px color-mix(in srgb, var(--color-gray12) 10%, transparent),
+        0px 1px 5px 0px color-mix(in srgb, var(--color-orange) 14%, transparent),
+        0px 8px 20px 0px color-mix(in srgb, var(--color-orange) 24%, transparent);
+    transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
 }
+
 
 .job-modal__close svg {
     width: 20px;
     height: 20px;
-    color: var(--color-gray8);
+    color: var(--color-gray1);
 }
 
 .job-modal__body {
