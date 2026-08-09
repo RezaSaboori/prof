@@ -39,12 +39,11 @@
     min-width: 220px;
 }
 
-/* Grid Layout */
+/* Column Layout — each column sizes independently, so a growing card
+   only pushes down the card directly below it */
 .jobs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: var(--spacing-xl);
-    align-items: start;
+    column-width: 380px;
+    column-gap: var(--spacing-xl);
 }
 
 /* Job Card */
@@ -54,7 +53,9 @@
     border-radius: var(--border-radius-container-lg);
     overflow: hidden;
     padding: var(--spacing-lg);
-    gap: var(--spacing-xl); 
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    break-inside: avoid;
 }
 
 
@@ -566,8 +567,12 @@
     }
     
     .jobs-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-lg);
+        column-width: auto;
+        column-count: 1;
+    }
+
+    .jobs-grid .job-card {
+        margin-bottom: var(--spacing-lg);
     }
     
     .job-card__footer {
