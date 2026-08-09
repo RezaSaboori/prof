@@ -53,7 +53,7 @@
     function showCoverLetter(jobIndex) {
         const data = window.JOBS_DATA || [];
         if (data[jobIndex] && data[jobIndex].cover_letter) {
-            coverLetterContent.textContent = data[jobIndex].cover_letter;
+            coverLetterContent.innerHTML = renderMarkdown(data[jobIndex].cover_letter);
             openModal(coverLetterModal);
         } else {
             coverLetterContent.textContent = 'No cover letter available for this job.';
@@ -65,7 +65,7 @@
     function showResume(jobIndex) {
         const data = window.JOBS_DATA || [];
         if (data[jobIndex] && data[jobIndex].resume) {
-            resumeContent.textContent = data[jobIndex].resume;
+            resumeContent.innerHTML = renderMarkdown(data[jobIndex].resume);
             openModal(resumeModal);
         } else {
             resumeContent.textContent = 'No resume available for this job.';
@@ -188,6 +188,24 @@
             closeAllModals();
         }
     });
+
+    // Render markdown source into sanitized HTML (marked + DOMPurify).
+    // Falls back to escaped plain text if the CDN scripts are unavailable.
+    function renderMarkdown(source) {
+        if (typeof marked === 'undefined' || typeof DOMPurify === 'undefined') {
+            const span = document.createElement('span');
+            span.textContent = source || '';
+            return span.innerHTML;
+        }
+        return DOMPurify.sanitize(marked.parse(source || '', { breaks: true }));
+    }
+
+    // Render the qualifications markdown inside each job card.
+    function initJobCardMarkdown() {
+        document.querySelectorAll('.job-card__text').forEach(function(text) {
+            text.innerHTML = renderMarkdown(text.textContent);
+        });
+    }
 
     // Row-major masonry: cards are absolutely positioned so each column
     // grows independently while the left-to-right row order is preserved
@@ -500,6 +518,7 @@
     // Initialize on DOM ready
     function init() {
         initJobsData();
+        initJobCardMarkdown();
         initJobsMasonry();
         initCompanyLogos();
         initJobSort();
