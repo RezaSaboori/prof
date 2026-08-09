@@ -37,7 +37,7 @@
     </div>
     <div class="jobs-grid" data-logo-endpoint="{% url 'dashboard:api_company_logo' %}" data-unlock-endpoint="{% url 'dashboard:api_job_unlock' %}">
         {% for job in jobs %}
-        <div class="job-card {% if job.paid %}opal-glass{% else %}glass{% endif %}">
+        <div class="job-card {% if job.paid %}opal-glass{% else %}glass{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}">
             <div class="job-card__header">
                 <div class="job-card__identity">
                     {% if job.paid %}
@@ -108,7 +108,8 @@
                 <div class="job-card__qualifications">
                     {% if job.paid %}
                     <h3 class="job-card__section-title">Qualifications</h3>
-                    <p class="job-card__text">{{ job.qualifications|truncatechars:200 }}</p>
+                    <p class="job-card__text">{{ job.qualifications }}</p>
+                    <button type="button" class="job-card__more-btn glass" data-toggle-more aria-expanded="false" hidden>More</button>
                     {% else %}
                     <span class="job-card__placeholder job-card__placeholder--short"></span>
                     <span class="job-card__placeholder job-card__placeholder--long"></span>

@@ -258,16 +258,14 @@
 
         function cardValue(card, key) {
             if (key === 'score') {
-                const el = card.querySelector('.job-card__score-value');
-                return el ? parseFloat(el.textContent) || 0 : 0;
+                return parseFloat(card.dataset.sortScore) || 0;
             }
             if (key === 'salary') {
                 const el = card.querySelector('.job-card__salary');
                 return averageSalary(el ? el.textContent : '');
             }
             if (key === 'date') {
-                const el = card.querySelector('.job-card__date');
-                const time = el ? Date.parse(el.textContent.trim()) : NaN;
+                const time = Date.parse(card.dataset.sortDate || '');
                 return isNaN(time) ? 0 : time;
             }
             return 0;
@@ -365,12 +363,59 @@
         });
     }
 
+    // Expand/collapse job card qualifications with a smooth height transition.
+    // The "More" button is only shown when the clamped text actually overflows.
+    function initJobCardExpand() {
+        const grid = document.querySelector('.jobs-grid');
+        if (!grid) {
+            return;
+        }
+
+        grid.querySelectorAll('.job-card__text').forEach(function(text) {
+            const btn = text.parentElement.querySelector('[data-toggle-more]');
+            if (!btn) {
+                return;
+            }
+            btn.hidden = text.scrollHeight - text.clientHeight <= 1;
+        });
+
+        grid.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-toggle-more]');
+            if (!btn) {
+                return;
+            }
+            const text = btn.parentElement.querySelector('.job-card__text');
+            if (!text) {
+                return;
+            }
+
+            if (text.classList.contains('job-card__text--expanded')) {
+                // Collapse: freeze current height, then release to the clamped value
+                text.style.maxHeight = text.scrollHeight + 'px';
+                void text.offsetHeight;
+                text.classList.remove('job-card__text--expanded');
+                text.style.maxHeight = '';
+                btn.textContent = 'More';
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                // Expand: freeze clamped height, drop the clamp, grow to full height
+                text.style.maxHeight = text.clientHeight + 'px';
+                void text.offsetHeight;
+                text.classList.add('job-card__text--expanded');
+                text.style.maxHeight = text.scrollHeight + 'px';
+                btn.textContent = 'Less';
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    }
+
     // Initialize on DOM ready
     function init() {
         initJobsData();
         initCompanyLogos();
         initJobSort();
         initJobUnlock();
+        initJobCardExpand();
     }
 
     if (document.readyState === 'loading') {
