@@ -40,82 +40,45 @@
         <div class="job-card {% if job.paid %}opal-glass{% else %}glass{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}">
             <div class="job-card__header">
                 <div class="job-card__identity">
-                    {% if job.paid %}
                     <div class="job-card__logo glass" data-logo-link="{{ job.link }}">
                         <span class="job-card__logo-fallback">{{ job.company|first|upper }}</span>
                     </div>
-                    {% else %}
-                    <div class="job-card__logo job-card__logo--locked glass">
-                        <svg class="job-card__lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2"/>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        </svg>
-                    </div>
-                    {% endif %}
                     <div class="job-card__title-group">
-                        {% if job.paid %}
                         <h2 class="job-card__company">{{ job.company }}</h2>
-                        {% else %}
-                        <span class="job-card__placeholder job-card__placeholder--medium"></span>
-                        {% endif %}
                         <p class="job-card__date">{{ job.created_at|relative_date }}</p>
                     </div>
                 </div>
-                    {% if job.paid %}
                     <a href="{{ job.link }}" target="_blank" rel="noopener noreferrer" class="job-card__source-btn glass">
                         <span>Source</span>
                         <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 13.5V9M15 9H10.5M15 9L9.00019 14.9999M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </a>
-                    {% else %}
-                    <span class="job-card__source-btn job-card__source-btn--disabled glass" aria-disabled="true">
-                        <span>Source</span>
-                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15 13.5V9M15 9H10.5M15 9L9.00019 14.9999M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </span>
-                    {% endif %}
             </div>
             
             <div class="job-card__body">
                 <h2 class="job-card__title">{{ job.title }}</h2>
 
                 <div class="job-card__info-row">
-                    {% if job.paid %}
                     <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                         <circle cx="12" cy="10" r="3"/>
                     </svg>
                     <span class="job-card__location">{{ job.location }}</span>
-                    {% else %}
-                    <span class="job-card__placeholder job-card__placeholder--short"></span>
-                    {% endif %}
                 </div>
                 
                 <div class="job-card__info-row">
-                    {% if job.paid %}
                     <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="1" x2="12" y2="23"/>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                     </svg>
                     <span class="job-card__salary">{{ job.salary|default:"Not specified" }}</span>
-                    {% else %}
-                    <span class="job-card__placeholder job-card__placeholder--short"></span>
-                    {% endif %}
                 </div>
                 
                 <div class="job-card__qualifications">
-                    {% if job.paid %}
                     <h3 class="job-card__section-title">Qualifications</h3>
                     <p class="job-card__text">{{ job.qualifications }}</p>
                     <button type="button" class="job-card__more-btn glass" data-toggle-more aria-expanded="false" hidden>More</button>
-                    {% else %}
-                    <span class="job-card__placeholder job-card__placeholder--short"></span>
-                    <span class="job-card__placeholder job-card__placeholder--long"></span>
-                    <span class="job-card__placeholder job-card__placeholder--medium"></span>
-                    <span class="job-card__placeholder job-card__placeholder--short"></span>
-                    {% endif %}
                 </div>
 
             </div>
