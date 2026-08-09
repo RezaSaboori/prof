@@ -60,6 +60,13 @@
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* During a height animation the rAF loop repositions cards every frame —
+   the transform transition would lag behind the moving target, so it is
+   disabled to keep the below card perfectly synced with the growth. */
+.jobs-grid--masonry.jobs-grid--animating .job-card {
+    transition: none;
+}
+
 /* Job Card */
 .jobs-grid .job-card {
     display: flex;

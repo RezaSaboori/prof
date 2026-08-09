@@ -237,10 +237,13 @@
         // so the card below follows the growing card smoothly.
         function animateJobsLayout(duration) {
             const start = performance.now();
+            grid.classList.add('jobs-grid--animating');
             (function frame(now) {
                 layoutJobsGrid();
                 if (now - start < duration) {
                     requestAnimationFrame(frame);
+                } else {
+                    grid.classList.remove('jobs-grid--animating');
                 }
             })(performance.now());
         }
