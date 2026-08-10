@@ -834,6 +834,13 @@ body {
     letter-spacing: -0.5px;
 }
 
+.logo .dashboard-island__logo-img {
+    width: 20px;
+    height: 20px;
+    display: block;
+    flex-shrink: 0;
+}
+
 .main-nav {
     display: flex;
     gap: var(--spacing-xl);
@@ -865,6 +872,34 @@ body {
 
 .header-cta:hover {
     background: var(--color-gray12);
+}
+
+@media (max-width: 768px) {
+    .site-header {
+        position: fixed;
+        top: auto;
+        bottom: var(--spacing-md);
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-container {
+        width: fit-content;
+        margin: 0;
+        padding: var(--spacing-xs);
+        gap: var(--spacing-sm);
+    }
+
+    .main-nav {
+        display: none;
+    }
+
+    .logo {
+        padding: 6.5px 6.5px;
+    }
 }
 
 /* Section Base - CUSTOM STYLE FROM TEMPLATE */
