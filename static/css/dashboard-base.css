@@ -17,6 +17,12 @@
     position: relative;
 }
 
+
+/* Dock wrapper — transparent (display: contents) on desktop, fixed bottom-center dock on mobile */
+.dashboard-dock {
+    display: contents;
+}
+
 /* ============================================
    DASHBOARD ISLAND (fixed left sidebar)
    ============================================ */
@@ -126,9 +132,38 @@
     color: var(--color-gray1);
 }
 
+/* Desktop: not a separate island — transparent, pinned exactly where it sat inside the nav island */
 .dashboard-island__signout {
+    position: fixed;
+    left: var(--spacing-md);
+    bottom: calc(var(--spacing-lg) / 2);
+    z-index: 100;
+    width: var(--dashboard-sidebar-width);
     padding: var(--spacing-lg);
     flex-shrink: 0;
+}
+
+
+/* Desktop only: no glass surface of its own — the nav island's glass shows behind it */
+@media (min-width: 769px) {
+    .dashboard-island__signout {
+        background-image: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+    }
+
+
+    .dashboard-island__signout.glass::before {
+        content: none;
+    }
+
+
+    /* Sign out docks together with the nav island when the footer is visible */
+    .dashboard-island--docked ~ .dashboard-island__signout {
+        position: absolute;
+        bottom: 0;
+    }
 }
 
 .dashboard-island__signout a {
@@ -179,56 +214,164 @@
 /* ============================================
    RESPONSIVE
    ============================================ */
+/* Active-tab label reveal — pill item expands, label morphs in (inspired by saveBtnTextMorph) */
+@keyframes dashboardNavLabelMorph {
+    0%   { max-width: 0;     margin-left: 0;                 opacity: 0; filter: blur(4px); transform: scale(0.85) translateX(-4px); }
+    40%  { max-width: 200px; margin-left: var(--spacing-sm); opacity: 0; filter: blur(4px); transform: scale(0.85) translateX(-4px); }
+    100% { max-width: 200px; margin-left: var(--spacing-sm); opacity: 1; filter: blur(0px); transform: scale(1) translateX(0); }
+}
+
 @media (max-width: 768px) {
     .dashboard-layout {
         flex-direction: column;
         padding: var(--spacing-sm);
+        padding-bottom: calc(var(--spacing-5xl) + var(--spacing-md));
     }
+
 
     .dashboard-main {
         max-width: 100%;
         margin-inline: 0;
     }
 
-    .dashboard-island {
-        width: 100%;
-        height: auto;
-        position: static;              /* back in flow on mobile */
-        left: auto;
-        top: auto;
-        transform: none;
-        z-index: auto;
-        flex-direction: row;
-        flex-wrap: wrap;
-        border-radius: var(--border-radius-item-xl);
+
+    /* Bottom dock — nav pill + sign-out island side by side, the pair centered as one group */
+    .dashboard-dock {
+        position: fixed;
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        bottom: var(--spacing-md);
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-sm);
     }
 
+
+
+    /* Bottom pill navigation — glass surface comes from the .glass utility */
+    /* Bottom pill navigation — transparent glass surface identical to the header (.header-container) */
+    .dashboard-island {
+        width: fit-content;
+        height: auto;
+        position: static;
+        transform: none;
+        flex-direction: row;
+        align-items: center;
+        border-radius: var(--border-radius-pill);
+        background-image: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-gray1) 50%, transparent) 0%,
+            color-mix(in srgb, var(--color-gray6) 35%, transparent) 100%
+        );
+        backdrop-filter: saturate(200%) blur(4px) brightness(1.8);
+        -webkit-backdrop-filter: saturate(200%) blur(4px) brightness(1.8);
+        box-shadow:
+            inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray1) 18%, transparent),
+            inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-gray1) 90%, transparent),
+            inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray1) 30%, transparent),
+            inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray1) 10%, transparent),
+            inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
+            inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    }
+
+
+    /* The island is static inside the dock on mobile — neutralize the desktop docked state */
     .dashboard-island--docked {
         position: static;
-        bottom: auto;
+        transform: none;
     }
+
 
     .dashboard-island__brand {
-        border-bottom: none;
-        border-right: var(--border-width-hairline) solid
-            color-mix(in srgb, var(--color-gray12) 8%, transparent);
+        display: none;
     }
 
+
     .dashboard-island__nav {
+        flex: 1;
         flex-direction: row;
-        flex-wrap: wrap;
+        justify-content: space-between;
         padding: var(--spacing-xs);
         overflow-y: visible;
     }
 
-    .dashboard-island__signout {
-        border-top: none;
-        border-left: var(--border-width-hairline) solid
-            color-mix(in srgb, var(--color-gray12) 8%, transparent);
+
+    /* Zero the link gap so icon-only items stay perfectly pill-shaped */
+    .dashboard-island__nav a {
+        gap: 0;
     }
+
+
+    /* Labels collapsed by default — only the active tab reveals its label */
+    .dashboard-island__nav a span {
+        display: inline-block;
+        max-width: 0;
+        margin-left: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        opacity: 0;
+    }
+
+
+    .dashboard-island__nav a.active span {
+        transform-origin: left center;
+        animation: dashboardNavLabelMorph 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+
+    /* Sign-out island — transparent glass surface identical to the nav island */
+    .dashboard-island__signout {
+        position: static;
+        width: auto;
+        border-radius: var(--border-radius-pill);
+        padding: var(--spacing-sm) var(--spacing-sm) !important;
+        background-image: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-gray1) 50%, transparent) 0%,
+            color-mix(in srgb, var(--color-gray6) 35%, transparent) 100%
+        );
+        backdrop-filter: saturate(200%) blur(4px) brightness(1.2);
+        -webkit-backdrop-filter: saturate(200%) blur(4px) brightness(1.2);
+        box-shadow:
+            inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray1) 18%, transparent),
+            inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-gray1) 90%, transparent),
+            inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray1) 30%, transparent),
+            inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray1) 10%, transparent),
+            inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
+            inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    }
+
+    .dashboard-island__signout a {
+        padding: 6.5px 6.5px !important;
+    }
+
+    .dashboard-island__signout a span {
+        display: none;
+    }
+
+
     .dashboard-page .site-header .header-container,
     .dashboard-page .site-footer {
         padding-left: var(--spacing-xl);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+    .dashboard-island__nav a.active span {
+        animation: none;
+        max-width: 200px;
+        margin-left: var(--spacing-sm);
+        opacity: 1;
     }
 }
 
