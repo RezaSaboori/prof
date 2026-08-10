@@ -16,34 +16,6 @@
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ============================================
    WEBHOOK TEST BUTTON
    ============================================ */
@@ -204,30 +176,6 @@
     background-color: color-mix(in srgb, var(--color-red) 10%, transparent);
     border-bottom-color: color-mix(in srgb, var(--color-red) 25%, transparent);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* ============================================
