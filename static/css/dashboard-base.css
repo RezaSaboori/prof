@@ -232,7 +232,7 @@
     100% { max-width: 200px; margin-left: var(--spacing-sm); opacity: 1; filter: blur(0px); transform: scale(1) translateX(0); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 980px) {
     .dashboard-page .site-header {
         display: none;
     }
@@ -423,17 +423,13 @@
         fill: var(--color-gray12)
     }
 
-    .dashboard-page .site-header .header-container,
-    .dashboard-page .site-footer {
-        padding-left: var(--spacing-xl);
-    }
 
     .dashboard-page .site-footer {
         padding: var(--spacing-sm);
     }
 }
 
-@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+@media (prefers-reduced-motion: reduce) and (max-width: 980px) {
     .dashboard-island__nav a.active span {
         animation: none;
         max-width: 200px;

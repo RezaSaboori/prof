@@ -834,7 +834,27 @@ body {
     letter-spacing: -0.5px;
 }
 
-.logo .dashboard-island__logo-img {
+.site-header .dashboard-island__logo {
+    display: flex;
+    align-items: center;
+    background-image: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+}
+
+.site-header .dashboard-island__logo::before {
+    content: none;
+}
+
+.site-header .dashboard-island__logo a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.site-header .dashboard-island__logo-img {
     width: 20px;
     height: 20px;
     display: block;
@@ -874,7 +894,7 @@ body {
     background: var(--color-gray12);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 980px) {
     .site-header {
         position: fixed;
         top: auto;
@@ -889,17 +909,85 @@ body {
     .header-container {
         width: fit-content;
         margin: 0;
-        padding: var(--spacing-xs);
+        padding: var(--spacing-sm) 0 !important;
         gap: var(--spacing-sm);
+        background-image: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    .header-container::before {
+        content: none;
     }
 
     .main-nav {
         display: none;
     }
 
-    .logo {
-        padding: 6.5px 6.5px;
+    .site-header .dashboard-island__logo {
+        padding: 6.5px 6.5px !important;
+        border-radius: var(--border-radius-pill);
+        background-image: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-gray1) 50%, transparent) 0%,
+            color-mix(in srgb, var(--color-gray6) 35%, transparent) 100%
+        );
+        backdrop-filter: saturate(200%) blur(4px) brightness(1.2);
+        -webkit-backdrop-filter: saturate(200%) blur(4px) brightness(1.2);
+        box-shadow:
+            inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray1) 18%, transparent),
+            inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-gray1) 90%, transparent),
+            inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray1) 30%, transparent),
+            inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray1) 10%, transparent),
+            inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
+            inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
     }
+
+    .site-header .dashboard-island__logo::before {
+        content: "";
+    }
+
+    .site-header .dashboard-island__logo a {
+        padding: 6.5px 6.5px;
+        border-radius: var(--border-radius-pill);
+        transition: background 0.15s;
+    }
+
+    .site-header .dashboard-island__logo a:hover {
+        background: color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    }
+
+    .header-cta {
+        padding: var(--spacing-md) var(--spacing-lg);
+        position: static;
+        width: auto;
+        border-radius: var(--border-radius-pill);
+        background-image: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-gray12) 1%, transparent) 0%,
+            color-mix(in srgb, var(--color-gray6) 1%, transparent) 100%
+        );
+        backdrop-filter: saturate(200%) blur(2px) brightness(0.9);
+        -webkit-backdrop-filter: saturate(200%) blur(2px) brightness(0,9);
+        box-shadow:
+            inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray3) 18%, transparent),
+            inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-3) 90%, transparent),
+            inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray3) 30%, transparent),
+            inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray3) 10%, transparent),
+            inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
+            inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    }
+
 }
 
 /* Section Base - CUSTOM STYLE FROM TEMPLATE */
@@ -1139,6 +1227,10 @@ body {
 
     body.hero-scrolled .hero-scroll-indicator {
         transform: translateY(var(--spacing-md));
+    }
+
+    .site-footer {
+        padding: var(--spacing-sm);
     }
 }
 
