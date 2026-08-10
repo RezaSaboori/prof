@@ -9,7 +9,7 @@ sys.path.insert(0, str(BASE_DIR / 'apps'))
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-me')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-SITE_PIN = os.getenv('SITE_PIN', '9092301202')
+SITE_PIN = os.getenv('SITE_PIN', 'specialpin')
 
 ALLOWED_HOSTS = ['proflab.us','www.proflab.us',  'prof-8jy6.onrender.com', 'onrender.com', 'dietpi.taild764a0.ts.net', '100.97.116.21', 'localhost', '127.0.0.1']
 
