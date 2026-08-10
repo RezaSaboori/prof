@@ -964,22 +964,24 @@ body {
     }
 
     .header-cta {
+        position: relative;
         padding: var(--spacing-md) var(--spacing-lg);
-        position: static;
-        width: auto;
+        border: none;
         border-radius: var(--border-radius-pill);
+        color: var(--color-gray1);
+        background-color: transparent;
         background-image: linear-gradient(
             135deg,
-            color-mix(in srgb, var(--color-gray12) 1%, transparent) 0%,
-            color-mix(in srgb, var(--color-gray6) 1%, transparent) 100%
+            color-mix(in srgb, var(--color-gray12) 50%, transparent) 0%,
+            color-mix(in srgb, var(--color-gray6) 35%, transparent) 100%
         );
-        backdrop-filter: saturate(200%) blur(2px) brightness(0.9);
-        -webkit-backdrop-filter: saturate(200%) blur(2px) brightness(0,9);
+        backdrop-filter: saturate(200%) blur(4px) brightness(0.2);
+        -webkit-backdrop-filter: saturate(200%) blur(4px) brightness(0.2);
         box-shadow:
-            inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray3) 18%, transparent),
-            inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-3) 90%, transparent),
-            inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray3) 30%, transparent),
-            inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray3) 10%, transparent),
+            inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray6) 18%, transparent),
+            inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-gray6) 90%, transparent),
+            inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray6) 30%, transparent),
+            inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray6) 10%, transparent),
             inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
             inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
             inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
@@ -988,6 +990,28 @@ body {
             0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
     }
 
+    .header-cta::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: var(--border-width-thin);
+        background: linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--color-gray6) 100%, transparent) 0%,
+            color-mix(in srgb, var(--color-gray6) 0%, transparent) 42%
+        );
+        -webkit-mask:
+            linear-gradient(var(--color-gray12) 0 0) content-box,
+            linear-gradient(var(--color-gray12) 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .header-cta:hover {
+        background: color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    }
 }
 
 /* Section Base - CUSTOM STYLE FROM TEMPLATE */
