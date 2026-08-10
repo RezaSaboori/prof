@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Enter Pin – Prof{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="pin-container">
+    <div class="pin-box glass">
+        <div class="pin-header">
+            <h1>Enter Pin</h1>
+        </div>
+
+        {% if error %}
+        <p class="pin-message" id="pinError">{{ error }}</p>
+        {% endif %}
+
+        <form method="post" action="{% url 'core:pin' %}" class="pin-form" id="pinForm" autocomplete="off">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <div class="pin-form-group">
+                <label for="pinInput">Pin code</label>
+                <input
+                    type="password"
+                    inputmode="numeric"
+                    name="pin"
+                    id="pinInput"
+                    class="pin-input"
+                    maxlength="20"
+                    required
+                    autofocus
+                    placeholder="Enter pin"
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary pin-submit" id="pinSubmit">
+                Continue
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/pin.js' %}"></script>
+{% endblock %}

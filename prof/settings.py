@@ -9,6 +9,7 @@ sys.path.insert(0, str(BASE_DIR / 'apps'))
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-me')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
+SITE_PIN = os.getenv('SITE_PIN', '9092301202')
 
 ALLOWED_HOSTS = ['proflab.us','www.proflab.us',  'prof-8jy6.onrender.com', 'onrender.com', 'dietpi.taild764a0.ts.net', '100.97.116.21', 'localhost', '127.0.0.1']
 
@@ -30,6 +31,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'apps.core.middleware.SitePinMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -37,7 +39,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',  # ← new
 ]
-
 ROOT_URLCONF = 'prof.urls'
 
 TEMPLATES = [{
