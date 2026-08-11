@@ -116,6 +116,10 @@
     opacity: 0.8;
 }
 
+.upload-hero__break-mobile {
+    display: none;
+}
+
 /* ── Hint text ── */
 .upload-hero__hints {
     display: flex;
@@ -508,6 +512,30 @@
     .upload-section__title {
         font-size: clamp(22px, 5vw, 32px);
     }
-}
 
+    .upload-hero {
+        padding: var(--spacing-md) var(--spacing-md);
+    }
+
+    .upload-hero__drag-label {
+        font-size: clamp(10px, 4.2vw, 22px);
+        white-space: nowrap;
+    }
+
+    .upload-hero__break-desktop {
+        display: none;
+    }
+
+    .upload-hero__break-mobile {
+        display: inline;
+    }
+
+    .upload-choose-btn {
+        display: block;
+        width: 100%;
+        font-size: 22px;
+        padding: var(--spacing-sm) 0;
+        text-align: center;
+    }
+}
 

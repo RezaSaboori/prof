@@ -37,7 +37,7 @@
           hiring manager — while you focus on your actual work.
         </p>
         <div class="hero-actions">
-          <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-xl blue-glass hero-cta-primary">
+          <a href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'social:begin' 'google-oauth2' %}{% endif %}" class="btn btn-xl blue-glass hero-cta-primary">
             <span>Get Your First Match Free</span>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -419,7 +419,7 @@
         <span>Whether Prof Finds It First.</span>
       </h2>
 
-      <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-primary btn-xl">
+      <a href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'social:begin' 'google-oauth2' %}{% endif %}" class="btn btn-primary btn-xl">
         <span>Upload Your Resume - It's Free to Start</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path
