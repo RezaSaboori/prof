@@ -857,7 +857,7 @@ body {
 .site-header .dashboard-island__logo-img {
     width: 20px;
     height: 20px;
-    display: block;
+    display: none;
     flex-shrink: 0;
 }
 
@@ -961,6 +961,14 @@ body {
 
     .site-header .dashboard-island__logo a:hover {
         background: color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    }
+
+    .site-header .dashboard-island__logo .logo-text {
+        display: none;
+    }
+
+    .site-header .dashboard-island__logo-img {
+        display: block;
     }
 
     .header-cta {
