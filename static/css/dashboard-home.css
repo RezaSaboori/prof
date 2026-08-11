@@ -20,6 +20,16 @@
    WEBHOOK TEST BUTTON
    ============================================ */
 
+.webhook-test-title {
+    font-family: var(--font-family-variable);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-gray8);
+    margin: 0;
+}
+
 .webhook-test-wrapper {
     display: flex;
     flex-direction: column;

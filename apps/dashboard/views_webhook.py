@@ -21,6 +21,42 @@ _GATEWAY_CONFIG = WebhookConfig(
 
 _GATEWAY_CLIENT = WebhookClient(_GATEWAY_CONFIG)
 
+# ── Gateway config — Mode 1: Mentor ─────────────────────────────────────────────
+_GATEWAY_CONFIG_MODE1 = WebhookConfig(
+    url=settings.N8N_GATEWAY_URL_MODE1,
+    secret_header_name=settings.N8N_GATEWAY_SECRET_HEADER_NAME_MODE1,
+    secret_header_value=settings.N8N_GATEWAY_SECRET_HEADER_VALUE_MODE1,
+    timeout=30,
+    max_retries=5,
+    retry_backoff_base=1.5,
+)
+
+_GATEWAY_CLIENT_MODE1 = WebhookClient(_GATEWAY_CONFIG_MODE1)
+
+# ── Gateway config — Mode 2: Keywords ───────────────────────────────────────────
+_GATEWAY_CONFIG_MODE2 = WebhookConfig(
+    url=settings.N8N_GATEWAY_URL_MODE2,
+    secret_header_name=settings.N8N_GATEWAY_SECRET_HEADER_NAME_MODE2,
+    secret_header_value=settings.N8N_GATEWAY_SECRET_HEADER_VALUE_MODE2,
+    timeout=30,
+    max_retries=5,
+    retry_backoff_base=1.5,
+)
+
+_GATEWAY_CLIENT_MODE2 = WebhookClient(_GATEWAY_CONFIG_MODE2)
+
+# ── Gateway config — Mode 3: Link or JD ─────────────────────────────────────────
+_GATEWAY_CONFIG_MODE3 = WebhookConfig(
+    url=settings.N8N_GATEWAY_URL_MODE3,
+    secret_header_name=settings.N8N_GATEWAY_SECRET_HEADER_NAME_MODE3,
+    secret_header_value=settings.N8N_GATEWAY_SECRET_HEADER_VALUE_MODE3,
+    timeout=30,
+    max_retries=5,
+    retry_backoff_base=1.5,
+)
+
+_GATEWAY_CLIENT_MODE3 = WebhookClient(_GATEWAY_CONFIG_MODE3)
+
 # ── Test payload (dashboard home webhook test btn) ─────────────────────────────
 def _build_test_payload(request):
     """Build the n8n payload from the values entered beside the test button."""
@@ -37,9 +73,9 @@ def _build_test_payload(request):
     ]
 
 
-def _send_webhook(payload):
+def _send_webhook(payload, client=None):
     """Shared helper — returns (success: bool, body: dict, http_status: int)."""
-    result = _GATEWAY_CLIENT.send(payload)
+    result = (client or _GATEWAY_CLIENT).send(payload)
     body = {
         "success": result.success,
         "attempts": result.attempts,
@@ -61,6 +97,30 @@ def _send_webhook(payload):
 def trigger_webhook(request):
     """Dashboard home — webhook test button."""
     _, body, status = _send_webhook(_build_test_payload(request))
+    return JsonResponse(body, status=status)
+
+
+@login_required
+@require_POST
+def trigger_webhook_mode1(request):
+    """Dashboard home — webhook test button (Mode 1: Mentor)."""
+    _, body, status = _send_webhook(_build_test_payload(request), _GATEWAY_CLIENT_MODE1)
+    return JsonResponse(body, status=status)
+
+
+@login_required
+@require_POST
+def trigger_webhook_mode2(request):
+    """Dashboard home — webhook test button (Mode 2: Keywords)."""
+    _, body, status = _send_webhook(_build_test_payload(request), _GATEWAY_CLIENT_MODE2)
+    return JsonResponse(body, status=status)
+
+
+@login_required
+@require_POST
+def trigger_webhook_mode3(request):
+    """Dashboard home — webhook test button (Mode 3: Link or JD)."""
+    _, body, status = _send_webhook(_build_test_payload(request), _GATEWAY_CLIENT_MODE3)
     return JsonResponse(body, status=status)
 
 

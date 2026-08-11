@@ -106,6 +106,21 @@ N8N_GATEWAY_URL                  = os.getenv('N8N_GATEWAY_URL', '')
 N8N_GATEWAY_SECRET_HEADER_NAME   = os.getenv('N8N_GATEWAY_SECRET_HEADER_NAME', 'X-Workflow-Secret')
 N8N_GATEWAY_SECRET_HEADER_VALUE  = os.getenv('N8N_GATEWAY_SECRET_HEADER_VALUE', '')
 
+# ── n8n Gateway Webhook — Mode 1: Mentor ────────────────────────────
+N8N_GATEWAY_URL_MODE1                  = os.getenv('N8N_GATEWAY_URL_MODE1', '')
+N8N_GATEWAY_SECRET_HEADER_NAME_MODE1   = os.getenv('N8N_GATEWAY_SECRET_HEADER_NAME_MODE1', 'Mode1-Workflow-Secret')
+N8N_GATEWAY_SECRET_HEADER_VALUE_MODE1  = os.getenv('N8N_GATEWAY_SECRET_HEADER_VALUE_MODE1', '')
+
+# ── n8n Gateway Webhook — Mode 2: Keywords ──────────────────────────
+N8N_GATEWAY_URL_MODE2                  = os.getenv('N8N_GATEWAY_URL_MODE2', '')
+N8N_GATEWAY_SECRET_HEADER_NAME_MODE2   = os.getenv('N8N_GATEWAY_SECRET_HEADER_NAME_MODE2', 'Mode2-Workflow-Secret')
+N8N_GATEWAY_SECRET_HEADER_VALUE_MODE2  = os.getenv('N8N_GATEWAY_SECRET_HEADER_VALUE_MODE2', '')
+
+# ── n8n Gateway Webhook — Mode 3: Link or JD ────────────────────────
+N8N_GATEWAY_URL_MODE3                  = os.getenv('N8N_GATEWAY_URL_MODE3', '')
+N8N_GATEWAY_SECRET_HEADER_NAME_MODE3   = os.getenv('N8N_GATEWAY_SECRET_HEADER_NAME_MODE3', 'Mode3-Workflow-Secret')
+N8N_GATEWAY_SECRET_HEADER_VALUE_MODE3  = os.getenv('N8N_GATEWAY_SECRET_HEADER_VALUE_MODE3', '')
+
 # ── Social Auth: Increase timeout for slow connections ──────────────
 REQUESTS_TIMEOUT = 15.0
 SOCIAL_AUTH_REQUESTS_TIMEOUT = 15.0

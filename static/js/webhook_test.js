@@ -1,40 +1,51 @@
 // static/js/webhook_test.js
 // Webhook test button — handles loading, retry feedback, error states.
+// Supports multiple independent .webhook-test-wrapper blocks (Mode0…Mode3).
 
 (function () {
   "use strict";
 
   // ── State ──────────────────────────────────────────────────────────────────
   const RESET_DELAY_MS = 5000;
-  let resetTimer = null;
 
   // ── Init ───────────────────────────────────────────────────────────────────
   document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("webhookTestBtn");
-    if (!btn) return;
-
-    btn.addEventListener("click", handleClick);
+    const wrappers = document.querySelectorAll(".webhook-test-wrapper");
+    wrappers.forEach(initWrapper);
   });
 
-  // ── Handler ────────────────────────────────────────────────────────────────
-  function handleClick() {
-    const btn = document.getElementById("webhookTestBtn");
-    const output = document.getElementById("webhookTestOutput");
-    const idInput = document.getElementById("webhookTestIdInput");
-    const routeInput = document.getElementById("webhookTestRouteInput");
-    const inputInput = document.getElementById("webhookTestInputInput");
-    if (!btn || btn.disabled) return;
+  // ── Wrapper init ───────────────────────────────────────────────────────────
+  function initWrapper(wrapper) {
+    const btn = wrapper.querySelector(".btn-webhook-test");
+    const output = wrapper.querySelector('[data-field="output"]');
+    const idInput = wrapper.querySelector('[data-field="id"]');
+    const routeInput = wrapper.querySelector('[data-field="route"]');
+    const inputInput = wrapper.querySelector('[data-field="input"]');
+    if (!btn || !output) return;
 
-    clearTimeout(resetTimer);
+    let resetTimer = null;
+
+    btn.addEventListener("click", function () {
+      handleClick(btn, output, idInput, routeInput, inputInput, function () {
+        return resetTimer;
+      }, function (timer) {
+        resetTimer = timer;
+      });
+    });
+  }
+
+  // ── Handler ────────────────────────────────────────────────────────────────
+  function handleClick(btn, output, idInput, routeInput, inputInput, getResetTimer, setResetTimer) {
+    if (btn.disabled) return;
+
+    clearTimeout(getResetTimer());
     setLoading(btn, output);
 
-    const payload = [
-      {
-        id: idInput ? idInput.value.trim() : "",
-        route: routeInput ? routeInput.value.trim() : "",
-        input: inputInput ? inputInput.value.trim() : "",
-      },
-    ];
+    const payload = {
+      id: idInput ? idInput.value.trim() : "",
+      route: routeInput ? routeInput.value.trim() : "",
+      input: inputInput ? inputInput.value.trim() : "",
+    };
 
     fetch(btn.dataset.url, {
       method: "POST",
@@ -44,7 +55,7 @@
         "Content-Type": "application/json",
       },
       credentials: "same-origin",
-      body: JSON.stringify(payload[0]),
+      body: JSON.stringify(payload),
     })
       .then(function (res) {
         return res.json().then(function (data) {
@@ -63,9 +74,9 @@
       })
       .finally(function () {
         btn.disabled = false;
-        resetTimer = setTimeout(function () {
+        setResetTimer(setTimeout(function () {
           resetUI(btn, output);
-        }, RESET_DELAY_MS);
+        }, RESET_DELAY_MS));
       });
   }
 

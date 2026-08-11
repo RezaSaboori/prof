@@ -150,33 +150,33 @@
 
 </form>
 <div class="webhook-test-wrapper">
+  <h3 class="webhook-test-title">Mode0</h3>
   <div class="webhook-test-controls">
     <input
-      id="webhookTestIdInput"
       class="webhook-test-input"
+      data-field="id"
       type="text"
       placeholder="ID"
       aria-label="Webhook payload ID"
       autocomplete="off"
     >
     <input
-      id="webhookTestRouteInput"
       class="webhook-test-input"
+      data-field="route"
       type="text"
       placeholder="Route"
       aria-label="Webhook payload route"
       autocomplete="off"
     >
     <input
-      id="webhookTestInputInput"
       class="webhook-test-input"
+      data-field="input"
       type="text"
       placeholder="Input"
       aria-label="Webhook payload input"
       autocomplete="off"
     >
     <button
-      id="webhookTestBtn"
       class="btn btn-webhook-test"
       type="button"
       data-url="{% url 'dashboard:webhook_trigger' %}"
@@ -184,7 +184,121 @@
       Test Btn
     </button>
   </div>
-  <div id="webhookTestOutput" class="webhook-test-output" hidden></div>
+  <div class="webhook-test-output" data-field="output" hidden></div>
+</div>
+
+<div class="webhook-test-wrapper">
+  <h3 class="webhook-test-title">Mode1</h3>
+  <div class="webhook-test-controls">
+    <input
+      class="webhook-test-input"
+      data-field="id"
+      type="text"
+      placeholder="ID"
+      aria-label="Webhook payload ID"
+      autocomplete="off"
+    >
+    <input
+      class="webhook-test-input"
+      data-field="route"
+      type="text"
+      placeholder="Route"
+      aria-label="Webhook payload route"
+      autocomplete="off"
+    >
+    <input
+      class="webhook-test-input"
+      data-field="input"
+      type="text"
+      placeholder="Input"
+      aria-label="Webhook payload input"
+      autocomplete="off"
+    >
+    <button
+      class="btn btn-webhook-test"
+      type="button"
+      data-url="{% url 'dashboard:webhook_trigger_mode1' %}"
+    >
+      Test Btn
+    </button>
+  </div>
+  <div class="webhook-test-output" data-field="output" hidden></div>
+</div>
+
+<div class="webhook-test-wrapper">
+  <h3 class="webhook-test-title">Mode2</h3>
+  <div class="webhook-test-controls">
+    <input
+      class="webhook-test-input"
+      data-field="id"
+      type="text"
+      placeholder="ID"
+      aria-label="Webhook payload ID"
+      autocomplete="off"
+    >
+    <input
+      class="webhook-test-input"
+      data-field="route"
+      type="text"
+      placeholder="Route"
+      aria-label="Webhook payload route"
+      autocomplete="off"
+    >
+    <input
+      class="webhook-test-input"
+      data-field="input"
+      type="text"
+      placeholder="Input"
+      aria-label="Webhook payload input"
+      autocomplete="off"
+    >
+    <button
+      class="btn btn-webhook-test"
+      type="button"
+      data-url="{% url 'dashboard:webhook_trigger_mode2' %}"
+    >
+      Test Btn
+    </button>
+  </div>
+  <div class="webhook-test-output" data-field="output" hidden></div>
+</div>
+
+<div class="webhook-test-wrapper">
+  <h3 class="webhook-test-title">Mode3</h3>
+  <div class="webhook-test-controls">
+    <input
+      class="webhook-test-input"
+      data-field="id"
+      type="text"
+      placeholder="ID"
+      aria-label="Webhook payload ID"
+      autocomplete="off"
+    >
+    <input
+      class="webhook-test-input"
+      data-field="route"
+      type="text"
+      placeholder="Route"
+      aria-label="Webhook payload route"
+      autocomplete="off"
+    >
+    <input
+      class="webhook-test-input"
+      data-field="input"
+      type="text"
+      placeholder="Input"
+      aria-label="Webhook payload input"
+      autocomplete="off"
+    >
+    <button
+      class="btn btn-webhook-test"
+      type="button"
+      data-url="{% url 'dashboard:webhook_trigger_mode3' %}"
+    >
+      Test Btn
+    </button>
+  </div>
+  <div class="webhook-test-output" data-field="output" hidden></div>
 </div>
 {% endblock %}
 
