@@ -714,12 +714,26 @@
         min-width: 0;
     }
 
+
+
     .job-card__header {
         grid-template-areas:
-            "logo date source"
-            "company company company";
+            "logo logo  source"
+            "company company company"
+            "date date date";
+        justify-content: space-between;
+        text-align: center;
         row-gap: var(--spacing-sm);
     }
+
+    .job-card__company{
+        color: var(--color-gray7);
+        text-align: center;
+        background-color: rgb(from var(--color-gray1) r g b / 0.6);
+        padding: var(--spacing-sm);
+        border-radius: var(--border-radius-container-xs);
+    }
+
 
     .job-card__footer {
         flex-direction: column;
