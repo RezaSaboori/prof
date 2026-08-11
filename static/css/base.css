@@ -93,7 +93,6 @@
     --font-family-nunito: 'Nunito', sans-serif;
     --font-family-base: var(--font-family-nunito);
     --font-family-variable: var(--font-family-inter);
-    --font-size-base: 16px;        /* readability floor — never below 16px */
     --line-height-base: 1.5;       /* >= 1.5 for accessibility */
 
     /* ---- Accent ---- */
@@ -118,7 +117,6 @@ h3, h4, h5, h6, p, span, div, li, a, button, input, textarea, select {
 }
 
 /* Readability floor — applies at every breakpoint */
-html { font-size: var(--font-size-base); }
 body { line-height: var(--line-height-base); }
 
 

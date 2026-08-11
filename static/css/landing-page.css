@@ -864,6 +864,7 @@ body.hero-scrolled .hero-scroll-indicator {
         padding: var(--spacing-4xl) var(--spacing-xl);
     }
 
+
     .hero-content,
     .hero-subtitle {
         max-width: 100%;
@@ -894,7 +895,7 @@ body.hero-scrolled .hero-scroll-indicator {
 
     .section-title,
     .cta-title {
-        font-size: calc(var(--font-size-base) * 2);
+        font-size: 2rem;
         line-height: var(--line-height-base);
     }
 
@@ -904,12 +905,12 @@ body.hero-scrolled .hero-scroll-indicator {
     }
 
     .section-body {
-        font-size: var(--font-size-base);
+        font-size: 1rem;
         line-height: var(--line-height-base);
     }
 
     .section-subtitle {
-        font-size: calc(var(--font-size-base) * 1.25);
+        font-size: 1.25rem;
         margin-top: var(--spacing-2xl);
         margin-bottom: var(--spacing-lg);
     }
@@ -924,10 +925,11 @@ body.hero-scrolled .hero-scroll-indicator {
     }
 
     .hero-title {
-        font-size: calc(var(--font-size-base) * 2.5);
+        font-size: 2.5rem;
         line-height: var(--line-height-base);
         margin-bottom: var(--spacing-xl);
         overflow-wrap: break-word;
+        text-align: center !important;
     }
 
     .hero-title .line {
@@ -936,9 +938,12 @@ body.hero-scrolled .hero-scroll-indicator {
 
     .terminal-line {
         flex-wrap: wrap;
-        max-width: 100%;
+        width: 100%;
         padding: var(--spacing-sm) var(--spacing-md);
-        font-size: calc(var(--font-size-base) * 2);
+        font-size: 2rem;
+        text-align: center !important;
+        justify-content: center !important;
+        align-items: center !important;
     }
 
     .next-move::after {
@@ -951,7 +956,7 @@ body.hero-scrolled .hero-scroll-indicator {
     }
 
     .hero-subtitle {
-        font-size: var(--font-size-base);
+        font-size: 1rem;
         line-height: var(--line-height-base);
         margin-bottom: var(--spacing-2xl);
     }
@@ -985,7 +990,7 @@ body.hero-scrolled .hero-scroll-indicator {
     }
 
     .dashboard-label {
-        font-size: calc(var(--font-size-base) * 0.875);
+        font-size: 0.875rem;
     }
 
     .dashboard-body {
@@ -1014,11 +1019,11 @@ body.hero-scrolled .hero-scroll-indicator {
     }
 
     .score-value {
-        font-size: var(--font-size-base);
+        font-size: 1rem;
     }
 
     .score-label {
-        font-size: calc(var(--font-size-base) * 0.75);
+        font-size: 0.75rem;
     }
 
     .outreach-preview p {
@@ -1053,19 +1058,19 @@ body.hero-scrolled .hero-scroll-indicator {
     }
 
     .stat-number {
-        font-size: calc(var(--font-size-base) * 2);
+        font-size: 2rem;
     }
 
     .step-title,
     .feature-title {
-        font-size: calc(var(--font-size-base) * 1.125);
+        font-size: 1.125rem;
     }
 
     .step-body,
     .feature-body,
     .persona-desc,
     .trust-item p {
-        font-size: var(--font-size-base);
+        font-size: 1rem;
         line-height: var(--line-height-base);
     }
 
@@ -1085,11 +1090,11 @@ body.hero-scrolled .hero-scroll-indicator {
     }
 
     .tier-amount {
-        font-size: calc(var(--font-size-base) * 2.25);
+        font-size: 2.25rem;
     }
 
     .persona-quote {
-        font-size: calc(var(--font-size-base) * 1.125);
+        font-size: 1.125rem;
     }
 
     .trust-grid {
@@ -1101,7 +1106,7 @@ body.hero-scrolled .hero-scroll-indicator {
     }
 
     .trust-icon {
-        font-size: calc(var(--font-size-base) * 1.5);
+        font-size: 1.5rem;
         margin-bottom: var(--spacing-sm);
     }
 
