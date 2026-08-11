@@ -228,8 +228,8 @@
 
 @keyframes dashboardIslandMorph {
     0%   { max-width: 0;     opacity: 0; filter: blur(4px); transform: scale(0.85) translateX(-4px); }
-    40%  { max-width: 200px; opacity: 0; filter: blur(4px); transform: scale(0.85) translateX(-4px); }
-    100% { max-width: 200px; opacity: 1; filter: blur(0px); transform: scale(1) translateX(0); }
+    40%  { max-width: 260px; opacity: 0; filter: blur(4px); transform: scale(0.85) translateX(-4px); }
+    100% { max-width: 260px; opacity: 1; filter: blur(0px); transform: scale(1) translateX(0); }
 }
 
 @media (max-width: 980px) {
