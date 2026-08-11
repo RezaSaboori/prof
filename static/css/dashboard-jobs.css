@@ -83,8 +83,15 @@
 /* Card Header */
 .job-card__header {
     display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.job-card__header-row {
+    display: flex;
     justify-content: space-between;
-    align-items: top;
+    align-items: center;
+    flex-wrap: wrap;
     gap: var(--spacing-md);
 }
 
@@ -106,7 +113,6 @@
     color: var(--color-gray11);
     line-height: 1.3;
     overflow-wrap: break-word;
-    margin-bottom: var(--spacing-xs);
 }
 
 .job-card__date {
@@ -701,6 +707,15 @@
 
     .jobs-grid .job-card {
         margin-bottom: var(--spacing-lg);
+    }
+    
+    .jobs-toolbar {
+        justify-content: stretch;
+    }
+
+    .jobs-sort {
+        width: 100%;
+        min-width: 0;
     }
     
     .job-card__footer {

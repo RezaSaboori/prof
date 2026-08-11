@@ -217,7 +217,7 @@
         }
 
         const MIN_CARD_WIDTH = 380;
-        const MOBILE_BREAKPOINT = 768;
+        const MOBILE_BREAKPOINT = 980;
 
         function currentGap() {
             const name = window.innerWidth <= MOBILE_BREAKPOINT ? '--spacing-lg' : '--spacing-xl';
@@ -233,7 +233,9 @@
             }
             const gap = currentGap();
             const gridWidth = grid.clientWidth;
-            const columns = Math.max(1, Math.floor((gridWidth + gap) / (MIN_CARD_WIDTH + gap)));
+            const columns = window.innerWidth <= MOBILE_BREAKPOINT
+                ? 1
+                : Math.max(1, Math.floor((gridWidth + gap) / (MIN_CARD_WIDTH + gap)));
             const cardWidth = (gridWidth - (columns - 1) * gap) / columns;
             const columnHeights = [];
             for (let i = 0; i < columns; i++) {
