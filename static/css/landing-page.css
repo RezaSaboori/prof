@@ -1040,6 +1040,10 @@ body.hero-scrolled .hero-scroll-indicator {
         padding: var(--spacing-sm) var(--spacing-lg);
     }
 
+    .persona-label{
+        width:100%;
+        text-align: center;
+    }
     .stat-strip,
     .steps-grid,
     .features-grid,
@@ -1091,7 +1095,11 @@ body.hero-scrolled .hero-scroll-indicator {
         height: var(--spacing-xl);
     }
 
-    .tier-amount {
+    .feature-tag {
+        border-radius: var(--border-radius-container-xs);
+        width:100%
+    }
+        .tier-amount {
         font-size: 2.25rem;
     }
 
