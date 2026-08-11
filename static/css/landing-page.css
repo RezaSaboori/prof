@@ -885,6 +885,7 @@ body.hero-scrolled .hero-scroll-indicator {
 }
 
 @media (max-width: 980px) {
+
     .page-shell {
         overflow-x: hidden;
     }
@@ -895,8 +896,9 @@ body.hero-scrolled .hero-scroll-indicator {
 
     .section-title,
     .cta-title {
-        font-size: 2rem;
+        font-size: 1.5rem;
         line-height: var(--line-height-base);
+        text-align: center;
     }
 
     .section-title br,
@@ -1119,5 +1121,9 @@ body.hero-scrolled .hero-scroll-indicator {
 
     .cta-title {
         margin-bottom: var(--spacing-xl);
+    }
+
+    .btn-xl span {
+        font-size: 1rem;
     }
 }
