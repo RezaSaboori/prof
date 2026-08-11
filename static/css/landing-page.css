@@ -855,6 +855,33 @@ body.hero-scrolled .hero-scroll-indicator {
     font-weight: 600;
 }
 
+@media (max-width: 1024px) {
+    .hero-section {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--spacing-3xl);
+        max-width: 100%;
+        min-height: auto;
+        padding: var(--spacing-4xl) var(--spacing-xl);
+    }
+
+    .hero-content,
+    .hero-subtitle {
+        max-width: 100%;
+    }
+
+    .hero-visual {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .pricing-tiers {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .trust-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
 
 @media (max-width: 980px) {
     .page-shell {
@@ -1065,12 +1092,12 @@ body.hero-scrolled .hero-scroll-indicator {
         font-size: calc(var(--font-size-base) * 1.125);
     }
 
-    .trust-section {
-        display:none;
-    }
-
     .trust-grid {
         padding: var(--spacing-lg);
+    }
+
+    .trust-section {
+        display: none;
     }
 
     .trust-icon {
