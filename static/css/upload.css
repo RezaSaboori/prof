@@ -116,6 +116,10 @@
     opacity: 0.8;
 }
 
+.upload-hero__break-desktop {
+    display: block;
+}
+
 .upload-hero__break-mobile {
     display: none;
 }
@@ -518,6 +522,7 @@
     }
 
     .upload-hero__drag-label {
+        width: 100%;
         font-size: clamp(10px, 4.2vw, 22px);
         white-space: nowrap;
     }
@@ -527,13 +532,13 @@
     }
 
     .upload-hero__break-mobile {
-        display: inline;
+        display: block;
     }
 
     .upload-choose-btn {
         display: block;
-        width: 100%;
-        font-size: 22px;
+        width: 100% !important;
+        font-size: 16px;
         padding: var(--spacing-sm) 0;
         text-align: center;
     }
