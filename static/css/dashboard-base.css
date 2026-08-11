@@ -313,7 +313,7 @@
         flex: 1;
         flex-direction: row;
         justify-content: space-between;
-        padding: var(--spacing-xs);
+        padding: 6.5px;
         overflow-y: visible;
     }
 
@@ -321,6 +321,7 @@
     /* Zero the link gap so icon-only items stay perfectly pill-shaped */
     .dashboard-island__nav a {
         gap: 0;
+        padding: 10px;
     }
 
 
@@ -368,7 +369,7 @@
     }
 
     .dashboard-island__signout a {
-        padding: 6.5px 6.5px !important;
+        padding: 10px !important;
     }
 
     .dashboard-island__signout a span {
@@ -405,7 +406,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 6.5px 6.5px !important;
+        padding: 10px !important;
         text-decoration: none;
         border-radius: var(--border-radius-pill);
         transition: background 0.15s;
