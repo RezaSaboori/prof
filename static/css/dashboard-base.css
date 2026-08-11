@@ -239,7 +239,7 @@
 
     .dashboard-layout {
         flex-direction: column;
-        padding: var(--spacing-sm);
+        padding: var(--spacing-md);
         padding-bottom: calc(var(--spacing-5xl) + var(--spacing-md));
     }
 
