@@ -174,23 +174,23 @@ body { line-height: var(--line-height-base); }
 
 
 
-/*
-============================================================
-   MOBILE VARIANT  ( <= 768px )
+
+/* ============================================================
+   MOBILE VARIANT  ( ≤ 768px )
    ------------------------------------------------------------
-   Spacing range  4 -> 48(was 4 -> 64)
-   Item radius    0 -> 20(was 0 -> 20)
-   Container rad. 20 -> 48(was 24 -> 56)
-   Elevation      5-13%    (was 8-20%)  - flatter for small screens
+   Spacing range  4 → 48(was 4 → 64)
+   Item radius    0 → 20(was 0 → 20)
+   Container rad. 20→ 48(was 24 → 56)
+   Elevation      5–13%    (was 8–20%)  — flatter for small screens
    Content pad    16px floor, touch target 44px floor
-   ============================================================
+   ============================================================ */
 @media (max-width: 768px) {
     
     :root {
         --spacing-xs: 4px;
         --spacing-sm: 8px;
-        --spacing-md: 12px;
-        --spacing-lg: 16px;
+        --spacing-md: 16px;
+        --spacing-lg: 20px;
         --spacing-xl: 24px;
         --spacing-2xl: 32px;
         --spacing-3xl: 36px;
@@ -203,14 +203,14 @@ body { line-height: var(--line-height-base); }
         --border-radius-item-lg: 12px;
         --border-radius-item-xl: 20px;
 
-        [comment] Border radius: containers 20px -> 48px
+        /* Border radius: containers 20px → 48px */
         --border-radius-container-xs: 20px;
         --border-radius-container-sm: 24px;
         --border-radius-container-md: 32px;
         --border-radius-container-lg: 40px;
         --border-radius-container-xl: 48px;
 
-        [comment] Flatter elevation for mobile: opacity 5% -> 13%
+        /* Flatter elevation for mobile: opacity 5% → 13% */
         --elevation-1: 0 1px 3px 0
             color-mix(in srgb, var(--color-gray12) 5%, transparent);
 
@@ -223,15 +223,15 @@ body { line-height: var(--line-height-base); }
         --elevation-4: 0 10px 20px 0
             color-mix(in srgb, var(--color-gray12) 13%, transparent);
 
-        [comment] Mobile layout and interaction floors
+        /* Mobile layout and interaction floors */
         --content-padding-min: 16px;
         --touch-target-min: 44px;
     }
 
-    [comment] Narrow scrollbar for hybrid / narrow desktop browsers
+    /* Narrow scrollbar for hybrid / narrow desktop browsers */
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
 }
-*/
+
