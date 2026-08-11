@@ -572,7 +572,7 @@ body.hero-scrolled .hero-scroll-indicator {
     place-items: center;
     background: linear-gradient(135deg, color-mix(in srgb, var(--color-blue) 12%, transparent), color-mix(in srgb, var(--color-teal) 8%, transparent));
     color: var(--accent-dark);
-    border-radius: var(--border-radius-item-md);
+    border-radius: var(--border-radius-container-xs);
     margin-bottom: var(--spacing-lg);
 }
 
