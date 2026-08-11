@@ -898,7 +898,7 @@ body {
     .site-header {
         position: fixed;
         top: auto;
-        bottom: var(--spacing-md);
+        bottom: var(--spacing-sm);
         left: var(--spacing-md);
         right: var(--spacing-md);
         display: flex;
@@ -909,7 +909,7 @@ body {
     .header-container {
         width: fit-content;
         margin: 0;
-        padding: var(--spacing-sm) 0 !important;
+        padding: 0 0 !important;
         gap: var(--spacing-sm);
         background-image: none;
         backdrop-filter: none;
@@ -954,7 +954,7 @@ body {
     }
 
     .site-header .dashboard-island__logo a {
-        padding: 6.5px 6.5px;
+        padding: 10px 10px;
         border-radius: var(--border-radius-pill);
         transition: background 0.15s;
     }
@@ -1262,7 +1262,7 @@ body {
     }
 
     .site-footer {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-md);
     }
 }
 
