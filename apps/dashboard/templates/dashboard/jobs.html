@@ -42,8 +42,10 @@
                 <div class="job-card__logo glass" data-logo-link="{{ job.link }}">
                     <span class="job-card__logo-fallback">{{ job.company|first|upper }}</span>
                 </div>
-                <h2 class="job-card__company">{{ job.company }}</h2>
-                <p class="job-card__date">{{ job.created_at|relative_date }}</p>
+                <div class="job-card__info">
+                    <h2 class="job-card__company">{{ job.company }}</h2>
+                    <p class="job-card__date">{{ job.created_at|relative_date }}</p>
+                </div>
                 <a href="{{ job.link }}" target="_blank" rel="noopener noreferrer" class="job-card__source-btn glass">
                     <span>Source</span>
                     <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -86,9 +86,9 @@
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-areas:
-        "logo company source"
-        "logo date    source";
-    align-items: center;
+        "logo info source"
+        "logo info source";
+    align-items: start;
     column-gap: var(--spacing-md);
     row-gap: 2px;
 }
@@ -101,8 +101,12 @@
     grid-area: source;
 }
 
+.job-card__header .job-card__info {
+    grid-area: info;
+    min-width: 0;
+}
+
 .job-card__company {
-    grid-area: company;
     font-size: 16px;
     font-weight: 500;
     color: var(--color-gray11);
@@ -111,7 +115,6 @@
 }
 
 .job-card__date {
-    grid-area: date;
     font-size: 12px;
     font-weight: 400;
     color: var(--color-gray9);
@@ -719,19 +722,28 @@
     .job-card__header {
         grid-template-areas:
             "logo logo  source"
-            "company company company"
-            "date date date";
+            "info info info";
         justify-content: space-between;
         text-align: center;
-        row-gap: var(--spacing-sm);
+        row-gap: var(--spacing-md);
     }
 
-    .job-card__company{
-        color: var(--color-gray7);
-        text-align: center;
+    .job-card__info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs);
         background-color: rgb(from var(--color-gray1) r g b / 0.6);
         padding: var(--spacing-sm);
         border-radius: var(--border-radius-container-xs);
+    }
+
+    .job-card__company{
+        text-align: center;
+    }
+
+    .job-card__date {
+        text-align: center;
     }
 
 
