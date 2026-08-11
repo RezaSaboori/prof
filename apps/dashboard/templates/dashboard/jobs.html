@@ -39,21 +39,17 @@
         {% for job in jobs %}
         <div class="job-card {% if job.paid %}opal-glass{% else %}glass{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}">
             <div class="job-card__header">
-                <div class="job-card__header-row">
-                    <div class="job-card__identity">
-                        <div class="job-card__logo glass" data-logo-link="{{ job.link }}">
-                            <span class="job-card__logo-fallback">{{ job.company|first|upper }}</span>
-                        </div>
-                        <p class="job-card__date">{{ job.created_at|relative_date }}</p>
-                    </div>
-                    <a href="{{ job.link }}" target="_blank" rel="noopener noreferrer" class="job-card__source-btn glass">
-                        <span>Source</span>
-                        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15 13.5V9M15 9H10.5M15 9L9.00019 14.9999M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
+                <div class="job-card__logo glass" data-logo-link="{{ job.link }}">
+                    <span class="job-card__logo-fallback">{{ job.company|first|upper }}</span>
                 </div>
                 <h2 class="job-card__company">{{ job.company }}</h2>
+                <p class="job-card__date">{{ job.created_at|relative_date }}</p>
+                <a href="{{ job.link }}" target="_blank" rel="noopener noreferrer" class="job-card__source-btn glass">
+                    <span>Source</span>
+                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 13.5V9M15 9H10.5M15 9L9.00019 14.9999M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
             </div>
             
             <div class="job-card__body">
