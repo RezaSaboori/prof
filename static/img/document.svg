@@ -1,7 +1,7 @@
 <svg
-  viewBox="5.75 3.75 12.5 16.5"
+  viewBox="0 0 16 16"
   xmlns="http://www.w3.org/2000/svg"
-  width="150"
+  width="200"
   height="200"
   fill="none"
   style="color: #f8f8f8;"
@@ -15,8 +15,8 @@
   </style>
 
   <rect
-    x="6.5"
-    y="4.5"
+    x="0.5"
+    y="0.5"
     width="11"
     height="15"
     rx="3"
@@ -26,7 +26,7 @@
   />
 
   <path
-    d="M9 9h6M9 12.5h3"
+    d="M3 5h6M3 8.5h3"
     fill="none"
     stroke="currentColor"
     stroke-linecap="round"

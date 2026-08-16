@@ -471,6 +471,7 @@
     animation: upload-hero-content-enter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+
 /* ── Upload hero reveal on first load (hidden until stage is known) ── */
 
 @keyframes upload-hero-reveal {
@@ -538,12 +539,22 @@
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        gap: var(--spacing-md);
+        gap: var(--spacing-sm);
     }
 
     .upload-hero__drag-text {
         order: 2;
         text-align: center;
+        display: flex;
+        font-weight: 500;
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: center;
+        gap: var(--spacing-xs);
+    }
+
+    .upload-hero__or {
+        order: -1;
     }
 
     .upload-hero__break-desktop {
@@ -556,8 +567,11 @@
 
     .upload-choose-btn {
         order: 1;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100% !important;
+        height: calc(1.5 * (1.5 * var(--spacing-sm) + 1.5em + 1.5 * var(--border-width-thin)));
         font-size: 16px;
         padding: var(--spacing-sm) 0;
         text-align: center;

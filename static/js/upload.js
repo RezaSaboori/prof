@@ -59,7 +59,7 @@
     // Maps each named upload hero status to the drag-label HTML and hints spans.
     const UPLOAD_HERO_CONTENT = {
         [UPLOAD_HERO_STATUS.UPLOADING]: {
-            label: '<span class="upload-hero__drag-text">Drag &amp; Drop here<span class="upload-hero__break-desktop"></span> or</span><span class="upload-hero__break-mobile"></span> <button type="button" class="upload-choose-btn" id="resumeUploadBtn" aria-label="Choose resume file to upload">choose file</button>',
+            label: '<span class="upload-hero__drag-text">Drag &amp; Drop here<span class="upload-hero__break-desktop"></span><span class="upload-hero__or">or</span></span><span class="upload-hero__break-mobile"></span> <button type="button" class="upload-choose-btn" id="resumeUploadBtn" aria-label="Choose resume file to upload">choose file</button>',
             hints: [
                 'Upload your Resume in PDF format (max 15 MB).',
                 'Our system will automatically extract your information — this takes a few minutes. Come back here to review and confirm before our agents start working.',
