@@ -529,7 +529,11 @@
     }
 
     .upload-hero {
-        padding: var(--spacing-md) var(--spacing-md);
+        padding: var(--spacing-lg) var(--spacing-lg);
+    }
+
+    .upload-hero__top-row {
+        margin-bottom: var(--spacing-sm);
     }
 
     .upload-hero__drag-label {
@@ -571,10 +575,14 @@
         align-items: center;
         justify-content: center;
         width: 100% !important;
-        height: calc(1.5 * (1.5 * var(--spacing-sm) + 1.5em + 1.5 * var(--border-width-thin)));
         font-size: 16px;
-        padding: var(--spacing-sm) 0;
+        padding: var(--spacing-md) 0;
         text-align: center;
+    }
+
+    .upload-hero__hints {
+       margin: 0;
+       padding: 0;
     }
 }
 
