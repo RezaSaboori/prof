@@ -54,7 +54,7 @@
 .upload-hero__top-row {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: top;
     gap: var(--spacing-xl);
     width: 100%;
     margin-bottom: var(--spacing-xl);
@@ -535,6 +535,15 @@
         width: 100%;
         font-size: clamp(10px, 4.2vw, 22px);
         white-space: nowrap;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+
+    .upload-hero__drag-text {
+        order: 2;
+        text-align: center;
     }
 
     .upload-hero__break-desktop {
@@ -542,10 +551,11 @@
     }
 
     .upload-hero__break-mobile {
-        display: block;
+        display: none;
     }
 
     .upload-choose-btn {
+        order: 1;
         display: block;
         width: 100% !important;
         font-size: 16px;
