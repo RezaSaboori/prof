@@ -695,6 +695,12 @@
 
 /* Responsive */
 @media (max-width: 980px) {
+
+    .jobs-title {
+        font-family: var(--font-family-variable);
+        font-size: 2.5rem !important;
+    }
+
     .jobs-container {
         padding: 0;
     }

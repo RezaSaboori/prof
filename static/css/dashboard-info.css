@@ -457,5 +457,20 @@ DASHBOARD INFO — Page-specific styles
 }
 
 .undo-btn__text {
-    white-space: nowrap;
+   white-space: nowrap;
+}
+
+/* ── Responsive: form actions ── */
+@media (max-width: 980px) {
+   .info-form__actions {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+   }
+
+   #saveInfoBtn,
+   #undoInfoBtn {
+      width: 100%;
+      justify-content: center;
+   }
 }
