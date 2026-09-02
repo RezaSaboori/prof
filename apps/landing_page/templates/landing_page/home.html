@@ -10,75 +10,42 @@
 
   <main>
     <section class="section hero-section" id="hero">
-      <div class="hero-content">
-        <h1 class="hero-title">
-          <span class="line strike-line">
-            <span class="word">Stop</span>
-            <span class="word">Applying.</span>
-          </span>
+      <div class="hero-glass-stage">
+        <canvas id="heroGlassCanvas" class="hero-glass-canvas"></canvas>
+        <div id="heroGlassFallback" class="hero-glass-fallback">WEBGL NOT SUPPORTED</div>
 
-          <span class="line terminal-line">
-            <span class="word">Start</span>
-            <span class="word">Engineering</span>
-          </span>
+        <svg class="hero-arc-text hero-arc-text--top" viewBox="0 0 300 300" aria-hidden="true">
+          <path id="heroArcTop" d="M 40,260 A 150,150 0 0 1 260,40" fill="none" />
+          <text>
+            <textPath href="#heroArcTop" startOffset="50%" text-anchor="middle">Who You Are</textPath>
+          </text>
+        </svg>
 
-          <span class="line gradient-line">
-            <span class="word">Your</span>
-            <span class="next-move">
-              <span class="word">Next</span>
-              <span class="word">Move.</span>
-            </span>
-          </span>
-        </h1>
+        <svg class="hero-arc-text hero-arc-text--bottom" viewBox="0 0 260 260" aria-hidden="true">
+          <path id="heroArcBottom" d="M 210,40 A 150,150 0 0 0 210,220" fill="none" />
+          <text>
+            <textPath href="#heroArcBottom" startOffset="50%" text-anchor="middle">What They Need</textPath>
+          </text>
+        </svg>
 
-        <p class="hero-subtitle">
-          Prof analyzes your background, continuously hunts executive-grade roles, and delivers
-          bespoke application packages — tailored resume, cover letter, and a direct path to the
-          hiring manager — while you focus on your actual work.
-        </p>
-        <div class="hero-actions">
-          <a href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'social:begin' 'google-oauth2' %}{% endif %}" class="btn btn-xl blue-glass hero-cta-primary">
-            <span>Get Your First Match Free</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </a>
+        <div class="hero-copy">
+          <span class="hero-eyebrow">We Will Find</span>
+          <h1 class="hero-heading">Where You are Needed</h1>
         </div>
       </div>
 
-      <div class="hero-visual glass">
-          <div class="dashboard-header">
-            <div class="window-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <span class="dashboard-label">Prof Matching Engine</span>
-          </div>
-
-          <div class="dashboard-body">
-            <div class="match-card">
-              <div class="match-top">
-                <div class="match-info">
-                  <h4>VP, Product Strategy</h4>
-                  <p>Series C Fintech • Hybrid • New York</p>
-                </div>
-                <div class="match-score">
-                  <span class="score-value">92%</span>
-                  <span class="score-label">Match</span>
-                </div>
-              </div>
-              <a href="{% url 'social:begin' 'google-oauth2' %}" class="check-position-btn">Check the Position</a>
-            </div>
-
-            <div class="outreach-preview">
-              <h4>Suggested Email Massage</h4>
-              <p>
-                I noticed your team is scaling platform strategy after the recent expansion. My experience leading regulated product rollouts may be highly relevant to what you're building.
-                I've spent the past 12 years driving product strategy at the intersection of financial services and technology — leading cross...
-              </p>
-            </div>
-          </div>
+      <p class="hero-subtitle">
+        Prof analyzes your background, continuously hunts executive-grade roles, and delivers
+        bespoke application packages — tailored resume, cover letter, and a direct path to the
+        hiring manager — while you focus on your actual work.
+      </p>
+      <div class="hero-actions">
+        <a href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'social:begin' 'google-oauth2' %}{% endif %}" class="btn btn-xl blue-glass hero-cta-primary">
+          <span>Get Your First Match Free</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
       </div>
 
       <a href="#problem" class="hero-scroll-indicator" aria-label="Read more">
@@ -438,8 +405,10 @@
 
 </div>
 
+<script src="{% static 'js/hero-glass.js' %}" defer></script>
+
 <script>
-'use strict';
+"use strict";
 
 const debounce = (func, wait = 100) => {
   let timeout;
