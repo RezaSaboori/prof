@@ -512,6 +512,77 @@ void main(){
   let mouseTargetPresence = 0;
   let mousePresence = 0;
 
+  const heroCopyEl = document.querySelector('.hero-copy');
+  const arcTopSvg = document.querySelector('.hero-arc-text--top');
+  const arcBottomSvg = document.querySelector('.hero-arc-text--bottom');
+  const arcTopPath = document.getElementById('heroArcTop');
+  const arcBottomPath = document.getElementById('heroArcBottom');
+
+  /* Tunable overlay anchoring — all distances are proportional to the
+     ball/pill's OWN radius (computed from the exact same computeLayout()
+     data the shader uses), so the arcs and copy block stay correctly
+     placed "around the objects" at any screen size. */
+  const ARC_TOP_GAP_PX       = 22;
+  const ARC_TOP_START_DEG    = 200;
+  const ARC_TOP_END_DEG      = 340;
+  const ARC_BOTTOM_GAP_PX    = 22;
+  const ARC_BOTTOM_START_DEG = 205;
+  const ARC_BOTTOM_END_DEG   = 100;
+  const HERO_COPY_OFFSET_X   = 0.55;
+  const HERO_COPY_OFFSET_Y   = 0.65;
+
+  function polarPoint(cx, cy, r, deg) {
+    const rad = deg * Math.PI / 180;
+    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+  }
+
+  function layoutOverlay(rect) {
+    const aspect = rect.width / rect.height;
+    const layout = computeLayout(aspect);
+    const halfH = rect.height * 0.5;
+
+    const ballCx = layout.b1[0] * halfH + rect.width * 0.5;
+    const ballCy = layout.b1[1] * halfH + rect.height * 0.5;
+    const ballR  = layout.rB * halfH;
+
+    const pillCx = layout.p1[0] * halfH + rect.width * 0.5;
+    const pillCy = layout.p1[1] * halfH + rect.height * 0.5;
+    const pillR  = layout.rP * halfH;
+    const pillH  = layout.hP * halfH;
+    const pillBottomCy = pillCy + pillH;
+
+    if (arcTopSvg && arcTopPath) {
+      const size = Math.max(ballR * 2 + ARC_TOP_GAP_PX * 2, 10);
+      arcTopSvg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+      arcTopSvg.style.width = size + 'px';
+      arcTopSvg.style.height = size + 'px';
+      arcTopSvg.style.left = (ballCx - size / 2) + 'px';
+      arcTopSvg.style.top = (ballCy - size / 2) + 'px';
+      const r = ballR + ARC_TOP_GAP_PX;
+      const [x1, y1] = polarPoint(size / 2, size / 2, r, ARC_TOP_START_DEG);
+      const [x2, y2] = polarPoint(size / 2, size / 2, r, ARC_TOP_END_DEG);
+      arcTopPath.setAttribute('d', `M ${x1},${y1} A ${r},${r} 0 0 1 ${x2},${y2}`);
+    }
+
+    if (arcBottomSvg && arcBottomPath) {
+      const size = Math.max(pillR * 2 + ARC_BOTTOM_GAP_PX * 2, 10);
+      arcBottomSvg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+      arcBottomSvg.style.width = size + 'px';
+      arcBottomSvg.style.height = size + 'px';
+      arcBottomSvg.style.left = (pillCx - size / 2) + 'px';
+      arcBottomSvg.style.top = (pillBottomCy - size / 2) + 'px';
+      const r = pillR + ARC_BOTTOM_GAP_PX;
+      const [x1, y1] = polarPoint(size / 2, size / 2, r, ARC_BOTTOM_START_DEG);
+      const [x2, y2] = polarPoint(size / 2, size / 2, r, ARC_BOTTOM_END_DEG);
+      arcBottomPath.setAttribute('d', `M ${x1},${y1} A ${r},${r} 0 0 0 ${x2},${y2}`);
+    }
+
+    if (heroCopyEl) {
+      heroCopyEl.style.left = (pillCx + pillR * HERO_COPY_OFFSET_X) + 'px';
+      heroCopyEl.style.top = (pillCy + pillH * HERO_COPY_OFFSET_Y) + 'px';
+    }
+  }
+
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect();
     DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -522,6 +593,7 @@ void main(){
     rtComposite = makeTarget(W, H);
     rtA = makeTarget(W >> 1, H >> 1);
     rtB = makeTarget(W >> 1, H >> 1);
+    layoutOverlay(rect);
   }
 
   /* --------------------------- Layout & Natural Motion ------------------------ */

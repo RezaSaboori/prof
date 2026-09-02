@@ -33,26 +33,31 @@
 
 
 /* HERO */
-.hero-section {
+#hero.hero-section {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-2xl);
-    margin: 0 auto var(--spacing-xl) auto;
-    max-width: 1280px;
-    min-height: calc(100svh - var(--spacing-5xl));
-    padding: var(--spacing-5xl);
+    width: 100vw;
+    max-width: none;
+    left: 50%;
+    margin: 0 0 0 -50vw;
+    height: 100svh;
+    min-height: 100svh;
+    padding: var(--spacing-2xl) var(--spacing-2xl) calc(var(--spacing-4xl) + 64px);
+    gap: var(--spacing-lg);
     background-color: var(--color-gray12);
-    border-radius: var(--border-radius-container-lg);
+    border-radius: 0;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .hero-glass-stage {
     position: relative;
     width: 100%;
+    max-width: 1280px;
     flex: 1 1 auto;
-    min-height: 420px;
+    min-height: 0;
 }
 
 .hero-glass-canvas {
@@ -85,24 +90,8 @@
     letter-spacing: 0.02em;
 }
 
-.hero-arc-text--top {
-    top: 2%;
-    right: 18%;
-    width: 240px;
-    height: 240px;
-}
-
-.hero-arc-text--bottom {
-    bottom: 8%;
-    left: 2%;
-    width: 200px;
-    height: 200px;
-}
-
 .hero-copy {
     position: absolute;
-    left: 46%;
-    top: 58%;
     max-width: 420px;
 }
 
@@ -125,6 +114,7 @@
 }
 
 .hero-subtitle {
+    flex-shrink: 0;
     font-size: 18px;
     line-height: 1.7;
     color: var(--color-gray7);
@@ -134,6 +124,7 @@
 }
 
 .hero-actions {
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -144,10 +135,9 @@
 .hero-scroll-indicator {
     position: absolute;
     left: 50%;
-    bottom: var(--spacing-5xl);
+    bottom: var(--spacing-lg);
     transform: translateX(-50%);
     display: inline-flex;
-    margin-bottom: var(--spacing-md);
     color: var(--color-gray7);
     text-decoration: none;
     opacity: 1;
@@ -584,13 +574,9 @@ body.hero-scrolled .hero-scroll-indicator {
 }
 
 @media (max-width: 1024px) {
-    .hero-section {
-        gap: var(--spacing-3xl);
-        max-width: 100%;
-        min-height: auto;
-        padding: var(--spacing-4xl) var(--spacing-xl);
+    #hero.hero-section {
+        padding: var(--spacing-xl) var(--spacing-lg) calc(var(--spacing-4xl) + 56px);
     }
-
 
     .hero-subtitle {
         max-width: 100%;
@@ -646,13 +632,6 @@ body.hero-scrolled .hero-scroll-indicator {
 
     .hero-heading {
         font-size: 1.75rem;
-    }
-
-    .hero-copy {
-        left: 6%;
-        top: auto;
-        bottom: 6%;
-        max-width: calc(100% - 12%);
     }
 
     .hero-arc-text {
