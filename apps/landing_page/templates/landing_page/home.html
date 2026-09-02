@@ -5,45 +5,55 @@
 
 {% block meta_description %}Upload your resume. Prof handles the rest. AI-powered job sourcing, ATS-crushing documents, and precision outreach to decision-makers.{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/hero-glass.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="page-shell">
 
   <main>
     <section class="section hero-section" id="hero">
       <div class="hero-glass-stage">
-        <canvas id="heroGlassCanvas" class="hero-glass-canvas"></canvas>
-        <div id="heroGlassFallback" class="hero-glass-fallback">WEBGL NOT SUPPORTED</div>
+        <canvas id="gl" class="hero-glass-canvas"></canvas>
+        <div id="fallback" class="hero-glass-fallback">WEBGL NOT SUPPORTED</div>
 
-        <svg class="hero-arc-text hero-arc-text--top" viewBox="0 0 300 300" aria-hidden="true">
-          <path id="heroArcTop" d="M 40,260 A 150,150 0 0 1 260,40" fill="none" />
-          <text>
-            <textPath href="#heroArcTop" startOffset="50%" text-anchor="middle">Who You Are</textPath>
-          </text>
-        </svg>
+        <div id="stage">
+          <svg class="curved curved--desktop" viewBox="0 0 1980 1060" fill="none" aria-hidden="true">
+            <defs>
+              <path id="arcWho-d" d="M 716.76,93.24 A 261.1,261.1 0 0 1 969.4,235.2"/>
+              <path id="arcWhat-d" d="M 325.3,526 L 325.3,692 A 218.7,218.7 0 0 0 376.5,832.6 L 405.4,867.1"/>
+            </defs>
+            <text id="textWho-d" class="ct"><textPath id="tpWho-d" href="#arcWho-d" xlink:href="#arcWho-d" startOffset="4">Who You Are</textPath></text>
+            <text id="textWhat-d" class="ct"><textPath id="tpWhat-d" href="#arcWhat-d" xlink:href="#arcWhat-d" startOffset="4">What They Need</textPath></text>
+          </svg>
 
-        <svg class="hero-arc-text hero-arc-text--bottom" viewBox="0 0 260 260" aria-hidden="true">
-          <path id="heroArcBottom" d="M 210,40 A 150,150 0 0 0 210,220" fill="none" />
-          <text>
-            <textPath href="#heroArcBottom" startOffset="50%" text-anchor="middle">What They Need</textPath>
-          </text>
-        </svg>
+          <svg class="curved curved--mobile" viewBox="0 0 1060 1980" fill="none" aria-hidden="true">
+            <defs>
+              <path id="arcWho-m" d="M 589.7,256.7 A 338.5,338.5 0 0 1 928.3,476.0"/>
+              <path id="arcWhat-m" d="M 57,782 L 57,1040 C 57,1160 95,1262 192,1282"/>
+            </defs>
+            <text id="textWho-m" class="ct"><textPath id="tpWho-m" href="#arcWho-m" xlink:href="#arcWho-m" startOffset="4">Who You Are</textPath></text>
+            <text id="textWhat-m" class="ct"><textPath id="tpWhat-m" href="#arcWhat-m" xlink:href="#arcWhat-m" startOffset="4">What They Need</textPath></text>
+          </svg>
 
-        <div class="hero-copy">
-          <span class="hero-eyebrow">We Will Find</span>
-          <h1 class="hero-heading">Where You are Needed</h1>
+          <div class="headline headline--desktop">
+            <span class="pre"><span class="w">We</span> <span class="w">Will</span> <span class="w">Find</span></span><span class="big"><span class="w">Where</span> <span class="w">You</span> <span class="w">are</span> <span class="w">Needed</span></span>
+          </div>
+          <div class="headline headline--mobile">
+            <div class="pre"><span class="w">We</span> <span class="w">Will</span> <span class="w">Find</span></div>
+            <div class="big">
+              <div class="ln"><span class="w">Where</span></div>
+              <div class="ln"><span class="w">You</span> <span class="w">are</span></div>
+              <div class="ln"><span class="w">Needed</span></div>
+            </div>
+          </div>
 
-          <p class="hero-subtitle">
-            Prof analyzes your background, continuously hunts executive-grade roles, and delivers
-            bespoke application packages — tailored resume, cover letter, and a direct path to the
-            hiring manager — while you focus on your actual work.
-          </p>
-          <div class="hero-actions">
-            <a href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'social:begin' 'google-oauth2' %}{% endif %}" class="btn btn-xl blue-glass hero-cta-primary">
-              <span>Get Your First Match Free</span>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </a>
+          <p class="para para--desktop"><span class="jl">Prof analyzes your background, continuously hunts executive-grade</span><span class="jl">roles, and delivers bespoke application packages — tailored</span><span class="jl">resume, cover letter, and a direct path to the hiring manager —</span><span class="ln">while you focus on your actual work.</span></p>
+          <p class="para para--mobile"><span class="jl">Prof analyzes your background, continuously hunts executive-grade</span><span class="jl">roles, and delivers bespoke application packages — tailored resume,</span><span class="jl">cover letter, and a direct path to the hiring manager — while you</span><span class="ln">focus on your actual work.</span></p>
+
+          <div class="cta-wrap">
+            <a href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'social:begin' 'google-oauth2' %}{% endif %}" class="cta">Get Your First Match Free</a>
           </div>
         </div>
       </div>
@@ -405,6 +415,8 @@
 
 </div>
 
-<script src="{% static 'js/hero-glass.js' %}" defer></script>
+<script src="{% static 'js/hero-config.js' %}" defer></script>
+<script src="{% static 'js/hero-content.js' %}" defer></script>
+<script src="{% static 'js/hero-scene.js' %}" defer></script>
 <script src="{% static 'js/landing-page.js' %}" defer></script>
 {% endblock %}

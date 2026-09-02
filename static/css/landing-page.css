@@ -80,62 +80,6 @@
     text-align: center;
 }
 
-.hero-arc-text {
-    position: absolute;
-    pointer-events: none;
-    fill: var(--color-gray6);
-    font-family: var(--font-family-nunito);
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-.hero-copy {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    max-width: 420px;
-    gap: var(--spacing-md);
-}
-
-.hero-eyebrow {
-    display: block;
-    color: var(--color-gray6);
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: var(--spacing-sm);
-}
-
-.hero-heading {
-    font-family: var(--font-family-inter);
-    font-size: clamp(32px, 4vw, 48px);
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    color: var(--color-gray1);
-    margin: 0;
-}
-
-.hero-subtitle {
-    flex-shrink: 0;
-    font-size: 18px;
-    line-height: 1.7;
-    color: var(--color-gray7);
-    max-width: 420px;
-    text-align: left;
-    margin: 0;
-}
-
-.hero-actions {
-    flex-shrink: 0;
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: var(--spacing-md);
-    align-items: center;
-}
-
 .hero-scroll-indicator {
     position: absolute;
     left: 50%;
@@ -582,30 +526,6 @@ body.hero-scrolled .hero-scroll-indicator {
         padding: var(--spacing-xl) var(--spacing-lg) calc(var(--spacing-4xl) + 56px);
     }
 
-    .hero-copy {
-        position: static;
-        align-items: center;
-        max-width: 100%;
-        text-align: center;
-        left: auto;
-        top: auto;
-    }
-
-    .hero-eyebrow,
-    .hero-heading {
-        text-align: center;
-    }
-
-    .hero-subtitle {
-        max-width: 100%;
-        text-align: center;
-        margin: 0 auto;
-    }
-
-    .hero-actions {
-        justify-content: center;
-    }
-
     .pricing-tiers {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -654,25 +574,6 @@ body.hero-scrolled .hero-scroll-indicator {
             var(--spacing-4xl);
     }
 
-    .hero-heading {
-        font-size: 1.75rem;
-    }
-
-    .hero-arc-text {
-        display: none;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-        line-height: var(--line-height-base);
-    }
-
-    .hero-actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .hero-actions .btn,
     .cta-section .btn {
         display: inline-flex;
         align-items: center;
