@@ -1,0 +1,103 @@
+/* ============================================================================
+   PROF HERO — shared base stylesheet (desktop + mobile variants).
+
+   Both variants lay their whole composition out on a fixed DESIGN canvas
+   (desktop 1980x1060, mobile 1060x1980 — set --dw/--dh in the variant css)
+   and uniformly scale it with scale(min(vw/dw, vh/dh)) — a "contain" fit,
+   exactly like a slide or a video player. This guarantees:
+     - browser zoom  -> all CSS px scale together, ratios untouched
+     - window resize -> one uniform scale factor, every relative size/position
+                        between texts and shapes stays exactly the same
+     - any aspect    -> nothing ever crops (narrow screens shrink the whole
+                        composition instead of reflowing it)
+   The WebGL scene uses the very same mapping (see the DESIGN config in the
+   page and the fit factor K in js/scene.js), so the DOM texts and the glass
+   shapes are locked together at every viewport size, at any zoom.
+   ============================================================================ */
+
+:root { color-scheme: dark; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; width: 100%; background: #020204; overflow: hidden; font-family: "Inter", -apple-system, sans-serif; }
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: pointer; }
+#fallback { position: fixed; inset: 0; display: none; place-items: center; color: #8a8a90; font-size: 13px; letter-spacing: .12em; }
+
+/* --- design stage ---------------------------------------------------------- */
+#stage {
+  position: fixed; left: 50%; top: 50%;
+  width: var(--dw); height: var(--dh);
+  margin-top: calc(var(--dh) / -2);
+  margin-left: calc(var(--dw) / -2);
+  transform: scale(var(--fit, 1));
+  transform-origin: 50% 50%;
+  pointer-events: none;
+}
+
+/* --- choreographed reveal (three movements, after the shapes land) ----------
+   A · curved labels  — JS tween: blur + fade while sweeping forward along
+                        each label's own orbit. The glyph rotation during
+                        that sweep is what makes the words visibly ride the
+                        shapes' own curves, in the reading direction.
+   B · headline (p2)  — words rise out of a blur, gently staggered.
+   C · rest (p3)      — paragraph lines settle, CTA springs up.              */
+#stage { --ease: cubic-bezier(.22, 1, .36, 1); }
+#stage.resetting * { transition: none !important; animation: none !important; }
+
+/* B · headline words */
+#stage .headline .w {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(14px);
+  transition: opacity .95s var(--ease), transform .95s var(--ease), filter .95s var(--ease);
+  will-change: opacity, transform, filter;
+}
+#stage.p2 .headline .w { opacity: 1; transform: none; filter: blur(0); }
+
+/* C · paragraph lines */
+#stage .para .jl, #stage .para .ln {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(10px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease);
+  will-change: opacity, transform, filter;
+}
+#stage.p3 .para .jl, #stage.p3 .para .ln { opacity: 1; transform: none; filter: blur(0); }
+
+/* C · CTA — the wrapper carries the reveal so the button itself keeps its
+   quick hover response. */
+#stage .cta-wrap {
+  opacity: 0;
+  transform: translateY(24px) scale(.955);
+  filter: blur(12px);
+  transition: opacity .85s var(--ease) .17s,
+              transform .9s cubic-bezier(.3, 1.35, .45, 1) .17s,
+              filter .85s var(--ease) .17s;
+  will-change: opacity, transform, filter;
+}
+#stage.p3 .cta-wrap { opacity: 1; transform: none; filter: blur(0); }
+
+/* --- curved micro-labels (SVG textPath, 20px off the shapes' borders) ------ */
+#stage svg.curved { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#stage text.ct {
+  font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--ct-fs, 32px);
+  font-weight: 500;
+  fill: rgba(255, 255, 255, .51);
+}
+
+/* --- CTA button (pill) ------------------------------------------------------
+   The absolutely-positioned wrapper carries the reveal; the button fills it
+   and keeps its own fast hover transition. Sizes/positions live in the
+   variant stylesheets. */
+#stage .cta {
+  width: 100%; height: 100%;
+  border: none; border-radius: var(--cta-radius, 48.5px);
+  background: #0088FF;
+  color: #fff;
+  font-family: inherit; font-size: var(--cta-fs, 28px); font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; pointer-events: auto;
+  transition: filter .25s ease;
+}
+#stage .cta:hover { filter: brightness(1.12); }
+#stage .cta:focus-visible { outline: 2px solid rgba(255, 255, 255, .6); outline-offset: 4px; }

@@ -1,0 +1,82 @@
+/* ============================================================================
+   MOBILE VARIANT — layout on the fixed 1060x1980 portrait design canvas.
+
+   Geometry extracted 1:1 from the mobile reference design:
+   - glass shapes keep the EXACT same SVG-relative geometry as desktop
+     (pill r=h=50u, circle R=70u, offset +56,-48u) at 4.55 px/unit with the
+     pill center at (356.5, 812.9) — so the aspect ratio and the relational
+     position of the circle and pill are unchanged.
+   - content stack: "We Will Find" + 3-line headline (left, x~625), a full
+     measure justified paragraph (x 130-923, aligned with the pill's left
+     edge) and a horizontally centered CTA pill.
+   ============================================================================ */
+
+#stage {
+  --dw: 1060px;
+  --dh: 1980px;
+  --ct-fs: 49px;      /* curved micro-labels (measured from the reference) */
+  --cta-fs: 36.5px;   /* button text */
+  --cta-radius: 67.5px;
+}
+
+/* --- headline stack: "We Will Find" above the 3-line "Where You are
+       Needed" (both blocks left-aligned at x ~ 623-627) ---------------------- */
+#stage .headline {
+  position: absolute;
+  left: 621px;            /* "We" ink lands at x = 624 (design px)          */
+  top: 956px;             /* "We Will Find" baseline lands at y ~ 995       */
+}
+#stage .headline .pre {
+  display: block;
+  font-size: 45.5px; line-height: 46px; font-weight: 500;
+  color: rgba(255, 255, 255, .51);
+  word-spacing: 8.5px;    /* tuned: word gaps measure 19-21px              */
+}
+#stage .headline .big {
+  position: absolute;
+  left: -1px;             /* tuned: "Where" W ink lands at x = 623         */
+  top: 66px;              /* tuned: line 1 cap top lands at y = 1042       */
+}
+#stage .headline .big .ln {
+  display: block;
+  font-size: 80px; line-height: 97px; font-weight: 600; color: #fff;
+  white-space: nowrap;
+}
+/* word stagger — We(0) Will(.055) Find(.11) Where(.165) You(.22) are(.275) Needed(.33) */
+#stage .headline .pre .w:nth-child(1) { transition-delay: 0s; }
+#stage .headline .pre .w:nth-child(2) { transition-delay: .055s; }
+#stage .headline .pre .w:nth-child(3) { transition-delay: .11s; }
+#stage .headline .big .ln:nth-child(1) .w { transition-delay: .165s; }
+#stage .headline .big .ln:nth-child(2) .w:nth-child(1) { transition-delay: .22s; }
+#stage .headline .big .ln:nth-child(2) .w:nth-child(2) { transition-delay: .275s; }
+#stage .headline .big .ln:nth-child(3) .w { transition-delay: .33s; }
+
+/* --- paragraph (left edge aligned with the pill, justified, 4 lines) ------- */
+#stage .para {
+  position: absolute;
+  left: 129px; top: 1382px; width: 796px;
+  font-size: 24px; line-height: 29px; font-weight: 400;
+  color: rgba(255, 255, 255, .5);
+  text-align: justify;
+}
+/* Same construction as the desktop variant: the first three lines justify
+   to the full 793px measure (right edge x=923), the last line stays
+   natural and ragged. */
+#stage .para .jl { display: block; text-align: justify; text-align-last: justify; }
+#stage .para .ln { display: block; }
+#stage .para span:nth-child(1) { transition-delay: 0s; }
+#stage .para span:nth-child(2) { transition-delay: .09s; }
+#stage .para span:nth-child(3) { transition-delay: .18s; }
+#stage .para span:nth-child(4) { transition-delay: .27s; }
+
+/* --- CTA button (pill, horizontally centered on the composition) ----------- */
+#stage .cta-wrap {
+  position: absolute;
+  left: 202px; top: 1585px; width: 655px; height: 135px;
+}
+
+/* --- curved label tracking ------------------------------------------------- */
+/* "Who You Are" rides the circle at its own measured size (the reference's
+   arc span is slightly tighter than "What They Need"'s glyph run). */
+#stage #textWho { font-size: 46.5px; }
+#stage #textWhat { word-spacing: 12px; }

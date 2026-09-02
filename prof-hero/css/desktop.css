@@ -1,0 +1,65 @@
+/* ============================================================================
+   DESKTOP VARIANT — layout on the fixed 1980x1060 design canvas.
+   Every value below is the exact design-space geometry of the verified
+   desktop reference (see js/content.js + js/scene.js for the shared engine).
+   ============================================================================ */
+
+#stage {
+  --dw: 1980px;
+  --dh: 1060px;
+  --ct-fs: 32px;      /* curved micro-labels */
+  --cta-fs: 28px;     /* button text */
+  --cta-radius: 48.5px;
+}
+
+/* --- headline line: "We Will Find" + "Where You are Needed" ---------------- */
+#stage .headline {
+  position: absolute;
+  left: 757px;           /* tuned: "We" W ink lands at x = 758 (design px) */
+  top: 606px;            /* tuned: shared baseline lands at y = 659.5      */
+  display: flex; align-items: baseline; white-space: nowrap;
+}
+#stage .headline .pre {
+  font-size: 32px; font-weight: 500; color: rgba(255, 255, 255, .51);
+  margin-right: 15px;   /* tuned: ink gap "d -> W" = 19px                 */
+}
+#stage .headline .big {
+  font-size: 64px; line-height: 64px; font-weight: 600; color: #fff;
+}
+/* word stagger — We(0) Will(.055) Find(.11) Where(.165) You(.22) are(.275) Needed(.33) */
+#stage .headline .pre .w:nth-child(1) { transition-delay: 0s; }
+#stage .headline .pre .w:nth-child(2) { transition-delay: .055s; }
+#stage .headline .pre .w:nth-child(3) { transition-delay: .11s; }
+#stage .headline .big .w:nth-child(1) { transition-delay: .165s; }
+#stage .headline .big .w:nth-child(2) { transition-delay: .22s; }
+#stage .headline .big .w:nth-child(3) { transition-delay: .275s; }
+#stage .headline .big .w:nth-child(4) { transition-delay: .33s; }
+
+/* --- paragraph (right-edge-aligned block, justified, 4 lines) -------------- */
+#stage .para {
+  position: absolute;
+  left: 1013px; top: 454px; width: 650px;
+  font-size: 20px; line-height: 24px; font-weight: 400;
+  color: rgba(255, 255, 255, .5);
+  text-align: justify;
+}
+/* Each of the first three lines is forced to justify exactly like the
+   reference (full 650px measure, right edge at x=1662). A <br> alone would
+   leave those lines ragged, so each line is a block whose single (last)
+   line is justified via text-align-last. The final line (.ln) stays natural
+   and is also a block, so it can join the staggered reveal. */
+#stage .para .jl { display: block; text-align: justify; text-align-last: justify; }
+#stage .para .ln { display: block; }
+#stage .para span:nth-child(1) { transition-delay: 0s; }
+#stage .para span:nth-child(2) { transition-delay: .09s; }
+#stage .para span:nth-child(3) { transition-delay: .18s; }
+#stage .para span:nth-child(4) { transition-delay: .27s; }
+
+/* --- CTA button (pill, right-aligned with the text block) ------------------ */
+#stage .cta-wrap {
+  position: absolute;
+  left: 1191px; top: 725px; width: 472px; height: 97px;
+}
+
+/* --- curved label tracking ------------------------------------------------- */
+#stage #textWhat { word-spacing: 12px; }

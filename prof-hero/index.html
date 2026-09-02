@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Prof — We Will Find Where You are Needed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/desktop.css">
+<script>
+/* Serve the dedicated portrait composition to phones (narrow portrait
+   viewports). Remove this block if you always want the desktop layout. */
+if (window.innerWidth < window.innerHeight && Math.min(innerWidth, innerHeight) < 900)
+  location.replace('mobile.html');
+
+/* ---------------------------------------------------------------------------
+   DESIGN CONFIG — the single source of truth shared by the DOM stage
+   (js/content.js) and the WebGL engine (js/scene.js).
+   Desktop: 1980x1060 canvas, SVG geometry at 3.444 px/unit,
+   pill center at design px (544, 519), 84px curved-label reveal runway.
+   --------------------------------------------------------------------------- */
+window.PROF_DESIGN = {
+  W: 1980, H: 1060,        // design canvas (px)
+  scalePx: 3.444,          // design px per SVG unit (pill r=50u -> 172.2px)
+  pillCx: 544, pillCy: 519,// pill center in design px
+  runway: 84               // px of curved-label reveal runway
+};
+</script>
+</head>
+<body>
+
+<canvas id="gl"></canvas>
+<div id="fallback">WEBGL NOT SUPPORTED</div>
+
+<!-- ==========================================================================
+     CONTENT LAYER — everything below is positioned in the fixed 1980x1060
+     design space (the exact coordinate system of the reference design) and
+     scaled as a whole together with the WebGL shapes. The two curved labels
+     ride SVG textPaths whose geometry is derived from the pill's and the
+     circle's own outlines, offset 20px outward from their borders; each path
+     also carries 84px of invisible runway before the label's final resting
+     offset (following the very same curve), which the reveal sweeps the text
+     along — every glyph rotates through the curve as it arrives.
+     ========================================================================== -->
+<div id="stage">
+  <svg class="curved" viewBox="0 0 1980 1060" fill="none" aria-hidden="true">
+    <defs>
+      <!-- "Who You Are" — arc concentric with the circle (baseline R + 20px),
+           extended 84px backwards over the circle's top as reveal runway -->
+      <path id="arcWho" d="M 716.76,93.24 A 261.1,261.1 0 0 1 969.4,235.2"/>
+      <!-- "What They Need" — parallel to the pill's left edge and bottom-left
+           corner (46.5px out so cap tops clear the border by 20px), plus the
+           same 84px of straight runway above for the orbital reveal -->
+      <path id="arcWhat" d="M 325.3,526 L 325.3,692 A 218.7,218.7 0 0 0 376.5,832.6 L 405.4,867.1"/>
+    </defs>
+    <text id="textWho" class="ct" style="letter-spacing:-0.025em"><textPath id="tpWho" href="#arcWho" xlink:href="#arcWho" startOffset="4">Who You Are</textPath></text>
+    <text id="textWhat" class="ct"><textPath id="tpWhat" href="#arcWhat" xlink:href="#arcWhat" startOffset="4">What They Need</textPath></text>
+  </svg>
+
+  <div class="headline">
+    <span class="pre"><span class="w">We</span> <span class="w">Will</span> <span class="w">Find</span></span><span class="big"><span class="w">Where</span> <span class="w">You</span> <span class="w">are</span> <span class="w">Needed</span></span>
+  </div>
+
+  <p class="para"><span class="jl">Prof analyzes your background, continuously hunts executive-grade</span><span class="jl">roles, and delivers bespoke application packages — tailored</span><span class="jl">resume, cover letter, and a direct path to the hiring manager —</span><span class="ln">while you focus on your actual work.</span></p>
+
+  <div class="cta-wrap"><button class="cta" type="button">Get Your First Match Free</button></div>
+</div>
+
+<script src="js/content.js"></script>
+<script src="js/scene.js"></script>
+</body>
+</html>

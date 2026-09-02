@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Prof — We Will Find Where You are Needed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/mobile.css">
+<script>
+/* ---------------------------------------------------------------------------
+   DESIGN CONFIG — mobile portrait composition.
+   Mobile: 1060x1980 canvas, the SAME SVG-relative geometry as desktop
+   (pill r=h=50u, circle R=70u, circle offset +56,-48u from the pill center)
+   at 4.55 px/unit with the pill center at design px (356.5, 812.9) — so the
+   aspect ratio and the relational position of the circle and pill are
+   exactly unchanged. 112px curved-label reveal runway (the labels are
+   46px vs the desktop's 32px).
+   --------------------------------------------------------------------------- */
+window.PROF_DESIGN = {
+  W: 1060, H: 1980,          // design canvas (px, portrait)
+  scalePx: 4.55,             // design px per SVG unit (pill r=50u -> 227.5px)
+  pillCx: 356.5, pillCy: 812.9, // pill center in design px
+  runway: 112                // px of curved-label reveal runway
+};
+</script>
+</head>
+<body>
+
+<canvas id="gl"></canvas>
+<div id="fallback">WEBGL NOT SUPPORTED</div>
+
+<!-- ==========================================================================
+     MOBILE CONTENT LAYER — everything below is positioned in the fixed
+     1060x1980 portrait design space (the exact coordinate system of the
+     mobile reference design) and scaled as a whole together with the WebGL
+     shapes, which keep their desktop-relative geometry (see PROF_DESIGN).
+     The curved labels ride the same constructions as desktop, scaled:
+     "Who You Are" on the arc concentric with the circle (baseline R + 20px),
+     "What They Need" parallel to the pill's left edge and around its
+     bottom-left corner, each with 112px of invisible reveal runway.
+     Below the shapes: "We Will Find" + the 3-line headline (left-aligned at
+     x~625), the full-measure justified paragraph (x 130-923, aligned with
+     the pill's left edge) and the centered CTA pill.
+     ========================================================================== -->
+<div id="stage">
+  <svg class="curved" viewBox="0 0 1060 1980" fill="none" aria-hidden="true">
+    <defs>
+      <!-- "Who You Are" — arc concentric with the circle (center 611.3,594.5,
+           baseline R+20 = 338.5), text sweeping 74.7° -> ~27°, extended 112px
+           backwards over the circle's top as reveal runway -->
+      <path id="arcWho" d="M 589.7,256.7 A 338.5,338.5 0 0 1 928.3,476.0"/>
+      <!-- "What They Need" — straight parallel to the pill's left edge
+           (baseline 63.3px out so cap tops clear the border by ~20px), then a
+           gentle Bézier wrapping the bottom-left corner (the reference's
+           text flares outward around the corner and ends ~35° below
+           horizontal), plus 112px of straight runway above for the reveal -->
+      <path id="arcWhat" d="M 57,782 L 57,1040 C 57,1160 95,1262 192,1282"/>
+    </defs>
+    <text id="textWho" class="ct"><textPath id="tpWho" href="#arcWho" xlink:href="#arcWho" startOffset="4">Who You Are</textPath></text>
+    <text id="textWhat" class="ct"><textPath id="tpWhat" href="#arcWhat" xlink:href="#arcWhat" startOffset="4">What They Need</textPath></text>
+  </svg>
+
+  <div class="headline">
+    <div class="pre"><span class="w">We</span> <span class="w">Will</span> <span class="w">Find</span></div>
+    <div class="big">
+      <div class="ln"><span class="w">Where</span></div>
+      <div class="ln"><span class="w">You</span> <span class="w">are</span></div>
+      <div class="ln"><span class="w">Needed</span></div>
+    </div>
+  </div>
+
+  <p class="para"><span class="jl">Prof analyzes your background, continuously hunts executive-grade</span><span class="jl">roles, and delivers bespoke application packages — tailored resume,</span><span class="jl">cover letter, and a direct path to the hiring manager — while you</span><span class="ln">focus on your actual work.</span></p>
+
+  <div class="cta-wrap"><button class="cta" type="button">Get Your First Match Free</button></div>
+</div>
+
+<script src="js/content.js"></script>
+<script src="js/scene.js"></script>
+</body>
+</html>
