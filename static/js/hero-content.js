@@ -25,6 +25,7 @@
   const stage = document.getElementById('stage');
   const D = window.PROF_DESIGN;
   const DESIGN_W = D.W, DESIGN_H = D.H;
+  const suffix = D.variant === 'mobile' ? '-m' : '-d';
 
   function fitStage() {
     const s = Math.min(window.innerWidth / DESIGN_W, window.innerHeight / DESIGN_H);
@@ -49,8 +50,8 @@
   const T_C = 3550;                 // paragraph + button movement
 
   const labels = [
-    { text: document.getElementById('textWho'),  tp: document.getElementById('tpWho'),  at: T_A },
-    { text: document.getElementById('textWhat'), tp: document.getElementById('tpWhat'), at: T_A + T_A_GAP }
+    { text: document.getElementById('textWho' + suffix),  tp: document.getElementById('tpWho' + suffix),  at: T_A },
+    { text: document.getElementById('textWhat' + suffix), tp: document.getElementById('tpWhat' + suffix), at: T_A + T_A_GAP }
   ];
 
   let rafId = 0, timers = [], t0 = 0;
