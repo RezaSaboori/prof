@@ -92,7 +92,11 @@
 
 .hero-copy {
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     max-width: 420px;
+    gap: var(--spacing-md);
 }
 
 .hero-eyebrow {
@@ -118,15 +122,15 @@
     font-size: 18px;
     line-height: 1.7;
     color: var(--color-gray7);
-    max-width: 640px;
-    text-align: center;
-    margin: 0 auto;
+    max-width: 420px;
+    text-align: left;
+    margin: 0;
 }
 
 .hero-actions {
     flex-shrink: 0;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     flex-wrap: wrap;
     gap: var(--spacing-md);
     align-items: center;
@@ -578,8 +582,28 @@ body.hero-scrolled .hero-scroll-indicator {
         padding: var(--spacing-xl) var(--spacing-lg) calc(var(--spacing-4xl) + 56px);
     }
 
+    .hero-copy {
+        position: static;
+        align-items: center;
+        max-width: 100%;
+        text-align: center;
+        left: auto;
+        top: auto;
+    }
+
+    .hero-eyebrow,
+    .hero-heading {
+        text-align: center;
+    }
+
     .hero-subtitle {
         max-width: 100%;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .hero-actions {
+        justify-content: center;
     }
 
     .pricing-tiers {
