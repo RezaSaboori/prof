@@ -19,6 +19,9 @@
                Re-arms whenever the WebGL intro is replayed (canvas click).
    The runway length (84 px desktop / 112 px mobile) comes from
    window.PROF_DESIGN so each composition sweeps proportionally.
+   The desktop/mobile curved-label ids are suffixed (-d / -m) since both
+   markup variants live in the DOM at once; window.PROF_DESIGN.variant picks
+   the active suffix.
    --------------------------------------------------------------------------- */
 (function () {
   "use strict";
