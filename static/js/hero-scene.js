@@ -747,9 +747,10 @@ let mousePresence = 0;
 
 
 function resize() {
+  const rect = canvas.parentElement.getBoundingClientRect();
   DPR = Math.min(window.devicePixelRatio || 1, 2);
-  W = Math.max(2, Math.round(innerWidth * DPR));
-  H = Math.max(2, Math.round(innerHeight * DPR));
+  W = Math.max(2, Math.round(rect.width * DPR));
+  H = Math.max(2, Math.round(rect.height * DPR));
   canvas.width = W; canvas.height = H;
   rtScene = makeTarget(W, H);
   rtComposite = makeTarget(W, H);

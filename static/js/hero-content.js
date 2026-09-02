@@ -31,7 +31,8 @@
   const suffix = D.variant === 'mobile' ? '-m' : '-d';
 
   function fitStage() {
-    const s = Math.min(window.innerWidth / DESIGN_W, window.innerHeight / DESIGN_H);
+    const rect = stage.parentElement.getBoundingClientRect();
+    const s = Math.min(rect.width / DESIGN_W, rect.height / DESIGN_H);
     stage.style.setProperty('--fit', s);
   }
   fitStage();
