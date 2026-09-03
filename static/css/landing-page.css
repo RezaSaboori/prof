@@ -44,7 +44,7 @@
     margin: 0 0 0 -50vw;
     height: 100svh;
     min-height: 100svh;
-    padding: var(--spacing-2xl) var(--spacing-2xl) calc(var(--spacing-4xl) + 64px);
+    padding: 0;
     gap: var(--spacing-lg);
     background-color: var(--color-gray12);
     border-radius: 0;
@@ -567,10 +567,7 @@ body.hero-scrolled .hero-scroll-indicator {
     .hero-section {
         gap: var(--spacing-2xl);
         margin-bottom: var(--spacing-xl);
-        padding:
-            var(--spacing-2xl)
-            var(--content-padding-min)
-            var(--spacing-4xl);
+        padding: 0;
     }
 
     .cta-section .btn {

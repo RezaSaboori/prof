@@ -189,8 +189,8 @@
         --cta-fs: 36.5px;
     }
 
-    .headline--desktop, .para--desktop, .curved--desktop { display: none; }
-    .headline--mobile, .para--mobile, .curved--mobile { display: block; }
+    #stage .headline--desktop, #stage .para--desktop, #stage .curved--desktop { display: none; }
+    #stage .headline--mobile, #stage .para--mobile, #stage .curved--mobile { display: block; }
 
     #stage .headline--mobile {
         position: absolute;
