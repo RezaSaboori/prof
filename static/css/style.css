@@ -387,11 +387,13 @@ body {
     z-index: 1000;
 }
 
-.landing-page-body .site-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+@media (min-width: 981px) {
+    .landing-page-body .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
 }
 
 .header-container {
@@ -905,7 +907,7 @@ body {
     .site-header {
         position: fixed;
         top: auto;
-        bottom: var(--spacing-sm);
+        bottom: var(--spacing-2xl);
         left: var(--spacing-md);
         right: var(--spacing-md);
         display: flex;

@@ -522,7 +522,7 @@ body.hero-scrolled .hero-scroll-indicator {
 
 @media (max-width: 1024px) {
     #hero.hero-section {
-        padding: var(--spacing-xl) var(--spacing-lg) calc(var(--spacing-4xl) + 56px);
+        padding: 0;
     }
 
     .pricing-tiers {
