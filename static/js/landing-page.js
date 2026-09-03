@@ -159,6 +159,24 @@ const HeroScrollIndicator = {
   }
 };
 
+const HeaderHeroState = {
+  init() {
+    const hero = document.getElementById('hero');
+    if (!hero || !('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          document.body.classList.toggle('header-on-hero', entry.isIntersecting);
+        });
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(hero);
+  }
+};
+
 
 const CounterAnimation = {
   init() {
@@ -282,6 +300,7 @@ const App = {
     PricingModule,
     CTAInteractions,
     HeroScrollIndicator,
+    HeaderHeroState,
   ],
 
   init() {

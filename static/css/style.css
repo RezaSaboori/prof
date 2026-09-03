@@ -390,7 +390,7 @@ body {
 @media (min-width: 981px) {
     .landing-page-body .site-header {
         position: fixed;
-        top: 0;
+        top: var(--spacing-md);
         left: 0;
         right: 0;
     }
@@ -903,6 +903,41 @@ body {
     background: var(--color-gray12);
 }
 
+.landing-page-body.header-on-hero .header-container {
+    background-color: transparent;
+    background-image: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-gray12) 50%, transparent) 0%,
+        color-mix(in srgb, var(--color-gray6) 35%, transparent) 100%
+    );
+    backdrop-filter: saturate(200%) blur(4px) brightness(0.2);
+    -webkit-backdrop-filter: saturate(200%) blur(4px) brightness(0.2);
+    box-shadow:
+        inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray6) 18%, transparent),
+        inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-gray6) 90%, transparent),
+        inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray6) 30%, transparent),
+        inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray6) 10%, transparent),
+        inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
+        inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+        inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+        inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
+        0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
+        0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
+}
+
+.landing-page-body.header-on-hero .header-container::before {
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-gray6) 100%, transparent) 0%,
+        color-mix(in srgb, var(--color-gray6) 0%, transparent) 42%
+    );
+}
+
+.landing-page-body.header-on-hero .logo-text,
+.landing-page-body.header-on-hero .nav-link {
+    color: var(--color-gray2);
+}
+
 @media (max-width: 980px) {
     .site-header {
         position: fixed;
@@ -1028,6 +1063,39 @@ body {
 
     .header-cta:hover {
         background: color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    }
+
+    .landing-page-body.header-on-hero .site-header .dashboard-island__logo {
+        background-image: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-gray12) 50%, transparent) 0%,
+            color-mix(in srgb, var(--color-gray6) 35%, transparent) 100%
+        );
+        backdrop-filter: saturate(200%) blur(4px) brightness(0.2);
+        -webkit-backdrop-filter: saturate(200%) blur(4px) brightness(0.2);
+        box-shadow:
+            inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--color-gray6) 18%, transparent),
+            inset 1.8px 3px 0 -2px color-mix(in srgb, var(--color-gray6) 90%, transparent),
+            inset -2px -2px 0 -2px color-mix(in srgb, var(--color-gray6) 30%, transparent),
+            inset -3px -12px 1px -8px color-mix(in srgb, var(--color-gray6) 10%, transparent),
+            inset -0.3px -1px 4px 0 color-mix(in srgb, var(--color-gray12) 10%, transparent),
+            inset -1.5px 2.5px 0 -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 0 3px 4px -2px color-mix(in srgb, var(--color-gray12) 16%, transparent),
+            inset 2px -6.5px 1px -4px color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 1px 5px 0 color-mix(in srgb, var(--color-gray12) 8%, transparent),
+            0 6px 16px 0 color-mix(in srgb, var(--color-gray12) 6%, transparent);
+    }
+
+    .landing-page-body.header-on-hero .site-header .dashboard-island__logo::before {
+        background: linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--color-gray6) 100%, transparent) 0%,
+            color-mix(in srgb, var(--color-gray6) 0%, transparent) 42%
+        );
+    }
+
+    .landing-page-body.header-on-hero .site-header .dashboard-island__logo-img path {
+        fill: var(--color-gray2);
     }
 }
 
