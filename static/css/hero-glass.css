@@ -119,6 +119,7 @@
 }
 #stage .cta:hover { filter: brightness(1.12); }
 #stage .cta:focus-visible { outline: 2px solid color-mix(in srgb, var(--color-gray1) 60%, transparent); outline-offset: 4px; }
+#stage .mobile-copy { display: contents; }
 
 /* --- curved micro-labels (SVG textPath) --- */
 #stage svg.curved { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -223,17 +224,20 @@
     #stage .headline--mobile .big .ln:nth-child(2) .w:nth-child(2) { transition-delay: .275s; }
     #stage .headline--mobile .big .ln:nth-child(3) .w { transition-delay: .33s; }
 
-    #stage .para--mobile {
+    #stage .mobile-copy {
+        display: block;
         position: absolute;
         left: 129px;
         top: 1382px;
         width: 796px;
+    }
+    #stage .para--mobile {
         font-size: 48px;
         line-height: 58px;
     }
     #stage .cta-wrap {
-        left: 202px;
-        top: 1585px;
+        position: static;
+        margin: 87px 0 0 73px;
         width: 655px;
         height: 135px;
     }

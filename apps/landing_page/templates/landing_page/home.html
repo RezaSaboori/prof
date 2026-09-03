@@ -51,10 +51,12 @@
           </div>
 
           <p class="para para--desktop"><span class="jl">Prof analyzes your background, continuously hunts executive-grade</span><span class="jl">roles, and delivers bespoke application packages — tailored</span><span class="jl">resume, cover letter, and a direct path to the hiring manager —</span><span class="ln">while you focus on your actual work.</span></p>
-          <p class="para para--mobile"><span class="jl">Prof analyzes your background, continuously hunts executive-grade</span><span class="jl">roles, and delivers bespoke application packages — tailored resume,</span><span class="jl">cover letter, and a direct path to the hiring manager — while you</span><span class="ln">focus on your actual work.</span></p>
-
-          <div class="cta-wrap">
-            <a href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'social:begin' 'google-oauth2' %}{% endif %}" class="cta">Get Your First Match Free</a>
+            <div class="mobile-copy">
+              <p class="para para--mobile"><span class="jl">Prof analyzes your background, continuously hunts executive-grade</span><span class="jl">roles, and delivers bespoke application packages — tailored resume,</span><span class="jl">cover letter, and a direct path to the hiring manager — while you</span><span class="ln">focus on your actual work.</span></p>
+              <div class="cta-wrap">
+              <a href="{% if user.is_authenticated %}{% url 'dashboard:index' %}{% else %}{% url 'social:begin' 'google-oauth2' %}{% endif %}" class="cta">Get Your First Match Free</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

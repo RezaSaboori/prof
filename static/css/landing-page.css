@@ -61,7 +61,7 @@
 
 @media (max-width: 980px) {
     .hero-glass-stage {
-        transform: translateY(-60px);
+        transform: translateY(-105px);
     }
 }
 
