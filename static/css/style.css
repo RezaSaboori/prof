@@ -390,7 +390,7 @@ body {
 @media (min-width: 981px) {
     .landing-page-body .site-header {
         position: fixed;
-        top: var(--spacing-xl);
+        top: var(--spacing-sm);
         left: 0;
         right: 0;
     }
