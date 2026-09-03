@@ -187,7 +187,7 @@
         --dw: 1060px;
         --dh: 1980px;
         --ct-fs: 49px;
-        --cta-fs: 36.5px;
+        --cta-fs: 42px;
     }
 
     #stage .headline--desktop, #stage .para--desktop, #stage .curved--desktop { display: none; }
@@ -237,9 +237,9 @@
     }
     #stage .cta-wrap {
         position: static;
-        margin: 87px 0 0 73px;
-        width: 655px;
-        height: 135px;
+        margin: 87px 0 0 0;
+        width: 796px;
+        height: 145px;
     }
 
     #stage #textWho-m { font-size: 46.5px; }
