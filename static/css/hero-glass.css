@@ -104,7 +104,6 @@
     height: 100%;
     border: none;
     border-radius: var(--border-radius-pill);
-    background: var(--color-blue);
     color: var(--color-gray1);
     font-family: var(--font-family-inter);
     font-size: var(--cta-fs, 28px);

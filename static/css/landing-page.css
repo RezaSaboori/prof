@@ -91,7 +91,7 @@
     bottom: var(--spacing-lg);
     transform: translateX(-50%);
     display: inline-flex;
-    color: var(--color-gray7);
+    color: var(--color-gray2);
     text-decoration: none;
     opacity: 1;
     transition:
