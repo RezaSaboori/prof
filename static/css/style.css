@@ -921,6 +921,7 @@ body {
 
 .header-cta:hover {
     background: var(--color-gray12);
+    cursor: pointer;
 }
 
 .header-cta::before {
