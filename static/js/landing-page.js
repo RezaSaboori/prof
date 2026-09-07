@@ -177,13 +177,17 @@ const HeaderHeroState = {
       themeMeta.setAttribute('content', isHero ? 'rgb(7, 7, 7)' : 'rgb(210, 210, 210)');
     };
 
+    const isMobile = window.matchMedia('(max-width: 980px)').matches;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           updateHeroState(entry.isIntersecting);
         });
       },
-      { threshold: 0.1 }
+      {
+        rootMargin: isMobile ? '0px 0px -50% 0px' : '0px 0px 0px 0px',
+        threshold: 0
+      }
     );
 
     observer.observe(hero);
