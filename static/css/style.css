@@ -944,7 +944,7 @@ body {
     .site-header {
         position: fixed;
         top: auto;
-        bottom: var(--spacing-md);
+        bottom: var(--spacing-sm);
         left: var(--spacing-md);
         right: var(--spacing-md);
         display: flex;
