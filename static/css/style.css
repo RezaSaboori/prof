@@ -1651,8 +1651,14 @@ body {
 /* ============================================
    LANDING PAGE BODY STYLES
    ============================================ */
+html.hero-active,
+html.hero-active body.landing-page-body {
+    background: var(--color-gray12) !important;
+}
+
 .landing-page-body {
     background: linear-gradient(180deg, var(--color-gray3) 0%, var(--color-gray3) 100%);
+    transition: background-color 0.3s ease;
 }
 
 .landing-page-body .page-shell {

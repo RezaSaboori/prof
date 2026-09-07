@@ -164,13 +164,26 @@ const HeaderHeroState = {
     const hero = document.getElementById('hero');
     if (!hero || !('IntersectionObserver' in window)) return;
 
+    let themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (!themeMeta) {
+      themeMeta = document.createElement('meta');
+      themeMeta.name = 'theme-color';
+      document.head.appendChild(themeMeta);
+    }
+
+    const updateHeroState = (isHero) => {
+      document.body.classList.toggle('header-on-hero', isHero);
+      document.documentElement.classList.toggle('hero-active', isHero);
+      themeMeta.setAttribute('content', isHero ? 'rgb(7, 7, 7)' : 'rgb(210, 210, 210)');
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          document.body.classList.toggle('header-on-hero', entry.isIntersecting);
+          updateHeroState(entry.isIntersecting);
         });
       },
-      { threshold: 0 }
+      { threshold: 0.1 }
     );
 
     observer.observe(hero);
