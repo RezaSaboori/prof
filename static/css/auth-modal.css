@@ -104,7 +104,7 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--border-radius-pill);
-    color: var(--color-gray7);
+    color: var(--color-gray12);
     background: color-mix(in srgb, var(--color-gray1) 35%, transparent);
     border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray1) 20%, transparent);
     transition: background 0.2s ease, color 0.2s ease;
@@ -139,7 +139,7 @@
 
 .auth-modal-subtitle {
     font-size: 14px;
-    color: var(--color-gray8);
+    color: var(--color-gray12);
     margin: 0;
 }
 
@@ -158,7 +158,7 @@
     align-items: center;
     gap: var(--spacing-sm);
     font-size: 14px;
-    color: var(--color-gray8);
+    color: var(--color-gray12);
     cursor: pointer;
     user-select: none;
     position: relative;
