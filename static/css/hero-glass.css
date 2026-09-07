@@ -233,10 +233,16 @@
     #stage .para--mobile {
         font-size: 38px;
         line-height: 58px;
+        text-align: left;
+        margin-top: 52px;
+    }
+    #stage .para--mobile .jl {
+        text-align: left;
+        text-align-last: left;
     }
     #stage .cta-wrap {
         position: static;
-        margin: 87px 0 0 0;
+        margin: 0;
         width: 796px;
         height: 145px;
     }

@@ -1083,11 +1083,6 @@ canvas.addEventListener('pointerdown', (e) => {
   const [px, py] = pxFromEvent(e);
   mouseRaw.x = px; mouseRaw.y = py;
   mouseTargetPresence = 1;
-  const now = performance.now();
-  if (now - tStart < 800) return;
-  tStart = now;
-  // Intro replayed: hide the content again, re-reveal once the shapes land.
-  if (typeof window.__scheduleReveal === 'function') window.__scheduleReveal();
 });
 
 
