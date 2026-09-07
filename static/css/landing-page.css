@@ -44,9 +44,8 @@
     margin: 0 0 0 -50vw;
     height: 100svh;
     min-height: 100svh;
-    padding-top: max(env(safe-area-inset-top), var(--spacing-lg));
-    padding-bottom: max(env(safe-area-inset-bottom), var(--spacing-5xl));
-    gap: var(--spacing-lg);
+    padding: 0;
+    gap: 0;
     background-color: var(--color-gray12);
     border-radius: 0;
     overflow: hidden;
@@ -55,8 +54,7 @@
 
 @media (min-width: 981px) {
     #hero.hero-section {
-        padding-top: calc(var(--spacing-5xl) + env(safe-area-inset-top));
-        padding-bottom: max(env(safe-area-inset-bottom), var(--spacing-2xl));
+        padding-top: calc(var(--spacing-3xl) + env(safe-area-inset-top));
     }
 }
 
@@ -69,7 +67,8 @@
 
 @media (max-width: 980px) {
     .hero-glass-stage {
-        transform: none;
+        /* Centered in the clear window between dynamic island (~54px) and bottom island header (~110px) */
+        transform: translateY(calc((env(safe-area-inset-top, 0px) - (var(--spacing-2xl) + 48px + env(safe-area-inset-bottom, 0px))) / 2));
     }
 }
 
