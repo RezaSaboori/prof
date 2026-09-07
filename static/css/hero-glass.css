@@ -235,10 +235,16 @@
         line-height: 58px;
         text-align: left;
         margin-top: 52px;
+        opacity: 0;
+        transform: translateY(18px);
+        filter: blur(10px);
+        transition: opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease);
+        will-change: opacity, transform, filter;
     }
-    #stage .para--mobile .jl {
-        text-align: left;
-        text-align-last: left;
+    #stage.p3 .para--mobile {
+        opacity: 1;
+        transform: none;
+        filter: blur(0);
     }
     #stage .cta-wrap {
         position: static;

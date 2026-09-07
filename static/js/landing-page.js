@@ -162,7 +162,7 @@ const HeroScrollIndicator = {
 const HeaderHeroState = {
   init() {
     const hero = document.getElementById('hero');
-    if (!hero || !('IntersectionObserver' in window)) return;
+    if (!hero) return;
 
     let themeMeta = document.querySelector('meta[name="theme-color"]');
     if (!themeMeta) {
@@ -171,26 +171,26 @@ const HeaderHeroState = {
       document.head.appendChild(themeMeta);
     }
 
-    const updateHeroState = (isHero) => {
-      document.body.classList.toggle('header-on-hero', isHero);
-      document.documentElement.classList.toggle('hero-active', isHero);
-      themeMeta.setAttribute('content', isHero ? 'rgb(7, 7, 7)' : 'rgb(210, 210, 210)');
+    let isHeroActive = null;
+
+    const update = () => {
+      const rect = hero.getBoundingClientRect();
+      const isMobile = window.innerWidth <= 980;
+      // In mobile, switch when bottom of hero crosses 50% of screen; in desktop, when bottom crosses top (0)
+      const thresholdY = isMobile ? window.innerHeight * 0.5 : 0;
+      const isHero = rect.bottom > thresholdY;
+
+      if (isHero !== isHeroActive) {
+        isHeroActive = isHero;
+        document.body.classList.toggle('header-on-hero', isHero);
+        document.documentElement.classList.toggle('hero-active', isHero);
+        themeMeta.setAttribute('content', isHero ? 'rgb(7, 7, 7)' : 'rgb(210, 210, 210)');
+      }
     };
 
-    const isMobile = window.matchMedia('(max-width: 980px)').matches;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          updateHeroState(entry.isIntersecting);
-        });
-      },
-      {
-        rootMargin: isMobile ? '0px 0px -50% 0px' : '0px 0px 0px 0px',
-        threshold: 0
-      }
-    );
-
-    observer.observe(hero);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
   }
 };
 
