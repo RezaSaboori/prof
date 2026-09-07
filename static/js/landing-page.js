@@ -171,20 +171,29 @@ const HeaderHeroState = {
       document.head.appendChild(themeMeta);
     }
 
-    let isHeroActive = null;
+    let isPageHeroActive = null;
+    let isHeaderHeroActive = null;
 
     const update = () => {
       const rect = hero.getBoundingClientRect();
       const isMobile = window.innerWidth <= 980;
-      // In mobile, switch when bottom of hero crosses 50% of screen; in desktop, when bottom crosses top (0)
-      const thresholdY = isMobile ? window.innerHeight * 0.5 : 0;
-      const isHero = rect.bottom > thresholdY;
 
-      if (isHero !== isHeroActive) {
-        isHeroActive = isHero;
-        document.body.classList.toggle('header-on-hero', isHero);
-        document.documentElement.classList.toggle('hero-active', isHero);
-        themeMeta.setAttribute('content', isHero ? 'rgb(7, 7, 7)' : 'rgb(210, 210, 210)');
+      // Page background switches at 50% of the viewport on both desktop and mobile
+      const pageHero = rect.bottom > window.innerHeight * 0.5;
+
+      // Header switches at the top edge on desktop (approx. header offset 80px), and 50% on mobile
+      const headerThresholdY = isMobile ? window.innerHeight * 0.5 : 80;
+      const headerHero = rect.bottom > headerThresholdY;
+
+      if (pageHero !== isPageHeroActive) {
+        isPageHeroActive = pageHero;
+        document.documentElement.classList.toggle('hero-active', pageHero);
+        themeMeta.setAttribute('content', pageHero ? 'rgb(7, 7, 7)' : 'rgb(210, 210, 210)');
+      }
+
+      if (headerHero !== isHeaderHeroActive) {
+        isHeaderHeroActive = headerHero;
+        document.body.classList.toggle('header-on-hero', headerHero);
       }
     };
 
