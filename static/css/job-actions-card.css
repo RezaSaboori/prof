@@ -1,17 +1,29 @@
 /* ============================================
    JOB ACTIONS CARD
    ============================================ */
+/* ============================================
+   JOB ACTIONS CARD
+   ============================================ */
 .job-actions-card {
     position: relative;
     border-radius: var(--border-radius-container-md);
     padding: var(--spacing-md);
-    min-height: 240px;
+    height: 240px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: var(--spacing-md);
     width: 100%;
     overflow: hidden;
+}
+
+@media (max-width: 980px) {
+    .job-actions-card {
+        height: auto;
+        min-height: auto;
+        gap: var(--spacing-lg);
+    }
 }
 
 /* Header */

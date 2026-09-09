@@ -201,46 +201,50 @@
 }
 
 /* ============================================
-   MESSAGE CARD — Square welcome card
+   MESSAGE CARD — Fixed 240px square
    ============================================ */
 .message-card {
     position: relative;
     border-radius: var(--border-radius-container-md);
-    padding: var(--spacing-xl);
-    min-height: 240px;
-    aspect-ratio: 1 / 1;
+    padding: var(--spacing-lg);
+    width: 240px;
+    height: 240px;
+    flex: 0 0 240px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: var(--spacing-md);
-    flex-shrink: 0;
     overflow: hidden;
 }
 
+
 .message-card .dashboard-header {
-    margin-bottom: 0;
+    margin-bottom: var(--spacing-md);
 }
 
+
 .message-card .dashboard-header h1 {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 700;
     margin-bottom: 0;
     line-height: 1.25;
 }
+
 
 .message-card__body {
     position: relative;
     z-index: 1;
 }
 
+
 .message-card__text {
     font-family: var(--font-family-base);
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 500;
     color: var(--color-gray8);
     line-height: 1.5;
     margin: 0;
 }
+
 
 /* ============================================
    JOB ACTIONS & BALANCE CARDS — Equal flex share
@@ -249,7 +253,10 @@
 .dashboard-cards-grid .balance-card {
     flex: 1 1 0;
     min-width: 0;
+    height: 240px;
+    box-sizing: border-box;
 }
+
 
 /* ============================================
    BALANCE CARD — Credit-card style
@@ -260,11 +267,11 @@
     padding: var(--spacing-md);
     margin-bottom: 0;
     overflow: hidden;
-    min-height: 240px;
+    height: 240px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-md);
     width: 100%;
 }
 
@@ -273,15 +280,21 @@
         flex-direction: column;
     }
 
+
     .message-card {
         width: 100%;
-        aspect-ratio: auto;
+        height: auto;
         min-height: auto;
+        aspect-ratio: auto;
+        flex: none;
     }
+
 
     .dashboard-cards-grid .job-actions-card,
     .dashboard-cards-grid .balance-card {
         width: 100%;
+        height: auto;
+        min-height: auto;
         flex: none;
     }
 }
