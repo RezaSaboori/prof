@@ -33,13 +33,13 @@
         <div class="job-actions-card__body">
             <div class="job-mode-panel job-mode-panel--find" id="findJobsPanel">
                 <div class="job-stepper">
-                    <button type="button" class="job-stepper__btn glass" id="jobStepperUp" aria-label="Increase number">
+                    <button type="button" class="job-stepper__btn green-glass" id="jobStepperUp" aria-label="Increase number">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="18 15 12 9 6 15"/>
                         </svg>
                     </button>
                     <input type="number" class="job-stepper__input" id="jobStepperInput" value="1" min="1" step="1" aria-label="Number of jobs to find">
-                    <button type="button" class="job-stepper__btn glass" id="jobStepperDown" aria-label="Decrease number">
+                    <button type="button" class="job-stepper__btn orange-glass" id="jobStepperDown" aria-label="Decrease number">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="6 9 12 15 18 9"/>
                         </svg>
@@ -85,7 +85,10 @@
     <div class="job-modal__overlay" data-close-modal></div>
     <div class="job-modal__content">
         <div class="job-modal__header">
-            <h2 class="job-modal__title" id="section-search-pref">Search Preferences</h2>
+            <div class="job-modal__title-group">
+                <h2 class="job-modal__title" id="section-search-pref">Search Preferences</h2>
+                <p class="search-pref-modal__desc search-pref-modal__desc--desktop">Items included or excluded from AI inference and job matching. Do not forget to save your changes.</p>
+            </div>
             <button type="button" class="job-modal__close red-glass" data-close-modal aria-label="Close modal">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <line x1="18" y1="6" x2="6" y2="18"/>
@@ -97,7 +100,7 @@
             <form class="search-pref-form" id="searchPrefForm" novalidate>
                 {% csrf_token %}
 
-                <p class="search-pref-modal__desc">Items included or excluded from AI inference and job matching. Do not forget to save your changes.</p>
+                <p class="search-pref-modal__desc search-pref-modal__desc--mobile">Items included or excluded from AI inference and job matching. Do not forget to save your changes.</p>
 
                 <div class="info-field-grid">
                     <div class="form-field glass">
