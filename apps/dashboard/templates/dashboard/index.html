@@ -11,11 +11,16 @@
 {% block dashboard_title %}Home{% endblock %}
 
  {% block dashboard_content %}
-<div class="dashboard-header">
-    <h1>Hi {{ display_name }} 👋</h1>
-</div>
-
 <div class="dashboard-cards-grid">
+    <div class="message-card glass" id="messageCard">
+        <div class="message-card__header dashboard-header">
+            <h1>Hi {{ display_name }} 👋</h1>
+        </div>
+        <div class="message-card__body">
+            <p class="message-card__text">Lets find jobs or apply for a job.</p>
+        </div>
+    </div>
+
     <div class="job-actions-card glass" id="jobActionsCard">
         <div class="job-actions-card__header">
             <div class="job-actions-toggle" role="tablist" aria-label="Job actions mode">
