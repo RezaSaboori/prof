@@ -100,6 +100,7 @@
 .search-pref-form #searchPrefSaveBtn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-md) var(--spacing-2xl);
     min-width: 180px;
@@ -108,14 +109,17 @@
     font-family: var(--font-family-base);
     font-size: 15px;
     font-weight: 600;
+    white-space: nowrap;
     cursor: pointer;
     transition: opacity 0.15s ease, transform 0.1s ease;
 }
+
 
 .search-pref-form #searchPrefSaveBtn:disabled {
     cursor: not-allowed;
     opacity: 1;
 }
+
 
 .search-pref-form .save-btn__icon {
     display: flex;
@@ -125,15 +129,18 @@
     flex-shrink: 0;
 }
 
+
 .search-pref-form .save-btn__icon svg {
     width: 18px;
     height: 18px;
 }
 
+
 /* ── Undo button ───────────────────────────────── */
 .search-pref-form #searchPrefUndoBtn {
     display: none;
     align-items: center;
+    justify-content: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-md) var(--spacing-2xl);
     min-width: 180px;
@@ -142,6 +149,7 @@
     font-family: var(--font-family-base);
     font-size: 15px;
     font-weight: 600;
+    white-space: nowrap;
     cursor: pointer;
     transition: opacity 0.15s ease;
 }
@@ -370,6 +378,7 @@
         display: none !important;
     }
 
+
     .search-pref-modal .search-pref-modal__desc--mobile {
         display: block;
         background-color: var(--color-gray10);
@@ -379,5 +388,45 @@
         font-size: 13.5px;
         color: var(--color-gray2);
         line-height: 1.5;
+    }
+
+    /* Sticky island-style actions docked to the bottom of the modal */
+    .search-pref-modal .search-pref-form .info-form__actions {
+        position: sticky;
+        bottom: var(--spacing-xs);
+        z-index: 30;
+        width: fit-content;
+        max-width: 100%;
+        margin: var(--spacing-lg) auto 0 auto;
+        padding: 5px;
+        gap: var(--spacing-xs);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: nowrap;
+        border-radius: var(--border-radius-pill);
+    }
+
+    .search-pref-modal .search-pref-form #searchPrefSaveBtn,
+    .search-pref-modal .search-pref-form #searchPrefUndoBtn {
+        min-width: auto;
+        height: 38px;
+        padding: 0 var(--spacing-md);
+        font-size: 13px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .search-pref-modal .search-pref-form .save-btn__icon,
+    .search-pref-modal .search-pref-form .undo-btn__icon {
+        width: 15px;
+        height: 15px;
+    }
+
+    .search-pref-modal .search-pref-form .save-btn__icon svg,
+    .search-pref-modal .search-pref-form .undo-btn__icon svg {
+        width: 15px;
+        height: 15px;
     }
 }
