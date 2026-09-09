@@ -16,24 +16,10 @@
 </div>
 
 <div class="dashboard-cards-grid">
-    <div class="balance-card green-glass" id="balanceCard">
-        <div class="balance-card__header">
-            <span class="balance-card__label">Your balance</span>
-            <button class="balance-card__add-btn" id="addFundsBtn" type="button">Add Funds +</button>
-        </div>
-        <div class="balance-card__body">
-            <span class="balance-card__currency">$</span>
-            <span class="balance-card__value" id="balanceValue">
-                <span class="skeleton skeleton-heading--lg"></span>
-            </span>
-        </div>
-        <img class="balance-card__decoration" src="{% static 'img/dot pattern.svg' %}" aria-hidden="true" alt="">
-    </div>
-
     <div class="job-actions-card glass" id="jobActionsCard">
         <div class="job-actions-card__header">
             <div class="job-actions-toggle" role="tablist" aria-label="Job actions mode">
-                <button type="button" class="job-actions-toggle__btn active blue-glass" role="tab" aria-selected="true" data-mode="find">Find Jobs</button>
+                <button type="button" class="job-actions-toggle__btn active" role="tab" aria-selected="true" data-mode="find">Find Jobs</button>
                 <button type="button" class="job-actions-toggle__btn" role="tab" aria-selected="false" data-mode="take">Take a Job</button>
             </div>
             <button type="button" class="job-actions-settings-btn glass-dark" aria-label="Job action settings">
@@ -47,13 +33,13 @@
         <div class="job-actions-card__body">
             <div class="job-mode-panel job-mode-panel--find" id="findJobsPanel">
                 <div class="job-stepper">
-                    <button type="button" class="job-stepper__btn glass" id="jobStepperUp" aria-label="Increase number">
+                    <button type="button" class="job-stepper__btn green-glass" id="jobStepperUp" aria-label="Increase number">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="18 15 12 9 6 15"/>
                         </svg>
                     </button>
                     <input type="number" class="job-stepper__input" id="jobStepperInput" value="1" min="1" step="1" aria-label="Number of jobs to find">
-                    <button type="button" class="job-stepper__btn glass" id="jobStepperDown" aria-label="Decrease number">
+                    <button type="button" class="job-stepper__btn orange-glass" id="jobStepperDown" aria-label="Decrease number">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="6 9 12 15 18 9"/>
                         </svg>
@@ -77,6 +63,21 @@
             </div>
         </div>
     </div>
+    <div class="balance-card green-glass" id="balanceCard">
+        <div class="balance-card__header">
+            <span class="balance-card__label">Your balance</span>
+            <button class="balance-card__add-btn" id="addFundsBtn" type="button">Add Funds +</button>
+        </div>
+        <div class="balance-card__body">
+            <span class="balance-card__currency">$</span>
+            <span class="balance-card__value" id="balanceValue">
+                <span class="skeleton skeleton-heading--lg"></span>
+            </span>
+        </div>
+        <img class="balance-card__decoration" src="{% static 'img/dot pattern.svg' %}" aria-hidden="true" alt="">
+    </div>
+
+
 </div>
 
 <!-- ── SEARCH PREFERENCES ── -->

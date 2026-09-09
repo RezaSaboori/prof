@@ -22,11 +22,11 @@
                 var targetMode = btn.getAttribute('data-mode');
 
                 toggleBtns.forEach(function (b) {
-                    b.classList.remove('active', 'blue-glass');
+                    b.classList.remove('active');
                     b.setAttribute('aria-selected', 'false');
                 });
 
-                btn.classList.add('active', 'blue-glass');
+                btn.classList.add('active');
                 btn.setAttribute('aria-selected', 'true');
 
                 if (targetMode === 'find') {
