@@ -17,6 +17,9 @@
         var stepperUp = document.getElementById('jobStepperUp');
         var stepperDown = document.getElementById('jobStepperDown');
 
+        var findDesc = document.getElementById('findJobsDesc');
+        var takeDesc = document.getElementById('takeJobDesc');
+
         toggleBtns.forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var targetMode = btn.getAttribute('data-mode');
@@ -32,9 +35,13 @@
                 if (targetMode === 'find') {
                     if (findPanel) findPanel.removeAttribute('hidden');
                     if (takePanel) takePanel.setAttribute('hidden', '');
+                    if (findDesc) findDesc.removeAttribute('hidden');
+                    if (takeDesc) takeDesc.setAttribute('hidden', '');
                 } else {
                     if (findPanel) findPanel.setAttribute('hidden', '');
                     if (takePanel) takePanel.removeAttribute('hidden');
+                    if (findDesc) findDesc.setAttribute('hidden', '');
+                    if (takeDesc) takeDesc.removeAttribute('hidden');
                 }
             });
         });

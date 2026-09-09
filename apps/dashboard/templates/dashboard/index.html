@@ -31,10 +31,18 @@
         </div>
 
         <div class="job-actions-card__body">
-            <p class="job-actions-card__text">
-                Choose how many Jobs you want to be founded.
-                <span class="job-actions-card__subtext">consider that you must have enough credit inside the balance for them but it will charged only if you want it.</span>
-            </p>
+            <div class="job-body-desc" id="findJobsDesc">
+                <p class="job-actions-card__text">
+                    Choose how many Jobs you want to be founded.
+                    <span class="job-actions-card__subtext">consider that you must have enough credit inside the balance for them but it will charged only if you want it.</span>
+                </p>
+            </div>
+            <div class="job-body-desc" id="takeJobDesc" hidden>
+                <p class="job-actions-card__text">
+                    Create Resume and Cover letter for a specific Job
+                    <span class="job-actions-card__subtext">provide the Link for a specific job you have founded. we will check that and provide a special cover letter and master resume for that.</span>
+                </p>
+            </div>
         </div>
 
         <div class="job-actions-card__footer">
@@ -73,13 +81,15 @@
     <div class="balance-card green-glass" id="balanceCard">
         <div class="balance-card__header">
             <span class="balance-card__label">Your balance</span>
-            <button class="balance-card__add-btn" id="addFundsBtn" type="button">Add Funds +</button>
         </div>
         <div class="balance-card__body">
             <span class="balance-card__currency">$</span>
             <span class="balance-card__value" id="balanceValue">
                 <span class="skeleton skeleton-heading--lg"></span>
             </span>
+        </div>
+        <div class="balance-card__footer">
+            <button class="balance-card__add-btn" id="addFundsBtn" type="button">Add Funds +</button>
         </div>
         <img class="balance-card__decoration" src="{% static 'img/dot pattern.svg' %}" aria-hidden="true" alt="">
     </div>

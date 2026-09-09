@@ -35,6 +35,10 @@
     margin: var(--spacing-xs) 0;
 }
 
+.job-body-desc[hidden] {
+    display: none !important;
+}
+
 .job-actions-card__text {
     font-family: var(--font-family-base);
     font-size: 14.5px;
@@ -254,9 +258,10 @@
 .job-link-wrapper {
     width: 100%;
     min-height: 48px;
-    border-radius: var(--border-radius-pill);
+    border-radius: var(--border-radius-pill) !important;
     padding: 2px 4px 2px var(--spacing-sm);
 }
+
 
 .job-link-input {
     font-size: 15px;
@@ -265,8 +270,8 @@
 
 .job-link-submit-btn {
     position: relative;
-    width: 38px;
-    height: 38px;
+    width: 30px;
+    height: 30px;
     border-radius: var(--border-radius-pill);
     border: none;
     display: inline-flex;
