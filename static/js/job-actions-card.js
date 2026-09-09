@@ -81,6 +81,43 @@
             linkInput.addEventListener('change', updateSubmitButtonState);
             updateSubmitButtonState();
         }
+
+        var settingsBtn = document.getElementById('jobActionsSettingsBtn');
+        var prefModal = document.getElementById('search-preferences-modal');
+
+        function openPrefModal() {
+            if (prefModal) {
+                prefModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closePrefModal() {
+            if (prefModal) {
+                prefModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (settingsBtn && prefModal) {
+            settingsBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                openPrefModal();
+            });
+
+            prefModal.querySelectorAll('[data-close-modal]').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    closePrefModal();
+                });
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && prefModal.classList.contains('active')) {
+                    closePrefModal();
+                }
+            });
+        }
     }
 
     if (document.readyState === 'loading') {
