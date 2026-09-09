@@ -68,6 +68,8 @@
 <script src="{% static 'js/dashboard-skeleton.js' %}" defer></script>
 <script>
 (function() {
+    if (window.innerWidth <= 980) return;
+
     const sidebar = document.querySelector('.dashboard-island');
     const footer = document.querySelector('.site-footer');
     const layout = document.querySelector('.dashboard-layout');
@@ -75,6 +77,7 @@
     if (!sidebar || !footer || !layout) return;
 
     const observer = new IntersectionObserver(function(entries) {
+        if (window.innerWidth <= 980) return;
         entries.forEach(function(entry) {
             if (entry.isIntersecting) {
                 sidebar.classList.add('dashboard-island--docked');
@@ -88,6 +91,12 @@
     });
 
     observer.observe(footer);
+
+    window.addEventListener('resize', function() {
+        if (window.innerWidth <= 980 && sidebar.classList.contains('dashboard-island--docked')) {
+            sidebar.classList.remove('dashboard-island--docked');
+        }
+    });
 })();
 </script>
 

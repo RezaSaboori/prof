@@ -256,7 +256,7 @@
         position: fixed;
         left: var(--spacing-md);
         right: var(--spacing-md);
-        bottom: var(--spacing-md);
+        bottom: max(var(--spacing-md), env(safe-area-inset-bottom, 16px));
         z-index: 100;
         display: flex;
         justify-content: center;

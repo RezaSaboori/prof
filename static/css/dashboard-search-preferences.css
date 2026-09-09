@@ -398,7 +398,7 @@
         width: fit-content;
         max-width: 100%;
         margin: var(--spacing-lg) auto 0 auto;
-        padding: 5px;
+        padding: 6.5px;
         gap: var(--spacing-xs);
         display: flex;
         flex-direction: row;
@@ -411,22 +411,22 @@
     .search-pref-modal .search-pref-form #searchPrefSaveBtn,
     .search-pref-modal .search-pref-form #searchPrefUndoBtn {
         min-width: auto;
-        height: 38px;
-        padding: 0 var(--spacing-md);
-        font-size: 13px;
+        height: 44px;
+        padding: 0 var(--spacing-lg);
+        font-size: 15px;
         white-space: nowrap;
         flex-shrink: 0;
     }
 
     .search-pref-modal .search-pref-form .save-btn__icon,
     .search-pref-modal .search-pref-form .undo-btn__icon {
-        width: 15px;
-        height: 15px;
+        width: 18px;
+        height: 18px;
     }
 
     .search-pref-modal .search-pref-form .save-btn__icon svg,
     .search-pref-modal .search-pref-form .undo-btn__icon svg {
-        width: 15px;
-        height: 15px;
+        width: 18px;
+        height: 18px;
     }
 }

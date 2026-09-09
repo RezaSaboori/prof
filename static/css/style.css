@@ -9,10 +9,12 @@
 html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    background-color: var(--color-gray3);
 }
 
 body {
     font-family: var(--font-family-base);
+    background-color: var(--color-gray3);
     background: linear-gradient(180deg, var(--color-gray3) 0%, var(--color-gray3) 100%);
     color: var(--color-gray11);
     line-height: 1.6;
