@@ -52,7 +52,7 @@
                             <polyline points="18 15 12 9 6 15"/>
                         </svg>
                     </button>
-                    <input type="number" class="job-stepper__input" id="jobStepperInput" value="10" min="1" step="1" aria-label="Number of jobs to find">
+                    <input type="number" class="job-stepper__input" id="jobStepperInput" value="1" min="1" step="1" aria-label="Number of jobs to find">
                     <button type="button" class="job-stepper__btn glass" id="jobStepperDown" aria-label="Decrease number">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="6 9 12 15 18 9"/>
@@ -63,14 +63,16 @@
             </div>
 
             <div class="job-mode-panel job-mode-panel--take" id="takeJobPanel" hidden>
-                <div class="job-input-wrapper">
-                    <input type="url" class="job-link-input" id="takeJobLinkInput" placeholder="Provide the Job link" autocomplete="off" aria-label="Provide the Job link">
-                    <button type="button" class="job-link-submit-btn blue-glass" id="takeJobSubmitBtn" aria-label="Submit job link">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <line x1="12" y1="19" x2="12" y2="5"/>
-                            <polyline points="5 12 12 5 19 12"/>
-                        </svg>
-                    </button>
+                <div class="tag-wrapper job-link-wrapper" id="takeJobWrapper">
+                    <div class="tag-input-row">
+                        <input type="url" class="tag-input job-link-input" id="takeJobLinkInput" placeholder="Provide the Job link" autocomplete="off" aria-label="Provide the Job link">
+                        <button type="button" class="job-link-submit-btn glass" id="takeJobSubmitBtn" aria-label="Submit job link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="12" y1="19" x2="12" y2="5"/>
+                                <polyline points="5 12 12 5 19 12"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

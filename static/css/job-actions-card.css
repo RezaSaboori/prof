@@ -52,6 +52,7 @@
 }
 
 .job-actions-toggle__btn {
+    position: relative;
     border: none;
     background: transparent;
     border-radius: var(--border-radius-pill);
@@ -61,17 +62,18 @@
     font-weight: 600;
     color: var(--color-gray8);
     cursor: pointer;
-    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    transition: color 0.2s ease, box-shadow 0.2s ease;
     white-space: nowrap;
 }
 
 .job-actions-toggle__btn:hover:not(.active) {
     color: var(--color-gray11);
-    background: color-mix(in srgb, var(--color-blue) 6%, transparent);
+    background: color-mix(in srgb, var(--color-gray12) 6%, transparent);
 }
 
 .job-actions-toggle__btn.active {
     color: var(--color-gray1);
+    background: unset;
 }
 
 /* Settings button */
@@ -192,47 +194,38 @@
 }
 
 /* Take a Job Link Input Row */
-.job-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
+.job-link-wrapper {
     width: 100%;
+    min-height: 48px;
+    border-radius: var(--border-radius-pill);
+    padding: 2px 4px 2px var(--spacing-sm);
 }
 
 .job-link-input {
-    width: 100%;
-    height: 48px;
-    border-radius: var(--border-radius-pill);
-    border: var(--border-width-thin) solid color-mix(in srgb, var(--color-gray1) 35%, transparent);
-    background: var(--color-gray1);
-    padding: 0 54px 0 var(--spacing-lg);
-    font-family: var(--font-family-base);
     font-size: 15px;
-    color: var(--color-gray11);
-    outline: none;
-    box-shadow: var(--elevation-1);
-}
-
-.job-link-input::placeholder {
-    color: var(--color-gray6);
-}
-
-.job-link-input:focus {
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-blue) 40%, transparent);
+    padding: var(--spacing-xs) var(--spacing-sm);
 }
 
 .job-link-submit-btn {
-    position: absolute;
-    right: 4px;
-    width: 40px;
-    height: 40px;
+    position: relative;
+    width: 38px;
+    height: 38px;
     border-radius: var(--border-radius-pill);
     border: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-gray1);
     cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.job-link-submit-btn.glass {
+    color: var(--color-gray8);
+}
+
+.job-link-submit-btn.blue-glass {
+    color: var(--color-gray1);
 }
 
 .job-link-submit-btn svg {
@@ -241,5 +234,5 @@
 }
 
 .job-link-submit-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.92);
 }

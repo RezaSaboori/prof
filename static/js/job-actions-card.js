@@ -60,6 +60,27 @@
                 }
             });
         }
+
+        var linkInput = document.getElementById('takeJobLinkInput');
+        var submitBtn = document.getElementById('takeJobSubmitBtn');
+
+        function updateSubmitButtonState() {
+            if (!submitBtn || !linkInput) return;
+            var hasValue = linkInput.value.trim().length > 0;
+            if (hasValue) {
+                submitBtn.classList.remove('glass');
+                submitBtn.classList.add('blue-glass');
+            } else {
+                submitBtn.classList.remove('blue-glass');
+                submitBtn.classList.add('glass');
+            }
+        }
+
+        if (linkInput && submitBtn) {
+            linkInput.addEventListener('input', updateSubmitButtonState);
+            linkInput.addEventListener('change', updateSubmitButtonState);
+            updateSubmitButtonState();
+        }
     }
 
     if (document.readyState === 'loading') {
