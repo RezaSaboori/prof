@@ -189,19 +189,31 @@
 
 
 /* ============================================
+   DASHBOARD CARDS GRID
+   ============================================ */
+.dashboard-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-lg);
+    align-items: stretch;
+    margin-bottom: var(--spacing-xl);
+    max-width: 900px;
+}
+
+/* ============================================
    BALANCE CARD — Credit-card style
    ============================================ */
 .balance-card {
     position: relative;
     border-radius: var(--border-radius-container-md);
     padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-2xl);
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: 0;
     overflow: hidden;
     min-height: 160px;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
-    max-width: 420px;
+    width: 100%;
 }
 
 .balance-card__header {

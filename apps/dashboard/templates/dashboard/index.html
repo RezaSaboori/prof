@@ -3,6 +3,7 @@
 {% block extra_css %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/dashboard-home.css' %}">
+<link rel="stylesheet" href="{% static 'css/job-actions-card.css' %}">
 <link rel="stylesheet" href="{% static 'css/tags.css' %}">
 <link rel="stylesheet" href="{% static 'css/dashboard-search-preferences.css' %}">
 {% endblock %}
@@ -14,20 +15,67 @@
     <h1>Hi {{ display_name }} 👋</h1>
 </div>
 
-<div class="balance-card green-glass" id="balanceCard">
-    <div class="balance-card__header">
-        <span class="balance-card__label">Your balance</span>
-        <button class="balance-card__add-btn" id="addFundsBtn" type="button">Add Funds +</button>
+<div class="dashboard-cards-grid">
+    <div class="balance-card green-glass" id="balanceCard">
+        <div class="balance-card__header">
+            <span class="balance-card__label">Your balance</span>
+            <button class="balance-card__add-btn" id="addFundsBtn" type="button">Add Funds +</button>
+        </div>
+        <div class="balance-card__body">
+            <span class="balance-card__currency">$</span>
+            <span class="balance-card__value" id="balanceValue">
+                <span class="skeleton skeleton-heading--lg"></span>
+            </span>
+        </div>
+        <img class="balance-card__decoration" src="{% static 'img/dot pattern.svg' %}" aria-hidden="true" alt="">
     </div>
-    <div class="balance-card__body">
-        <span class="balance-card__currency">$</span>
-        <span class="balance-card__value" id="balanceValue">
-            <span class="skeleton skeleton-heading--lg"></span>
-        </span>
-    </div>
-    <img class="balance-card__decoration" src="{% static 'img/dot pattern.svg' %}" aria-hidden="true" alt="">
-</div>
 
+    <div class="job-actions-card glass" id="jobActionsCard">
+        <div class="job-actions-card__header">
+            <div class="job-actions-toggle" role="tablist" aria-label="Job actions mode">
+                <button type="button" class="job-actions-toggle__btn active blue-glass" role="tab" aria-selected="true" data-mode="find">Find Jobs</button>
+                <button type="button" class="job-actions-toggle__btn" role="tab" aria-selected="false" data-mode="take">Take a Job</button>
+            </div>
+            <button type="button" class="job-actions-settings-btn glass-dark" aria-label="Job action settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="job-actions-card__body">
+            <div class="job-mode-panel job-mode-panel--find" id="findJobsPanel">
+                <div class="job-stepper">
+                    <button type="button" class="job-stepper__btn glass" id="jobStepperUp" aria-label="Increase number">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="18 15 12 9 6 15"/>
+                        </svg>
+                    </button>
+                    <input type="number" class="job-stepper__input" id="jobStepperInput" value="10" min="1" step="1" aria-label="Number of jobs to find">
+                    <button type="button" class="job-stepper__btn glass" id="jobStepperDown" aria-label="Decrease number">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                </div>
+                <button type="button" class="job-action-start-btn blue-glass" id="jobStartBtn">Start</button>
+            </div>
+
+            <div class="job-mode-panel job-mode-panel--take" id="takeJobPanel" hidden>
+                <div class="job-input-wrapper">
+                    <input type="url" class="job-link-input" id="takeJobLinkInput" placeholder="Provide the Job link" autocomplete="off" aria-label="Provide the Job link">
+                    <button type="button" class="job-link-submit-btn blue-glass" id="takeJobSubmitBtn" aria-label="Submit job link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <line x1="12" y1="19" x2="12" y2="5"/>
+                            <polyline points="5 12 12 5 19 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- ── SEARCH PREFERENCES ── -->
 <form class="search-pref-form" id="searchPrefForm" novalidate>
@@ -304,6 +352,7 @@
 
 {% block extra_js %}
 <script src="{% static 'js/balance-card.js' %}" defer></script>
+<script src="{% static 'js/job-actions-card.js' %}" defer></script>
 <script src="{% static 'js/webhook_test.js' %}" defer></script>
 <script src="{% static 'js/tags.js' %}" defer></script>
 <script src="{% static 'js/dashboard-search-preferences.js' %}" defer></script>
