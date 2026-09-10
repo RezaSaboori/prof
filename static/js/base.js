@@ -1,11 +1,29 @@
 // Base JavaScript for Prof Landing Page
 document.addEventListener('DOMContentLoaded', () => {
+    initPWAViewportFix();
     initMobileNav();
     initScrollTop();
     initSmoothActionButtons();
     initMessages();
     initAuthModal();
 });
+
+function initPWAViewportFix() {
+    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+    if (!isStandalone) return;
+
+    const forceViewportSync = () => {
+        window.scrollTo(0, window.scrollY);
+        const islands = document.querySelectorAll('.site-header, .dashboard-dock');
+        islands.forEach((island) => {
+            island.style.transform = 'translate3d(0, 0, 0)';
+        });
+    };
+
+    requestAnimationFrame(forceViewportSync);
+    window.addEventListener('pageshow', forceViewportSync, { passive: true });
+    window.addEventListener('orientationchange', () => setTimeout(forceViewportSync, 100), { passive: true });
+}
 
 function initMobileNav() {
     const toggleButton = document.querySelector('.nav-toggle');

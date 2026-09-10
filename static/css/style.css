@@ -986,12 +986,16 @@ body {
     .site-header {
         position: fixed;
         top: auto;
-        bottom: var(--spacing-sm);
+        bottom: max(var(--spacing-sm), env(safe-area-inset-bottom, 16px));
         left: var(--spacing-md);
         right: var(--spacing-md);
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 1000;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        will-change: transform;
     }
 
     .header-container {
