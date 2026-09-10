@@ -151,8 +151,8 @@
 
 /* Settings button */
 .job-actions-settings-btn {
-    width: 44px;
-    height: 44px;
+    width: 35px;
+    height: 35px;
     border-radius: var(--border-radius-pill);
     border: none;
     cursor: pointer;
@@ -170,8 +170,8 @@
 }
 
 .job-actions-settings-btn svg {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
 }
 
 /* Body and Panels */
