@@ -53,7 +53,7 @@
     border: var(--border-width-thin) solid
         color-mix(in srgb, var(--color-gray12) 14%, transparent);
     background: color-mix(in srgb, var(--color-gray1) 100%, transparent);
-    font-size: 14px;
+    font-size: 16px;
     color: var(--color-gray11);
     outline: none;
     transition: border-color 0.18s ease, box-shadow 0.18s ease;

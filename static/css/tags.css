@@ -202,6 +202,12 @@
     word-break: break-word;
 }
 
+@media (max-width: 768px) {
+    .tag-input {
+        font-size: 16px;
+    }
+}
+
 .tag-input::placeholder {
     color: var(--color-gray6);
     font-size: 13px;
