@@ -232,11 +232,16 @@ body { line-height: var(--line-height-base); overflow-x: hidden; }
         height: 8px;
     }
 
-    /* Prevent mobile browser auto-zoom on field focus */
+    /* Global mobile safeguard: iOS Safari auto-zooms focused editable
+       controls when their computed font size is below 16px. Keep every
+       current and future editable control at the required minimum. */
     input,
     textarea,
-    select {
-        font-size: 16px;
+    select,
+    [contenteditable="true"],
+    [contenteditable=""],
+    [role="textbox"] {
+        font-size: 16px !important;
     }
 }
 
