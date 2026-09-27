@@ -409,8 +409,58 @@ body.job-document-modal-open {
         gap: var(--spacing-xs);
     }
 
+    .job-modal__close,
+    .job-modal__icon-btn,
+    .job-modal__save {
+        box-sizing: border-box;
+        height: calc(
+            var(--spacing-xl) +
+            var(--spacing-xs)
+        );
+        flex-shrink: 0;
+    }
+
+    .job-modal__close,
+    .job-modal__icon-btn,
+    .job-modal__save[data-save-state="edit"],
+    .job-modal__save[data-save-state="save"],
+    .job-modal__save[data-save-state="saved"] {
+        width: calc(
+            var(--spacing-xl) +
+            var(--spacing-xs)
+        );
+        min-width: calc(
+            var(--spacing-xl) +
+            var(--spacing-xs)
+        );
+        max-width: calc(
+            var(--spacing-xl) +
+            var(--spacing-xs)
+        );
+        flex-basis: calc(
+            var(--spacing-xl) +
+            var(--spacing-xs)
+        );
+    }
+
     .job-modal__save {
         padding: 0 var(--spacing-sm);
+    }
+
+    .job-modal__close {
+        padding: var(--spacing-sm);
+    }
+
+    .job-modal__icon-btn {
+        padding: var(--spacing-sm);
+    }
+
+    .job-modal__close svg,
+    .job-modal__icon-btn svg,
+    .job-modal__action-icon,
+    .job-modal__action-icon svg {
+        width: var(--spacing-md);
+        height: var(--spacing-md);
     }
 
     .job-modal__body {
