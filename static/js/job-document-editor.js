@@ -542,6 +542,8 @@
                 savedValue: storedValue,
                 saving: false,
                 closeAfterSave: false,
+                exitEditAfterSave: false,
+                confirmationAction: null,
                 savedFeedbackTimer: null,
                 mode: 'view',
             };
@@ -595,10 +597,32 @@
             }
         }
 
-        function openConfirmation() {
+        function exitEditMode() {
             if (!activeDocument) {
                 return;
             }
+
+            activeDocument.mode = 'view';
+            activeDocument.confirmationAction = null;
+            activeDocument.exitEditAfterSave = false;
+
+            activeDocument.editor.hidden = true;
+            activeDocument.editor.readOnly = false;
+
+            activeDocument.preview.innerHTML =
+                renderDocument(activeDocument.savedValue);
+            activeDocument.preview.hidden = false;
+
+            setSaveState('edit', true);
+        }
+
+        function openConfirmation(action) {
+            if (!activeDocument) {
+                return;
+            }
+
+            activeDocument.confirmationAction =
+                action || 'close-modal';
 
             confirmation.classList.add('active');
             confirmation.setAttribute('aria-hidden', 'false');
@@ -618,11 +642,17 @@
         function closeConfirmation(restoreEditorFocus) {
             confirmation.classList.remove('active');
             confirmation.setAttribute('aria-hidden', 'true');
+
+            if (activeDocument) {
+                activeDocument.confirmationAction = null;
+            }
+
             syncBodyLock();
 
             if (
                 restoreEditorFocus &&
-                activeDocument
+                activeDocument &&
+                activeDocument.mode === 'edit'
             ) {
                 window.requestAnimationFrame(function() {
                     activeDocument.editor.focus();
@@ -641,11 +671,32 @@
             }
 
             if (isDirty()) {
-                openConfirmation();
+                openConfirmation('close-modal');
                 return;
             }
 
             closeDocumentModal();
+        }
+
+        function requestEditorClose() {
+            if (
+                !activeDocument ||
+                activeDocument.mode !== 'edit'
+            ) {
+                return;
+            }
+
+            if (activeDocument.saving) {
+                activeDocument.exitEditAfterSave = true;
+                return;
+            }
+
+            if (isDirty()) {
+                openConfirmation('close-editor');
+                return;
+            }
+
+            exitEditMode();
         }
 
         function notifyError(message) {
@@ -660,7 +711,10 @@
             });
         }
 
-        async function saveDocument(closeAfterSave) {
+        async function saveDocument(
+            closeAfterSave,
+            exitEditAfterSave
+        ) {
             if (!activeDocument) {
                 return false;
             }
@@ -670,12 +724,18 @@
                     activeDocument.closeAfterSave = true;
                 }
 
+                if (exitEditAfterSave) {
+                    activeDocument.exitEditAfterSave = true;
+                }
+
                 return false;
             }
 
             if (!isDirty()) {
                 if (closeAfterSave) {
                     closeDocumentModal();
+                } else if (exitEditAfterSave) {
+                    exitEditMode();
                 } else {
                     showSavedFeedback(false);
                 }
@@ -688,6 +748,8 @@
 
             state.saving = true;
             state.closeAfterSave = Boolean(closeAfterSave);
+            state.exitEditAfterSave =
+                Boolean(exitEditAfterSave);
             state.editor.readOnly = true;
 
             const savingAnimation =
@@ -741,11 +803,18 @@
                         valueToSave;
                 }
 
-                const shouldClose = state.closeAfterSave;
+                const shouldClose =
+                    state.closeAfterSave;
+                const shouldExitEdit =
+                    state.exitEditAfterSave;
+
                 state.closeAfterSave = false;
+                state.exitEditAfterSave = false;
 
                 if (shouldClose) {
                     closeDocumentModal();
+                } else if (shouldExitEdit) {
+                    exitEditMode();
                 } else {
                     showSavedFeedback(true);
                 }
@@ -757,6 +826,7 @@
                 if (activeDocument === state) {
                     state.saving = false;
                     state.closeAfterSave = false;
+                    state.exitEditAfterSave = false;
                     state.editor.readOnly = false;
 
                     collapseToSaveState(
@@ -920,8 +990,17 @@
 
             if (confirmationSave) {
                 event.preventDefault();
+
+                const action = activeDocument
+                    ? activeDocument.confirmationAction
+                    : null;
+
                 closeConfirmation(false);
-                saveDocument(true);
+
+                saveDocument(
+                    action === 'close-modal',
+                    action === 'close-editor'
+                );
                 return;
             }
 
@@ -932,12 +1011,23 @@
             if (confirmationDiscard) {
                 event.preventDefault();
 
+                const action = activeDocument
+                    ? activeDocument.confirmationAction
+                    : null;
+
                 if (activeDocument) {
                     activeDocument.editor.value =
                         activeDocument.savedValue;
                 }
 
-                closeDocumentModal();
+                closeConfirmation(false);
+
+                if (action === 'close-editor') {
+                    exitEditMode();
+                } else {
+                    closeDocumentModal();
+                }
+
                 return;
             }
 
@@ -982,6 +1072,21 @@
                 activeDocument.modal.contains(event.target)
             ) {
                 requestDocumentClose();
+                return;
+            }
+
+            const modalContent = event.target.closest(
+                '.job-modal__content'
+            );
+
+            if (
+                activeDocument &&
+                activeDocument.mode === 'edit' &&
+                modalContent &&
+                activeDocument.modal.contains(modalContent) &&
+                !activeDocument.editor.contains(event.target)
+            ) {
+                requestEditorClose();
             }
         });
 
