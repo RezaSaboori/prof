@@ -6,6 +6,7 @@ from requests.adapters import HTTPAdapter
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import os
@@ -354,6 +355,7 @@ def api_user_info_save(request):
 
 
 @login_required
+@ensure_csrf_cookie
 def jobs(request):
     """Fetch user's processed jobs from Supabase."""
     SELECT_COLS = (

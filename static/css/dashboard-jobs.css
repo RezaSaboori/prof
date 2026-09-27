@@ -203,7 +203,7 @@
         backdrop-filter 0.5s ease !important;
 }
 
-.jobs-grid .job-card__btn.glass:hover,
+.jobs-grid .job-card__btn.glass:not(.job-card__btn--decline):hover,
 .jobs-grid .job-card__logo.glass:hover {
     -webkit-appearance: none;
     appearance: none;
@@ -521,11 +521,16 @@
 }
 
 .job-card__btn--decline {
-    color: var(--color-red);
+    color: var(--color-gray12);
 }
 
 .job-card__btn--decline:hover {
     color: var(--color-red);
+}
+
+.job-card__btn--decline:disabled {
+    color: var(--color-red);
+    cursor: default;
 }
 
 .job-card--declined {

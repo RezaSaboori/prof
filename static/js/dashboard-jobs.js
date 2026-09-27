@@ -491,6 +491,7 @@
                     'X-CSRFToken': getCsrfToken(),
                     'X-Requested-With': 'XMLHttpRequest',
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify({ id: btn.dataset.declineJob }),
             })
                 .then(function(response) {
@@ -508,7 +509,14 @@
                     if (card) {
                         card.dataset.jobPaid = '2';
                         card.classList.add('job-card--declined');
-                        btn.remove();
+
+                        btn.disabled = true;
+                        btn.removeAttribute('data-decline-job');
+
+                        if (label) {
+                            label.textContent = 'Declined';
+                        }
+
                         grid.appendChild(card);
 
                         if (typeof grid.layoutJobsGrid === 'function') {

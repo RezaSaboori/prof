@@ -111,7 +111,12 @@
                     </svg>
                     <span>Unlock</span>
                 </button>
-                {% if job.paid == 0 %}
+
+                {% if job.paid == 2 %}
+                <button type="button" class="job-card__btn job-card__btn--decline glass" disabled>
+                    <span>Declined</span>
+                </button>
+                {% else %}
                 <button type="button" class="job-card__btn job-card__btn--decline glass" data-decline-job="{{ job.id }}">
                     <span>Decline</span>
                 </button>
