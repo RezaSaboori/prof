@@ -685,6 +685,21 @@
                 return;
             }
 
+            const previewHeight =
+                activeDocument.preview.getBoundingClientRect().height;
+
+            if (previewHeight > 0) {
+                const editorHeight =
+                    Math.ceil(previewHeight) + 'px';
+
+                activeDocument.editor.style.height =
+                    editorHeight;
+                activeDocument.editor.style.minHeight =
+                    editorHeight;
+                activeDocument.editor.style.maxHeight =
+                    editorHeight;
+            }
+
             activeDocument.mode = 'edit';
             activeDocument.preview.hidden = true;
             activeDocument.editor.hidden = false;
@@ -824,6 +839,9 @@
 
             activeDocument.editor.hidden = true;
             activeDocument.editor.readOnly = false;
+            activeDocument.editor.style.height = '';
+            activeDocument.editor.style.minHeight = '';
+            activeDocument.editor.style.maxHeight = '';
 
             activeDocument.preview.innerHTML =
                 renderDocument(activeDocument.savedValue);
