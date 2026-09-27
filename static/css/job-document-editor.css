@@ -309,7 +309,8 @@ body.job-document-modal-open {
     min-height: 0;
     max-height: var(--job-document-content-max-height);
     display: flex;
-    flex: 1 1 0;
+    flex-direction: column;
+    flex: 1 1 auto;
     overflow: hidden;
 }
 
@@ -319,6 +320,7 @@ body.job-document-modal-open {
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
+    flex: 1 1 auto;
     overflow-y: auto;
     font-size: calc(
         var(--spacing-md) -
@@ -393,7 +395,7 @@ body.job-document-modal-open {
         2px
         var(--spacing-sm);
     border-radius:
-        var(--border-radius-pill)
+        var(--border-radius-container-xs)
         !important;
     overflow: visible;
 }
@@ -405,13 +407,15 @@ body.job-document-modal-open {
     padding: 0;
 }
 
-.job-modal__bottom-input {
+.job-modal__input-wrapper .job-modal__bottom-input {
     height: calc(1.5em + 8px);
     min-height: calc(1.5em + 8px);
     max-height: calc(1.5em * 5 + 8px);
     padding:
         var(--spacing-xs)
-        var(--spacing-sm);
+        0;
+    border-radius:
+        var(--border-radius-container-xs);
     overflow-x: hidden;
     overflow-y: hidden;
     resize: none;
@@ -419,6 +423,11 @@ body.job-document-modal-open {
     overflow-wrap: anywhere;
     word-break: break-word;
     font-size: 16px;
+}
+
+.job-modal__input-wrapper .job-modal__bottom-input:focus {
+    border-radius:
+        var(--border-radius-container-xs);
 }
 
 .job-modal__input-submit {
