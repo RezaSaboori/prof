@@ -55,4 +55,5 @@ urlpatterns = [
     path('api/company-logo/',     views.api_company_logo,     name='api_company_logo'),
 
     path('api/jobs/unlock/',      views.api_job_unlock,       name='api_job_unlock'),
+    path('api/jobs/decline/',     views.api_job_decline,      name='api_job_decline'),
 ]

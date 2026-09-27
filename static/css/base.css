@@ -99,6 +99,8 @@
     --accent-dark: rgb(0, 100, 210);
     --accent-glow: color-mix(in srgb, var(--color-blue) 15%, transparent);
 
+    --state-declined-opacity: 0.55;
+
     /* ---- Responsive utility tokens (desktop values) ---- */
     --content-padding-min: 24px;   /* minimum lateral page padding */
     --touch-target-min: 44px;      /* Apple HIG / Material floor — constant everywhere */

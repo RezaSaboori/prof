@@ -520,6 +520,18 @@
     cursor: wait;
 }
 
+.job-card__btn--decline {
+    color: var(--color-red);
+}
+
+.job-card__btn--decline:hover {
+    color: var(--color-red);
+}
+
+.job-card--declined {
+    opacity: var(--state-declined-opacity);
+}
+
 
 /* Empty State */
 .jobs-empty {

@@ -362,6 +362,13 @@
         function sortGrid(key) {
             const cards = Array.prototype.slice.call(grid.querySelectorAll('.job-card'));
             cards.sort(function(a, b) {
+                const aDeclined = a.dataset.jobPaid === '2';
+                const bDeclined = b.dataset.jobPaid === '2';
+
+                if (aDeclined !== bDeclined) {
+                    return aDeclined ? 1 : -1;
+                }
+
                 return cardValue(b, key) - cardValue(a, key);
             });
             cards.forEach(function(card) {
@@ -454,6 +461,79 @@
         });
     }
 
+    function initJobDecline() {
+        const grid = document.querySelector('.jobs-grid');
+        if (!grid) {
+            return;
+        }
+
+        const endpoint = grid.dataset.declineEndpoint || '/dashboard/api/jobs/decline/';
+
+        grid.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-decline-job]');
+            if (!btn || btn.disabled) {
+                return;
+            }
+
+            const label = btn.querySelector('span');
+            const card = btn.closest('.job-card');
+
+            btn.disabled = true;
+
+            if (label) {
+                label.textContent = 'Declining...';
+            }
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ id: btn.dataset.declineJob }),
+            })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP ' + response.status);
+                    }
+
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (!data || !data.ok) {
+                        throw new Error((data && data.error) || 'decline failed');
+                    }
+
+                    if (card) {
+                        card.dataset.jobPaid = '2';
+                        card.classList.add('job-card--declined');
+                        btn.remove();
+                        grid.appendChild(card);
+
+                        if (typeof grid.layoutJobsGrid === 'function') {
+                            grid.layoutJobsGrid();
+                        }
+                    }
+                })
+                .catch(function() {
+                    btn.disabled = false;
+
+                    if (label) {
+                        label.textContent = 'Decline';
+                    }
+
+                    if (typeof window.notify === 'function') {
+                        window.notify({
+                            type: 'error',
+                            category: 'Error',
+                            body: 'Could not decline this job right now. Please try again.',
+                        });
+                    }
+                });
+        });
+    }
+
 
     // Expand/collapse job card qualifications with a smooth height transition.
     // The "More" button is only shown when the clamped text actually overflows.
@@ -525,6 +605,7 @@
         initCompanyLogos();
         initJobSort();
         initJobUnlock();
+        initJobDecline();
         initJobCardExpand();
     }
 

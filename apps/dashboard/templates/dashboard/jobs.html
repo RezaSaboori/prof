@@ -35,9 +35,9 @@
             </div>
         </div>
     </div>
-    <div class="jobs-grid" data-logo-endpoint="{% url 'dashboard:api_company_logo' %}" data-unlock-endpoint="{% url 'dashboard:api_job_unlock' %}">
+    <div class="jobs-grid" data-logo-endpoint="{% url 'dashboard:api_company_logo' %}" data-unlock-endpoint="{% url 'dashboard:api_job_unlock' %}" data-decline-endpoint="{% url 'dashboard:api_job_decline' %}">
         {% for job in jobs %}
-        <div class="job-card {% if job.paid %}opal-glass{% else %}glass{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}">
+        <div class="job-card {% if job.paid == 1 %}opal-glass{% else %}glass{% endif %}{% if job.paid == 2 %} job-card--declined{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}" data-job-paid="{{ job.paid|default:0 }}">
             <div class="job-card__header">
                 <div class="job-card__logo glass" data-logo-link="{{ job.link }}">
                     <span class="job-card__logo-fallback">{{ job.company|default_if_none:""|first|upper }}</span>
@@ -84,7 +84,7 @@
             </div>
             
             <div class="job-card__footer">
-                {% if job.paid %}
+                {% if job.paid == 1 %}
                 <button class="job-card__btn job-card__btn--secondary glass" data-modal="cover-letter" data-job-id="{{ forloop.counter }}">
                     <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -111,6 +111,11 @@
                     </svg>
                     <span>Unlock</span>
                 </button>
+                {% if job.paid == 0 %}
+                <button type="button" class="job-card__btn job-card__btn--decline glass" data-decline-job="{{ job.id }}">
+                    <span>Decline</span>
+                </button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
