@@ -1,5 +1,9 @@
 from django.urls import path
 from . import views
+from .views_payments import (
+    create_balance_checkout_session_view,
+    stripe_webhook,
+)
 from .views_webhook import (
     trigger_webhook, trigger_webhook_mode1, trigger_webhook_mode2, trigger_webhook_mode3,
     webhook_resume_uploaded, webhook_information_confirmed,
@@ -37,6 +41,16 @@ urlpatterns = [
     path('api/resume-status/set/', views.api_set_resume_status, name='api_set_resume_status'),
 
     path('api/balance/',          views.api_balance_get,      name='api_balance_get'),
+    path(
+        'api/stripe/checkout/',
+        create_balance_checkout_session_view,
+        name='stripe_create_checkout',
+    ),
+    path(
+        'api/stripe/webhook/',
+        stripe_webhook,
+        name='stripe_webhook',
+    ),
 
     path('api/company-logo/',     views.api_company_logo,     name='api_company_logo'),
 

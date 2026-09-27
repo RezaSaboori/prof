@@ -101,6 +101,10 @@ SUPABASE_URL              = os.getenv('SUPABASE_URL', '')
 SUPABASE_ANON_KEY         = os.getenv('SUPABASE_ANON_KEY', '')
 SUPABASE_SERVICE_ROLE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY', '')
 
+# ── Stripe ─────────────────────────────────────────────────────────
+STRIPE_SECRET_KEY    = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
+
 # ── n8n Gateway Webhook ────────────────────────────────────────────
 N8N_GATEWAY_URL                  = os.getenv('N8N_GATEWAY_URL', '')
 N8N_GATEWAY_SECRET_HEADER_NAME   = os.getenv('N8N_GATEWAY_SECRET_HEADER_NAME', 'X-Workflow-Secret')

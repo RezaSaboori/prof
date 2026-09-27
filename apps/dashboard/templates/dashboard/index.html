@@ -83,7 +83,12 @@
             </div>
         </div>
     </div>
-    <div class="balance-card green-glass" id="balanceCard">
+    <div
+        class="balance-card green-glass"
+        id="balanceCard"
+        data-balance-url="{% url 'dashboard:api_balance_get' %}"
+        data-checkout-url="{% url 'dashboard:stripe_create_checkout' %}"
+    >
         <div class="balance-card__header">
             <span class="balance-card__label">Your balance</span>
         </div>
@@ -94,12 +99,99 @@
             </span>
         </div>
         <div class="balance-card__footer">
-            <button class="balance-card__add-btn" id="addFundsBtn" type="button">Add Funds +</button>
+            <button
+                class="balance-card__add-btn"
+                id="addFundsBtn"
+                type="button"
+                aria-haspopup="dialog"
+                aria-controls="balanceTopupModal"
+            >
+                Add Funds +
+            </button>
         </div>
         <img class="balance-card__decoration" src="{% static 'img/dot pattern.svg' %}" aria-hidden="true" alt="">
     </div>
 
 
+</div>
+
+<div
+    class="balance-topup-modal"
+    id="balanceTopupModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="balanceTopupTitle"
+    hidden
+>
+    <button
+        class="balance-topup-modal__overlay"
+        type="button"
+        data-balance-close
+        aria-label="Close add funds dialog"
+    ></button>
+
+    <div class="balance-topup-modal__dialog glass">
+        <div class="balance-topup-modal__header">
+            <div class="balance-topup-modal__heading">
+                <h2 class="balance-topup-modal__title" id="balanceTopupTitle">Add funds</h2>
+                <p class="balance-topup-modal__description">
+                    Enter the amount you want to add to your Prof balance.
+                </p>
+            </div>
+
+            <button
+                class="balance-topup-modal__close red-glass"
+                type="button"
+                data-balance-close
+                aria-label="Close add funds dialog"
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <form class="balance-topup-modal__form" id="balanceTopupForm" novalidate>
+            {% csrf_token %}
+
+            <label class="balance-topup-modal__label" for="balanceTopupAmount">
+                Amount
+            </label>
+
+            <div class="balance-topup-modal__amount">
+                <span class="balance-topup-modal__currency">$</span>
+                <input
+                    class="balance-topup-modal__input"
+                    id="balanceTopupAmount"
+                    name="amount"
+                    type="number"
+                    inputmode="decimal"
+                    min="1.00"
+                    max="10000.00"
+                    step="0.01"
+                    placeholder="0.00"
+                    autocomplete="off"
+                    required
+                >
+            </div>
+
+            <p
+                class="balance-topup-modal__error"
+                id="balanceTopupError"
+                role="alert"
+                hidden
+            ></p>
+
+            <button
+                class="balance-topup-modal__submit green-glass"
+                id="balanceTopupSubmit"
+                type="submit"
+            >
+                Continue to payment
+            </button>
+        </form>
+    </div>
 </div>
 
 <!-- ── SEARCH PREFERENCES MODAL ── -->

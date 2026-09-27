@@ -467,3 +467,173 @@
     font-weight: 500;
     color: color-mix(in srgb, var(--color-gray1) 60%, transparent);
 }
+
+
+/* ============================================
+   BALANCE TOP-UP MODAL
+   ============================================ */
+body.balance-topup-open {
+    overflow: hidden;
+}
+
+.balance-topup-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+}
+
+.balance-topup-modal[hidden] {
+    display: none;
+}
+
+.balance-topup-modal__overlay {
+    position: absolute;
+    inset: 0;
+    border: var(--border-width-none);
+    background-color:
+        color-mix(in srgb, var(--color-gray12) 42%, transparent);
+    backdrop-filter: blur(var(--spacing-xs));
+    -webkit-backdrop-filter: blur(var(--spacing-xs));
+    cursor: pointer;
+}
+
+.balance-topup-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: calc(var(--spacing-5xl) * 7);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-container-lg);
+}
+
+.balance-topup-modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+}
+
+.balance-topup-modal__heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.balance-topup-modal__title {
+    margin: 0;
+    font-family: var(--font-family-variable);
+    font-size: calc(var(--spacing-md) + var(--spacing-xs));
+    font-weight: 700;
+    color: var(--color-gray11);
+}
+
+.balance-topup-modal__description {
+    margin: 0;
+    color: var(--color-gray7);
+}
+
+.balance-topup-modal__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch-target-min);
+    height: var(--touch-target-min);
+    flex-shrink: 0;
+    padding: 0;
+    border: var(--border-width-none);
+    border-radius: var(--border-radius-pill);
+    cursor: pointer;
+}
+
+.balance-topup-modal__close svg {
+    width: var(--spacing-md);
+    height: var(--spacing-md);
+    color: var(--color-gray1);
+}
+
+.balance-topup-modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.balance-topup-modal__label {
+    font-family: var(--font-family-variable);
+    font-weight: 600;
+    color: var(--color-gray10);
+}
+
+.balance-topup-modal__amount {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-height: calc(var(--touch-target-min) + var(--spacing-md));
+    padding: 0 var(--spacing-lg);
+    border:
+        var(--border-width-thin)
+        solid
+        color-mix(in srgb, var(--color-gray12) 14%, transparent);
+    border-radius: var(--border-radius-container-xs);
+    background-color:
+        color-mix(in srgb, var(--color-gray1) 72%, transparent);
+}
+
+.balance-topup-modal__amount:focus-within {
+    border-color: var(--color-blue);
+    box-shadow: var(--elevation-2);
+}
+
+.balance-topup-modal__currency {
+    font-family: var(--font-family-variable);
+    font-size: calc(var(--spacing-md) + var(--spacing-xs));
+    font-weight: 700;
+    color: var(--color-gray7);
+}
+
+.balance-topup-modal__input {
+    width: 100%;
+    min-width: 0;
+    border: var(--border-width-none);
+    outline: none;
+    background: transparent;
+    font-family: var(--font-family-variable);
+    font-size: calc(var(--spacing-lg) + var(--spacing-xs));
+    font-weight: 700;
+    color: var(--color-gray11);
+}
+
+.balance-topup-modal__input::placeholder {
+    color: var(--color-gray5);
+}
+
+.balance-topup-modal__error {
+    margin: 0;
+    color: var(--color-red);
+    font-weight: 600;
+}
+
+.balance-topup-modal__error[hidden] {
+    display: none;
+}
+
+.balance-topup-modal__submit {
+    width: 100%;
+    min-height: var(--touch-target-min);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: var(--border-width-none);
+    border-radius: var(--border-radius-pill);
+    color: var(--color-gray1);
+    font-family: var(--font-family-base);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.balance-topup-modal__submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
