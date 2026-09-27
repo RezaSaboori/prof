@@ -2,6 +2,17 @@ body.job-document-modal-open {
     overflow: hidden;
 }
 
+.job-modal__header-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
 .job-modal__history-actions {
     width: 0;
     min-width: 0;
@@ -286,22 +297,24 @@ body.job-document-modal-open {
 }
 
 .job-modal__body {
+    --job-document-content-max-height: 52vh;
+
     display: flex;
     min-height: 0;
+    max-height: var(--job-document-content-max-height);
     overflow: hidden;
 }
 
 .job-modal__preview,
 .job-modal__editor {
     width: 100%;
+    max-height: var(--job-document-content-max-height);
+    box-sizing: border-box;
+    overflow-y: auto;
     font-size: calc(
         var(--spacing-md) -
         (var(--spacing-xs) / 2)
     );
-}
-
-.job-modal__preview {
-    overflow-y: auto;
 }
 
 .job-modal__preview[hidden],
@@ -310,7 +323,8 @@ body.job-document-modal-open {
 }
 
 .job-modal__editor {
-    min-height: 52vh;
+    height: var(--job-document-content-max-height);
+    min-height: 0;
     padding: var(--spacing-lg);
     border:
         var(--border-width-thin)
@@ -464,14 +478,26 @@ body.job-document-modal-open {
     }
 
     .job-modal__title {
-        flex: 1;
+        min-width: 0;
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .job-modal__header-actions {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
         gap: var(--spacing-xs);
+        flex: 0 0 auto;
     }
 
     .job-modal__history-actions {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        flex-shrink: 0;
         margin-inline:
             calc(var(--spacing-xs) * -1);
     }
@@ -535,11 +561,15 @@ body.job-document-modal-open {
     }
 
     .job-modal__body {
+        --job-document-content-max-height: 60vh;
+
         padding: var(--spacing-lg);
     }
 
     .job-modal__editor {
-        min-height: 60vh;
+        height: var(--job-document-content-max-height);
+        min-height: 0;
+        max-height: var(--job-document-content-max-height);
         padding: var(--spacing-md);
     }
 
