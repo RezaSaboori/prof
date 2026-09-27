@@ -521,11 +521,11 @@
 }
 
 .job-card__btn--decline {
-    color: var(--color-gray12);
+    color: var(--color-red);
 }
 
 .job-card__btn--decline:hover {
-    color: var(--color-red);
+    color: var(--color-gray12);
 }
 
 .job-card__btn--decline:disabled {
@@ -533,8 +533,16 @@
     cursor: default;
 }
 
-.job-card--declined {
+.job-card--declined .job-card__logo,
+.job-card--declined .job-card__info,
+.job-card--declined .job-card__body,
+.job-card--declined .job-card__btn--decline {
     opacity: var(--state-declined-opacity);
+}
+
+.job-card--declined .job-card__source-btn,
+.job-card--declined .job-card__btn--unlock {
+    opacity: 1;
 }
 
 
