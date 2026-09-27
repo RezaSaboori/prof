@@ -744,6 +744,7 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--spacing-lg) var(--spacing-xl);
+    padding-bottom: 0;
 }
 
 .job-modal__title {
