@@ -2,11 +2,49 @@ body.job-document-modal-open {
     overflow: hidden;
 }
 
-.job-modal__header-actions {
+.job-modal__history-actions {
+    width: 0;
+    min-width: 0;
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    margin-left: auto;
+    gap: var(--spacing-xs);
+    margin-inline:
+        calc(var(--spacing-sm) * -1);
+    overflow: hidden;
+    opacity: 0;
+    filter: blur(6px);
+    transform: scale(0.7);
+    transform-origin: right center;
+    pointer-events: none;
+    transition:
+        width 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        min-width 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        margin 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 280ms cubic-bezier(0.4, 0, 0.2, 1),
+        transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 200ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+.job-modal__history-actions.is-visible {
+    width: calc(
+        (
+            var(--spacing-xl) +
+            var(--spacing-xs)
+        ) * 2 +
+        var(--spacing-xs)
+    );
+    min-width: calc(
+        (
+            var(--spacing-xl) +
+            var(--spacing-xs)
+        ) * 2 +
+        var(--spacing-xs)
+    );
+    margin-inline: 0;
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+    pointer-events: auto;
 }
 
 .job-modal__save,
@@ -216,6 +254,30 @@ body.job-document-modal-open {
     color: var(--color-red);
 }
 
+.job-modal__history-btn {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+    transition:
+        color 200ms ease,
+        opacity 200ms ease,
+        transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 280ms cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 400ms cubic-bezier(1, 0, 0.4, 1),
+        background-image 400ms cubic-bezier(1, 0, 0.4, 1);
+}
+
+.job-modal__history-btn:disabled {
+    color: var(--color-gray6);
+    opacity: 0.45;
+    transform: scale(0.9);
+    cursor: default;
+}
+
+.job-modal__history-btn:not(:disabled):hover {
+    color: var(--color-blue);
+}
+
 .job-modal__save:focus-visible,
 .job-modal__icon-btn:focus-visible,
 .job-save-confirmation__button:focus-visible {
@@ -407,6 +469,15 @@ body.job-document-modal-open {
 
     .job-modal__header-actions {
         gap: var(--spacing-xs);
+    }
+
+    .job-modal__history-actions {
+        margin-inline:
+            calc(var(--spacing-xs) * -1);
+    }
+
+    .job-modal__history-actions.is-visible {
+        margin-inline: 0;
     }
 
     .job-modal__close,

@@ -464,6 +464,221 @@
                 }, SAVE_FEEDBACK_HOLD_MS);
         }
 
+        function getHistorySnapshot() {
+            if (!activeDocument) {
+                return null;
+            }
+
+            return {
+                value: activeDocument.editor.value,
+                selectionStart:
+                    activeDocument.editor.selectionStart || 0,
+                selectionEnd:
+                    activeDocument.editor.selectionEnd || 0,
+            };
+        }
+
+        function setHistoryActionsVisible(visible) {
+            if (!activeDocument) {
+                return;
+            }
+
+            const actions = activeDocument.modal.querySelector(
+                '[data-document-history-actions]'
+            );
+            const buttons = activeDocument.modal.querySelectorAll(
+                '[data-document-undo], [data-document-redo]'
+            );
+
+            if (!actions) {
+                return;
+            }
+
+            actions.classList.toggle(
+                'is-visible',
+                visible
+            );
+            actions.setAttribute(
+                'aria-hidden',
+                visible ? 'false' : 'true'
+            );
+
+            buttons.forEach(function(button) {
+                button.tabIndex = visible ? 0 : -1;
+            });
+        }
+
+        function syncHistoryButtons() {
+            if (!activeDocument) {
+                return;
+            }
+
+            const undoButton = activeDocument.modal.querySelector(
+                '[data-document-undo]'
+            );
+            const redoButton = activeDocument.modal.querySelector(
+                '[data-document-redo]'
+            );
+
+            if (!undoButton || !redoButton) {
+                return;
+            }
+
+            const editing =
+                activeDocument.mode === 'edit';
+            const blocked =
+                activeDocument.saving;
+
+            undoButton.disabled =
+                !editing ||
+                blocked ||
+                activeDocument.historyIndex <= 0;
+
+            redoButton.disabled =
+                !editing ||
+                blocked ||
+                activeDocument.historyIndex >=
+                    activeDocument.history.length - 1;
+        }
+
+        function resetEditorHistory() {
+            if (!activeDocument) {
+                return;
+            }
+
+            const snapshot = getHistorySnapshot();
+
+            activeDocument.history =
+                snapshot ? [snapshot] : [];
+            activeDocument.historyIndex =
+                snapshot ? 0 : -1;
+            activeDocument.historyApplying = false;
+
+            syncHistoryButtons();
+        }
+
+        function pushEditorHistory() {
+            if (
+                !activeDocument ||
+                activeDocument.historyApplying
+            ) {
+                return;
+            }
+
+            const snapshot = getHistorySnapshot();
+
+            if (!snapshot) {
+                return;
+            }
+
+            const current =
+                activeDocument.history[
+                    activeDocument.historyIndex
+                ];
+
+            if (
+                current &&
+                current.value === snapshot.value
+            ) {
+                current.selectionStart =
+                    snapshot.selectionStart;
+                current.selectionEnd =
+                    snapshot.selectionEnd;
+                syncHistoryButtons();
+                return;
+            }
+
+            if (
+                activeDocument.historyIndex <
+                activeDocument.history.length - 1
+            ) {
+                activeDocument.history =
+                    activeDocument.history.slice(
+                        0,
+                        activeDocument.historyIndex + 1
+                    );
+            }
+
+            activeDocument.history.push(snapshot);
+
+            if (activeDocument.history.length > 100) {
+                activeDocument.history.shift();
+            } else {
+                activeDocument.historyIndex += 1;
+            }
+
+            syncHistoryButtons();
+        }
+
+        function applyHistorySnapshot(index) {
+            if (
+                !activeDocument ||
+                index < 0 ||
+                index >= activeDocument.history.length
+            ) {
+                return;
+            }
+
+            const snapshot =
+                activeDocument.history[index];
+
+            activeDocument.historyApplying = true;
+            activeDocument.historyIndex = index;
+            activeDocument.editor.value =
+                snapshot.value;
+
+            activeDocument.historyApplying = false;
+
+            setSaveState(
+                isDirty() ? 'save' : 'saved'
+            );
+            syncHistoryButtons();
+
+            window.requestAnimationFrame(function() {
+                if (
+                    !activeDocument ||
+                    activeDocument.mode !== 'edit'
+                ) {
+                    return;
+                }
+
+                activeDocument.editor.focus();
+                activeDocument.editor.setSelectionRange(
+                    snapshot.selectionStart,
+                    snapshot.selectionEnd
+                );
+            });
+        }
+
+        function undoDocumentEdit() {
+            if (
+                !activeDocument ||
+                activeDocument.saving ||
+                activeDocument.historyIndex <= 0
+            ) {
+                return;
+            }
+
+            applyHistorySnapshot(
+                activeDocument.historyIndex - 1
+            );
+        }
+
+        function redoDocumentEdit() {
+            if (
+                !activeDocument ||
+                activeDocument.saving ||
+                activeDocument.historyIndex >=
+                    activeDocument.history.length - 1
+            ) {
+                return;
+            }
+
+            applyHistorySnapshot(
+                activeDocument.historyIndex + 1
+            );
+        }
+
         function isDirty() {
             return Boolean(
                 activeDocument &&
@@ -481,6 +696,8 @@
             activeDocument.editor.hidden = false;
             activeDocument.editor.readOnly = false;
 
+            resetEditorHistory();
+            setHistoryActionsVisible(true);
             setSaveState('save', true);
 
             window.requestAnimationFrame(function() {
@@ -546,11 +763,16 @@
                 confirmationAction: null,
                 savedFeedbackTimer: null,
                 mode: 'view',
+                history: [],
+                historyIndex: -1,
+                historyApplying: false,
             };
 
             editor.value = storedValue;
             editor.readOnly = false;
             editor.hidden = true;
+
+            setHistoryActionsVisible(false);
 
             preview.innerHTML = renderDocument(storedValue);
             preview.hidden = false;
@@ -612,6 +834,12 @@
             activeDocument.preview.innerHTML =
                 renderDocument(activeDocument.savedValue);
             activeDocument.preview.hidden = false;
+
+            setHistoryActionsVisible(false);
+
+            activeDocument.history = [];
+            activeDocument.historyIndex = -1;
+            activeDocument.historyApplying = false;
 
             setSaveState('edit', true);
         }
@@ -752,6 +980,8 @@
                 Boolean(exitEditAfterSave);
             state.editor.readOnly = true;
 
+            syncHistoryButtons();
+
             const savingAnimation =
                 beginSavingAnimation(state);
 
@@ -795,6 +1025,8 @@
                 state.saving = false;
                 state.editor.readOnly = false;
 
+                syncHistoryButtons();
+
                 state.preview.innerHTML =
                     renderDocument(valueToSave);
 
@@ -828,6 +1060,8 @@
                     state.closeAfterSave = false;
                     state.exitEditAfterSave = false;
                     state.editor.readOnly = false;
+
+                    syncHistoryButtons();
 
                     collapseToSaveState(
                         isDirty() ? 'save' : 'saved'
@@ -921,10 +1155,13 @@
             if (
                 !activeDocument ||
                 event.target !== activeDocument.editor ||
-                activeDocument.saving
+                activeDocument.saving ||
+                activeDocument.historyApplying
             ) {
                 return;
             }
+
+            pushEditorHistory();
 
             setSaveState(
                 isDirty() ? 'save' : 'saved'
@@ -970,9 +1207,33 @@
                 return;
             }
 
-            const copyButton = event.target.closest(
-                '[data-document-copy]'
+            const undoButton = event.target.closest(
+                '[data-document-undo]'
             );
+
+            if (
+                undoButton &&
+                activeDocument &&
+                activeDocument.modal.contains(undoButton)
+            ) {
+                event.preventDefault();
+                undoDocumentEdit();
+                return;
+            }
+
+            const redoButton = event.target.closest(
+                '[data-document-redo]'
+            );
+
+            if (
+                redoButton &&
+                activeDocument &&
+                activeDocument.modal.contains(redoButton)
+            ) {
+                event.preventDefault();
+                redoDocumentEdit();
+                return;
+            }
 
             if (
                 copyButton &&
@@ -1087,6 +1348,45 @@
                 !activeDocument.editor.contains(event.target)
             ) {
                 requestEditorClose();
+            }
+        });
+        document.addEventListener('keydown', function(event) {
+            if (
+                !activeDocument ||
+                activeDocument.mode !== 'edit' ||
+                activeDocument.saving ||
+                confirmation.classList.contains('active')
+            ) {
+                return;
+            }
+
+            const modifier =
+                event.ctrlKey || event.metaKey;
+
+            if (!modifier || event.altKey) {
+                return;
+            }
+
+            const key = event.key.toLowerCase();
+
+            if (
+                key === 'z' &&
+                !event.shiftKey
+            ) {
+                event.preventDefault();
+                undoDocumentEdit();
+                return;
+            }
+
+            if (
+                (
+                    key === 'z' &&
+                    event.shiftKey
+                ) ||
+                key === 'y'
+            ) {
+                event.preventDefault();
+                redoDocumentEdit();
             }
         });
 
