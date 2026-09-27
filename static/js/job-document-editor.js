@@ -1355,13 +1355,17 @@
             const modalContent = event.target.closest(
                 '.job-modal__content'
             );
+            const documentInputArea = event.target.closest(
+                '[data-document-input-area]'
+            );
 
             if (
                 activeDocument &&
                 activeDocument.mode === 'edit' &&
                 modalContent &&
                 activeDocument.modal.contains(modalContent) &&
-                !activeDocument.editor.contains(event.target)
+                !activeDocument.editor.contains(event.target) &&
+                !documentInputArea
             ) {
                 requestEditorClose();
             }

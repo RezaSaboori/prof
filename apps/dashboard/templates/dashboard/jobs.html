@@ -5,6 +5,7 @@
 {% block extra_css %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/dropdown.css' %}">
+<link rel="stylesheet" href="{% static 'css/tags.css' %}">
 <link rel="stylesheet" href="{% static 'css/dashboard-jobs.css' %}">
 <link rel="stylesheet" href="{% static 'css/job-document-editor.css' %}">
 {% endblock %}
@@ -274,15 +275,31 @@
         </div>
 
         <div class="job-modal__body">
-            <div class="job-modal__preview job-modal__content-text"
-                 data-document-preview></div>
+            <div class="job-modal__document">
+                <div class="job-modal__preview job-modal__content-text"
+                     data-document-preview></div>
 
-            <textarea class="job-modal__editor"
-                      id="cover-letter-content"
-                      data-document-editor
-                      aria-label="Cover letter editor"
-                      spellcheck="true"
-                      hidden></textarea>
+                <textarea class="job-modal__editor"
+                          id="cover-letter-content"
+                          data-document-editor
+                          aria-label="Cover letter editor"
+                          spellcheck="true"
+                          hidden></textarea>
+            </div>
+
+            <div class="job-modal__input-area"
+                 data-document-input-area>
+                <div class="tag-wrapper job-modal__input-wrapper">
+                    <div class="tag-input-row">
+                        <input type="text"
+                               class="tag-input job-modal__bottom-input"
+                               data-document-bottom-input
+                               placeholder="Type here..."
+                               autocomplete="off"
+                               aria-label="Cover letter input">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -398,15 +415,31 @@
         </div>
 
         <div class="job-modal__body">
-            <div class="job-modal__preview job-modal__content-text"
-                 data-document-preview></div>
+            <div class="job-modal__document">
+                <div class="job-modal__preview job-modal__content-text"
+                     data-document-preview></div>
 
-            <textarea class="job-modal__editor"
-                      id="resume-content"
-                      data-document-editor
-                      aria-label="Resume editor"
-                      spellcheck="true"
-                      hidden></textarea>
+                <textarea class="job-modal__editor"
+                          id="resume-content"
+                          data-document-editor
+                          aria-label="Resume editor"
+                          spellcheck="true"
+                          hidden></textarea>
+            </div>
+
+            <div class="job-modal__input-area"
+                 data-document-input-area>
+                <div class="tag-wrapper job-modal__input-wrapper">
+                    <div class="tag-input-row">
+                        <input type="text"
+                               class="tag-input job-modal__bottom-input"
+                               data-document-bottom-input
+                               placeholder="Type here..."
+                               autocomplete="off"
+                               aria-label="Resume input">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

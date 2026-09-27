@@ -296,15 +296,27 @@ body.job-document-modal-open {
     --job-document-content-max-height: 52vh;
 
     display: flex;
+    flex-direction: column;
     min-height: 0;
     box-sizing: border-box;
+    gap: var(--spacing-md);
+    overflow: hidden;
+}
+
+.job-modal__document {
+    width: 100%;
+    min-height: 0;
+    max-height: var(--job-document-content-max-height);
+    display: flex;
+    flex: 1 1 auto;
     overflow: hidden;
 }
 
 .job-modal__preview,
 .job-modal__editor {
     width: 100%;
-    max-height: var(--job-document-content-max-height);
+    min-height: 0;
+    max-height: 100%;
     box-sizing: border-box;
     overflow-y: auto;
     font-size: calc(
@@ -363,6 +375,34 @@ body.job-document-modal-open {
 
 .job-modal__editor[readonly] {
     cursor: progress;
+}
+
+.job-modal__input-area {
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+.job-modal__input-wrapper {
+    width: 100%;
+    min-height: 48px;
+    max-height: none;
+    box-sizing: border-box;
+    padding:
+        2px
+        4px
+        2px
+        var(--spacing-sm);
+    border-radius:
+        var(--border-radius-pill)
+        !important;
+    overflow: visible;
+}
+
+.job-modal__bottom-input {
+    font-size: 16px;
+    padding:
+        var(--spacing-xs)
+        var(--spacing-sm);
 }
 
 .job-modal__clipboard-helper {
