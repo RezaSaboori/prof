@@ -226,31 +226,150 @@
         }
 
         function layoutJobsGrid() {
-            const cards = Array.prototype.slice.call(grid.querySelectorAll('.job-card'));
+            const cards = Array.prototype.slice.call(
+                grid.querySelectorAll('.job-card')
+            );
+            const declinedToggle = grid.querySelector('[data-declined-toggle]');
+
             if (!cards.length) {
+                if (declinedToggle) {
+                    declinedToggle.hidden = true;
+                }
+
                 grid.style.height = '';
                 return;
             }
+
             const gap = currentGap();
             const gridWidth = grid.clientWidth;
             const columns = window.innerWidth <= MOBILE_BREAKPOINT
                 ? 1
-                : Math.max(1, Math.floor((gridWidth + gap) / (MIN_CARD_WIDTH + gap)));
-            const cardWidth = (gridWidth - (columns - 1) * gap) / columns;
-            const columnHeights = [];
-            for (let i = 0; i < columns; i++) {
-                columnHeights.push(0);
-            }
+                : Math.max(
+                    1,
+                    Math.floor(
+                        (gridWidth + gap) /
+                        (MIN_CARD_WIDTH + gap)
+                    )
+                );
 
-            cards.forEach(function(card, index) {
-                const col = index % columns;
-                card.style.width = cardWidth + 'px';
-                card.style.transform =
-                    'translate(' + (col * (cardWidth + gap)) + 'px, ' + columnHeights[col] + 'px)';
-                columnHeights[col] += card.offsetHeight + gap;
+            const cardWidth =
+                (gridWidth - (columns - 1) * gap) /
+                columns;
+
+            const activeCards = cards.filter(function(card) {
+                return card.dataset.jobPaid !== '2';
             });
 
-            grid.style.height = (Math.max.apply(null, columnHeights) - gap) + 'px';
+            const declinedCards = cards.filter(function(card) {
+                return card.dataset.jobPaid === '2';
+            });
+
+            function positionCards(cardGroup, startY) {
+                const columnHeights = [];
+
+                for (let i = 0; i < columns; i++) {
+                    columnHeights.push(startY);
+                }
+
+                cardGroup.forEach(function(card, index) {
+                    const col = index % columns;
+
+                    card.style.width = cardWidth + 'px';
+                    card.style.transform =
+                        'translate(' +
+                        (col * (cardWidth + gap)) +
+                        'px, ' +
+                        columnHeights[col] +
+                        'px)';
+
+                    columnHeights[col] +=
+                        card.offsetHeight + gap;
+                });
+
+                return columnHeights;
+            }
+
+            const activeHeights = positionCards(
+                activeCards,
+                0
+            );
+
+            const activeBottom = activeCards.length
+                ? Math.max.apply(null, activeHeights) - gap
+                : 0;
+
+            if (!declinedCards.length || !declinedToggle) {
+                if (declinedToggle) {
+                    declinedToggle.hidden = true;
+                }
+
+                grid.style.height = activeCards.length
+                    ? activeBottom + 'px'
+                    : '0px';
+
+                return;
+            }
+
+            declinedToggle.hidden = false;
+            declinedToggle.style.width = gridWidth + 'px';
+
+            const toggleTop = activeCards.length
+                ? activeBottom + gap
+                : 0;
+
+            declinedToggle.style.transform =
+                'translate(0, ' + toggleTop + 'px)';
+
+            const toggleBottom =
+                toggleTop +
+                declinedToggle.offsetHeight;
+
+            const declinedStart =
+                toggleBottom + gap;
+
+            const declinedHeights = positionCards(
+                declinedCards,
+                declinedStart
+            );
+
+            const expanded =
+                grid.dataset.declinedExpanded === '1';
+
+            const label = declinedToggle.querySelector(
+                '[data-declined-toggle-label]'
+            );
+
+            declinedToggle.setAttribute(
+                'aria-expanded',
+                expanded ? 'true' : 'false'
+            );
+
+            if (label) {
+                label.textContent = expanded
+                    ? 'Hide declined jobs (' + declinedCards.length + ')'
+                    : 'Show declined jobs (' + declinedCards.length + ')';
+            }
+
+            declinedCards.forEach(function(card) {
+                card.classList.toggle(
+                    'job-card--declined-hidden',
+                    !expanded
+                );
+            });
+
+            if (expanded) {
+                grid.style.height =
+                    (
+                        Math.max.apply(
+                            null,
+                            declinedHeights
+                        ) - gap
+                    ) +
+                    'px';
+            } else {
+                grid.style.height =
+                    toggleBottom + 'px';
+            }
         }
 
         // Re-layout every frame while a card height transition is running,
@@ -275,6 +394,38 @@
         layoutJobsGrid();
         window.addEventListener('resize', layoutJobsGrid);
         window.addEventListener('load', layoutJobsGrid);
+    }
+
+    function initDeclinedJobsToggle() {
+        const grid = document.querySelector('.jobs-grid');
+        if (!grid) {
+            return;
+        }
+
+        const toggle = grid.querySelector(
+            '[data-declined-toggle]'
+        );
+
+        if (!toggle) {
+            return;
+        }
+
+        toggle.addEventListener('click', function() {
+            const expanded =
+                grid.dataset.declinedExpanded === '1';
+
+            grid.dataset.declinedExpanded =
+                expanded ? '0' : '1';
+
+            if (
+                typeof grid.layoutJobsGrid ===
+                'function'
+            ) {
+                requestAnimationFrame(function() {
+                    grid.layoutJobsGrid();
+                });
+            }
+        });
     }
 
     // Sort jobs grid via the shared dropdown component (default: score)
@@ -610,6 +761,7 @@
         initJobsData();
         initJobCardMarkdown();
         initJobsMasonry();
+        initDeclinedJobsToggle();
         initCompanyLogos();
         initJobSort();
         initJobUnlock();
