@@ -1,0 +1,284 @@
+body.job-document-modal-open {
+    overflow: hidden;
+}
+
+.job-modal__header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+}
+
+.job-modal__save,
+.job-modal__icon-btn {
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
+}
+
+.job-modal__save {
+    min-height: calc(var(--spacing-xl) + var(--spacing-xs));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-md);
+    border-radius: var(--border-radius-pill);
+    color: var(--color-gray1);
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.job-modal__save svg {
+    width: var(--spacing-md);
+    height: var(--spacing-md);
+    flex-shrink: 0;
+}
+
+.job-modal__save[data-save-state="saving"] {
+    color: var(--color-gray8);
+    cursor: progress;
+}
+
+.job-modal__save[data-save-state="saved"] {
+    cursor: default;
+}
+
+.job-modal__icon-btn {
+    width: calc(var(--spacing-xl) + var(--spacing-xs));
+    height: calc(var(--spacing-xl) + var(--spacing-xs));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: var(--border-radius-container-md);
+    color: var(--color-gray10);
+    cursor: pointer;
+}
+
+.job-modal__icon-btn svg {
+    width: var(--spacing-lg);
+    height: var(--spacing-lg);
+}
+
+.job-modal__icon-btn:hover {
+    color: var(--color-blue);
+}
+
+.job-modal__icon-btn[data-copy-state="copied"] {
+    color: var(--color-green);
+}
+
+.job-modal__icon-btn[data-copy-state="error"] {
+    color: var(--color-red);
+}
+
+.job-modal__save:focus-visible,
+.job-modal__icon-btn:focus-visible,
+.job-save-confirmation__button:focus-visible {
+    outline: var(--border-width-thin) solid var(--color-blue);
+    outline-offset: var(--spacing-xs);
+}
+
+.job-modal__body {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.job-modal__editor {
+    width: 100%;
+    min-height: 52vh;
+    padding: var(--spacing-lg);
+    border:
+        var(--border-width-thin)
+        solid
+        color-mix(
+            in srgb,
+            var(--color-gray12) 12%,
+            transparent
+        );
+    border-radius: var(--border-radius-container-xs);
+    outline: none;
+    resize: none;
+    overflow: auto;
+    background:
+        color-mix(
+            in srgb,
+            var(--color-gray1) 72%,
+            transparent
+        );
+    color: var(--color-gray10);
+    font-family: var(--font-family-base);
+    line-height: var(--line-height-base);
+    transition:
+        border-color 400ms cubic-bezier(1, 0, 0.4, 1),
+        box-shadow 400ms cubic-bezier(1, 0, 0.4, 1),
+        background 400ms cubic-bezier(1, 0, 0.4, 1);
+}
+
+.job-modal__editor:focus {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--color-blue) 45%,
+            transparent
+        );
+    box-shadow:
+        inset 0 0 0
+        var(--border-width-thin)
+        var(--accent-glow);
+}
+
+.job-modal__editor[readonly] {
+    cursor: progress;
+}
+
+.job-modal__clipboard-helper {
+    position: fixed;
+    inset: 0 auto auto 0;
+    width: var(--spacing-xs);
+    height: var(--spacing-xs);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.job-save-confirmation {
+    position: fixed;
+    inset: 0;
+    z-index: 10020;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+}
+
+.job-save-confirmation.active {
+    display: flex;
+}
+
+.job-save-confirmation__overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        color-mix(
+            in srgb,
+            var(--color-gray12) 52%,
+            transparent
+        );
+    backdrop-filter: blur(var(--spacing-xs));
+    -webkit-backdrop-filter: blur(var(--spacing-xs));
+}
+
+.job-save-confirmation__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 32rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-container-lg);
+    animation:
+        modal-enter
+        0.3s
+        cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.job-save-confirmation__title {
+    font-family: var(--font-family-variable);
+    font-size: calc(var(--spacing-md) + var(--spacing-xs));
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-gray11);
+}
+
+.job-save-confirmation__text {
+    color: var(--color-gray8);
+    line-height: var(--line-height-base);
+}
+
+.job-save-confirmation__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.job-save-confirmation__button {
+    min-height: calc(var(--spacing-xl) + var(--spacing-sm));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-pill);
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    font-weight: 600;
+    color: var(--color-gray10);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
+}
+
+.job-save-confirmation__button--primary,
+.job-save-confirmation__button--danger {
+    color: var(--color-gray1);
+}
+
+@media (max-width: 980px) {
+    .job-modal {
+        padding: var(--spacing-md);
+    }
+
+    .job-modal__header {
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+
+    .job-modal__title {
+        flex: 1;
+    }
+
+    .job-modal__header-actions {
+        gap: var(--spacing-xs);
+    }
+
+    .job-modal__save {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .job-modal__body {
+        padding: var(--spacing-lg);
+    }
+
+    .job-modal__editor {
+        min-height: 60vh;
+        padding: var(--spacing-md);
+    }
+
+    .job-save-confirmation {
+        padding: var(--spacing-md);
+    }
+
+    .job-save-confirmation__content {
+        padding: var(--spacing-lg);
+    }
+
+    .job-save-confirmation__actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .job-save-confirmation__button {
+        width: 100%;
+    }
+}

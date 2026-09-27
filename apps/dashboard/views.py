@@ -683,6 +683,125 @@ def api_company_logo(request):
 
 @login_required
 @require_POST
+def api_job_document_save(request):
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    job_id = body.get('id')
+    field = body.get('field')
+    value = body.get('value')
+
+    if job_id is None or str(job_id).strip() == '':
+        return JsonResponse({'error': 'id is required'}, status=400)
+
+    if field not in {'cover_letter', 'resume'}:
+        return JsonResponse({'error': 'Invalid document field'}, status=400)
+
+    if not isinstance(value, str):
+        return JsonResponse({'error': 'value must be a string'}, status=400)
+
+    def patch_document(uid):
+        return _session.patch(
+            f'{settings.SUPABASE_URL}/rest/v1/jobs_processed',
+            params={
+                'id': f'eq.{job_id}',
+                'user_id': f'eq.{uid}',
+                'paid': 'eq.1',
+            },
+            json={field: value},
+            headers={
+                **_supabase_headers(),
+                'Prefer': 'return=representation',
+            },
+            timeout=(5, 15),
+        )
+
+    user_id = request.user.id
+    email = request.user.email
+
+    try:
+        resp = patch_document(user_id)
+
+        if not resp.ok:
+            logger.error(
+                'Supabase job document save error %s for user %s: %s',
+                resp.status_code,
+                user_id,
+                resp.text,
+            )
+            return JsonResponse(
+                {
+                    'error': f'Supabase {resp.status_code}',
+                    'detail': resp.text,
+                },
+                status=502,
+            )
+
+        if not resp.json():
+            info_resp = _session.get(
+                f'{settings.SUPABASE_URL}/rest/v1/user_info',
+                params={
+                    'email': f'eq.{email}',
+                    'select': 'id',
+                    'limit': 1,
+                },
+                headers=_supabase_headers(),
+                timeout=(5, 10),
+            )
+
+            if info_resp.ok and info_resp.json():
+                user_info_id = info_resp.json()[0].get('id')
+                resp = patch_document(user_info_id)
+
+                if not resp.ok:
+                    logger.error(
+                        'Supabase job document save error %s for user_info %s: %s',
+                        resp.status_code,
+                        user_info_id,
+                        resp.text,
+                    )
+                    return JsonResponse(
+                        {
+                            'error': f'Supabase {resp.status_code}',
+                            'detail': resp.text,
+                        },
+                        status=502,
+                    )
+
+            if not resp.json():
+                return JsonResponse(
+                    {'error': 'job not found or not unlocked'},
+                    status=404,
+                )
+
+        return JsonResponse({'ok': True})
+
+    except requests.exceptions.Timeout:
+        logger.error(
+            'Supabase job document save timed out for user %s',
+            user_id,
+        )
+        return JsonResponse({'error': 'timeout'}, status=504)
+    except requests.exceptions.ConnectionError as exc:
+        logger.error(
+            'Supabase job document save connection error for user %s: %s',
+            user_id,
+            exc,
+        )
+        return JsonResponse({'error': 'connection_error'}, status=502)
+    except requests.RequestException as exc:
+        logger.error(
+            'job document save failed for user %s: %s',
+            user_id,
+            exc,
+        )
+        return JsonResponse({'error': str(exc)}, status=502)
+
+
+@login_required
+@require_POST
 def api_job_unlock(request):
     """
     Unlock a processed job — sets paid = 1 on the user's jobs_processed row.
