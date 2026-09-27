@@ -15,7 +15,6 @@ body.job-document-modal-open {
     appearance: none;
     -webkit-appearance: none;
     font: inherit;
-    transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
 }
 
 .job-modal__save {
@@ -33,36 +32,157 @@ body.job-document-modal-open {
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
+    transition:
+        width 400ms cubic-bezier(1, 0, 0.4, 1),
+        box-shadow 400ms cubic-bezier(1, 0, 0.4, 1),
+        background-image 400ms cubic-bezier(1, 0, 0.4, 1),
+        color 200ms ease;
 }
 
 .job-modal__save[data-save-state="save"],
 .job-modal__save[data-save-state="saved"],
+.job-modal__save[data-save-state="saved-feedback-expand"],
 .job-modal__save[data-save-state="saved-feedback"] {
     color: var(--color-gray1);
 }
 
+.job-modal__save[data-save-state="saving-expand"],
 .job-modal__save[data-save-state="saving"],
+.job-modal__save[data-save-state="saved-feedback-expand"],
 .job-modal__save[data-save-state="saved-feedback"] {
     width: calc(var(--spacing-5xl) + var(--spacing-2xl));
 }
 
+.job-modal__save[data-save-state="saving-expand"],
 .job-modal__save[data-save-state="saving"] {
     color: var(--color-gray8);
     cursor: progress;
 }
 
 .job-modal__action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: var(--spacing-md);
     height: var(--spacing-md);
     flex: 0 0 var(--spacing-md);
+    transition:
+        filter 280ms cubic-bezier(0.4, 0, 0.2, 1),
+        transform 280ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 280ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.job-modal__action-icon[hidden] {
+.job-modal__action-icon svg {
+    display: block;
+    width: var(--spacing-md);
+    height: var(--spacing-md);
+}
+
+.job-modal__action-icon--enter {
+    animation:
+        jobDocumentActionIconEnter
+        320ms
+        cubic-bezier(0.34, 1.56, 0.64, 1)
+        forwards;
+}
+
+@keyframes jobDocumentActionIconEnter {
+    from {
+        filter: blur(6px);
+        transform: scale(0.7);
+        opacity: 0;
+    }
+
+    to {
+        filter: blur(0px);
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.job-modal__action-icon--exit {
+    animation:
+        jobDocumentActionIconExit
+        200ms
+        cubic-bezier(0.4, 0, 1, 1)
+        forwards;
+}
+
+@keyframes jobDocumentActionIconExit {
+    from {
+        filter: blur(0px);
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        filter: blur(6px);
+        transform: scale(0.7);
+        opacity: 0;
+    }
+}
+
+.job-modal__save-label {
+    display: inline-block;
+    transform-origin: left center;
+    white-space: nowrap;
+    font-size: calc(
+        var(--spacing-md) -
+        (var(--spacing-xs) / 2)
+    );
+    line-height: 1;
+    transition:
+        filter 260ms cubic-bezier(0.4, 0, 0.2, 1),
+        transform 260ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 260ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.job-modal__save-label:empty {
     display: none;
 }
 
-.job-modal__save [data-document-save-label]:empty {
-    display: none;
+.job-modal__save-label--exit {
+    animation:
+        jobDocumentSaveTextExit
+        200ms
+        cubic-bezier(0.4, 0, 1, 1)
+        forwards;
+}
+
+@keyframes jobDocumentSaveTextExit {
+    from {
+        filter: blur(0px);
+        transform: scale(1) translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        filter: blur(5px);
+        transform: scale(0.88) translateX(-6px);
+        opacity: 0;
+    }
+}
+
+.job-modal__save-label--enter {
+    animation:
+        jobDocumentSaveTextEnter
+        280ms
+        cubic-bezier(0.34, 1.56, 0.64, 1)
+        forwards;
+}
+
+@keyframes jobDocumentSaveTextEnter {
+    from {
+        filter: blur(5px);
+        transform: scale(0.88) translateX(-6px);
+        opacity: 0;
+    }
+
+    to {
+        filter: blur(0px);
+        transform: scale(1) translateX(0);
+        opacity: 1;
+    }
 }
 
 .job-modal__icon-btn {
@@ -76,11 +196,12 @@ body.job-document-modal-open {
     border-radius: var(--border-radius-container-md);
     color: var(--color-gray10);
     cursor: pointer;
+    transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
 }
 
 .job-modal__icon-btn svg {
-    width: 100%;
-    height: 100%;
+    width: var(--spacing-md);
+    height: var(--spacing-md);
 }
 
 .job-modal__icon-btn:hover {

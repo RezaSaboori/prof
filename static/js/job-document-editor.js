@@ -68,6 +68,23 @@
             );
         }
 
+        const EDIT_ICON_SVG =
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+
+        const SAVE_ICON_SVG =
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>';
+
+        const SAVE_BUTTON_EXPAND_MS = 400;
+        const SAVE_CONTENT_SWAP_MS = 210;
+        const SAVE_TEXT_ENTER_MS = 280;
+        const SAVE_FEEDBACK_HOLD_MS = 1200;
+
+        function wait(duration) {
+            return new Promise(function(resolve) {
+                window.setTimeout(resolve, duration);
+            });
+        }
+
         function clearSavedFeedbackTimer(documentState) {
             if (
                 documentState &&
@@ -80,7 +97,134 @@
             }
         }
 
-        function setSaveState(state) {
+        function clearSaveText(button) {
+            const label = button.querySelector(
+                '[data-document-save-label]'
+            );
+
+            if (!label) {
+                return;
+            }
+
+            label.classList.remove(
+                'job-modal__save-label--enter',
+                'job-modal__save-label--exit'
+            );
+            label.textContent = '';
+        }
+
+        function enterSaveText(button, text) {
+            const label = button.querySelector(
+                '[data-document-save-label]'
+            );
+
+            if (!label) {
+                return;
+            }
+
+            label.classList.remove(
+                'job-modal__save-label--enter',
+                'job-modal__save-label--exit'
+            );
+            label.textContent = text;
+
+            void label.offsetWidth;
+
+            label.classList.add(
+                'job-modal__save-label--enter'
+            );
+        }
+
+        function transitionSaveText(button, text) {
+            const label = button.querySelector(
+                '[data-document-save-label]'
+            );
+
+            if (!label) {
+                return Promise.resolve();
+            }
+
+            if (!label.textContent) {
+                if (text) {
+                    enterSaveText(button, text);
+
+                    return wait(SAVE_TEXT_ENTER_MS);
+                }
+
+                return Promise.resolve();
+            }
+
+            label.classList.remove(
+                'job-modal__save-label--enter'
+            );
+            label.classList.add(
+                'job-modal__save-label--exit'
+            );
+
+            return wait(SAVE_CONTENT_SWAP_MS)
+                .then(function() {
+                    label.classList.remove(
+                        'job-modal__save-label--exit'
+                    );
+                    label.textContent = text;
+
+                    if (!text) {
+                        return;
+                    }
+
+                    void label.offsetWidth;
+
+                    label.classList.add(
+                        'job-modal__save-label--enter'
+                    );
+
+                    return wait(SAVE_TEXT_ENTER_MS);
+                });
+        }
+
+        function transitionActionIcon(
+            button,
+            iconHtml,
+            iconName,
+            animate
+        ) {
+            const icon = button.querySelector(
+                '[data-document-action-icon]'
+            );
+
+            if (!icon || icon.dataset.icon === iconName) {
+                return;
+            }
+
+            icon.classList.remove(
+                'job-modal__action-icon--enter',
+                'job-modal__action-icon--exit'
+            );
+
+            if (!animate) {
+                icon.innerHTML = iconHtml;
+                icon.dataset.icon = iconName;
+                return;
+            }
+
+            icon.classList.add(
+                'job-modal__action-icon--exit'
+            );
+
+            window.setTimeout(function() {
+                icon.innerHTML = iconHtml;
+                icon.dataset.icon = iconName;
+
+                icon.classList.remove(
+                    'job-modal__action-icon--exit'
+                );
+                icon.classList.add(
+                    'job-modal__action-icon--enter'
+                );
+            }, SAVE_CONTENT_SWAP_MS);
+        }
+
+        function setSaveState(state, animateIcon) {
             if (!activeDocument) {
                 return;
             }
@@ -90,22 +234,8 @@
             const button = activeDocument.modal.querySelector(
                 '[data-document-save]'
             );
-            const label = activeDocument.modal.querySelector(
-                '[data-document-save-label]'
-            );
-            const editIcon = activeDocument.modal.querySelector(
-                '[data-document-edit-icon]'
-            );
-            const saveIcon = activeDocument.modal.querySelector(
-                '[data-document-save-icon]'
-            );
 
-            if (
-                !button ||
-                !label ||
-                !editIcon ||
-                !saveIcon
-            ) {
+            if (!button) {
                 return;
             }
 
@@ -116,12 +246,9 @@
             );
 
             button.dataset.saveState = state;
-            button.disabled = state === 'saving';
+            button.disabled = false;
 
-            editIcon.hidden = state !== 'edit';
-            saveIcon.hidden = state === 'edit';
-
-            label.textContent = '';
+            clearSaveText(button);
 
             if (state === 'edit') {
                 button.classList.add('glass');
@@ -130,30 +257,22 @@
                     'Edit document'
                 );
                 button.title = 'Edit';
+
+                transitionActionIcon(
+                    button,
+                    EDIT_ICON_SVG,
+                    'edit',
+                    Boolean(animateIcon)
+                );
                 return;
             }
 
-            if (state === 'saving') {
-                button.classList.add('glass');
-                button.setAttribute(
-                    'aria-label',
-                    'Saving'
-                );
-                button.title = 'Saving';
-                label.textContent = 'Saving...';
-                return;
-            }
-
-            if (state === 'saved-feedback') {
-                button.classList.add('green-glass');
-                button.setAttribute(
-                    'aria-label',
-                    'Saved'
-                );
-                button.title = 'Saved';
-                label.textContent = 'Saved';
-                return;
-            }
+            transitionActionIcon(
+                button,
+                SAVE_ICON_SVG,
+                'save',
+                Boolean(animateIcon)
+            );
 
             if (state === 'saved') {
                 button.classList.add('green-glass');
@@ -173,17 +292,154 @@
             button.title = 'Save';
         }
 
-        function showSavedFeedback() {
+        async function beginSavingAnimation(documentState) {
+            if (
+                !activeDocument ||
+                activeDocument !== documentState
+            ) {
+                return;
+            }
+
+            const button = documentState.modal.querySelector(
+                '[data-document-save]'
+            );
+
+            if (!button) {
+                return;
+            }
+
+            clearSavedFeedbackTimer(documentState);
+
+            button.classList.remove(
+                'blue-glass',
+                'glass',
+                'green-glass'
+            );
+            button.classList.add('glass');
+
+            button.dataset.saveState = 'saving-expand';
+            button.disabled = true;
+            button.setAttribute('aria-label', 'Saving');
+            button.title = 'Saving';
+
+            clearSaveText(button);
+
+            transitionActionIcon(
+                button,
+                SAVE_ICON_SVG,
+                'save',
+                false
+            );
+
+            await wait(SAVE_BUTTON_EXPAND_MS);
+
+            if (
+                activeDocument !== documentState ||
+                !documentState.saving
+            ) {
+                return;
+            }
+
+            button.dataset.saveState = 'saving';
+
+            enterSaveText(button, 'Saving...');
+
+            await wait(SAVE_TEXT_ENTER_MS);
+        }
+
+        async function collapseToSaveState(state) {
             if (!activeDocument) {
                 return;
             }
 
             const documentState = activeDocument;
+            const button = documentState.modal.querySelector(
+                '[data-document-save]'
+            );
 
-            setSaveState('saved-feedback');
+            if (!button) {
+                return;
+            }
+
+            await transitionSaveText(button, '');
+
+            if (activeDocument !== documentState) {
+                return;
+            }
+
+            setSaveState(state, false);
+        }
+
+        async function showSavedFeedback(alreadyExpanded) {
+            if (!activeDocument) {
+                return;
+            }
+
+            const documentState = activeDocument;
+            const button = documentState.modal.querySelector(
+                '[data-document-save]'
+            );
+
+            if (!button) {
+                return;
+            }
+
+            clearSavedFeedbackTimer(documentState);
+
+            button.classList.remove(
+                'blue-glass',
+                'glass',
+                'green-glass'
+            );
+            button.classList.add('green-glass');
+
+            button.disabled = true;
+            button.setAttribute('aria-label', 'Saved');
+            button.title = 'Saved';
+
+            transitionActionIcon(
+                button,
+                SAVE_ICON_SVG,
+                'save',
+                false
+            );
+
+            if (alreadyExpanded) {
+                button.dataset.saveState =
+                    'saved-feedback';
+
+                await transitionSaveText(
+                    button,
+                    'Saved'
+                );
+            } else {
+                clearSaveText(button);
+
+                button.dataset.saveState =
+                    'saved-feedback-expand';
+
+                await wait(SAVE_BUTTON_EXPAND_MS);
+
+                if (activeDocument !== documentState) {
+                    return;
+                }
+
+                button.dataset.saveState =
+                    'saved-feedback';
+
+                enterSaveText(button, 'Saved');
+
+                await wait(SAVE_TEXT_ENTER_MS);
+            }
+
+            if (activeDocument !== documentState) {
+                return;
+            }
 
             documentState.savedFeedbackTimer =
                 window.setTimeout(function() {
+                    documentState.savedFeedbackTimer = null;
+
                     if (
                         activeDocument !== documentState ||
                         isDirty()
@@ -191,9 +447,21 @@
                         return;
                     }
 
-                    documentState.savedFeedbackTimer = null;
-                    setSaveState('saved');
-                }, 1200);
+                    transitionSaveText(button, '')
+                        .then(function() {
+                            if (
+                                activeDocument !== documentState ||
+                                isDirty()
+                            ) {
+                                return;
+                            }
+
+                            setSaveState(
+                                'saved',
+                                false
+                            );
+                        });
+                }, SAVE_FEEDBACK_HOLD_MS);
         }
 
         function isDirty() {
@@ -213,7 +481,7 @@
             activeDocument.editor.hidden = false;
             activeDocument.editor.readOnly = false;
 
-            setSaveState('save');
+            setSaveState('save', true);
 
             window.requestAnimationFrame(function() {
                 activeDocument.editor.focus();
@@ -409,7 +677,7 @@
                 if (closeAfterSave) {
                     closeDocumentModal();
                 } else {
-                    showSavedFeedback();
+                    showSavedFeedback(false);
                 }
 
                 return true;
@@ -422,7 +690,8 @@
             state.closeAfterSave = Boolean(closeAfterSave);
             state.editor.readOnly = true;
 
-            setSaveState('saving');
+            const savingAnimation =
+                beginSavingAnimation(state);
 
             try {
                 const response = await fetch(saveEndpoint, {
@@ -447,6 +716,8 @@
                 } catch (error) {
                     data = {};
                 }
+
+                await savingAnimation;
 
                 if (!response.ok || !data.ok) {
                     throw new Error(
@@ -476,17 +747,19 @@
                 if (shouldClose) {
                     closeDocumentModal();
                 } else {
-                    showSavedFeedback();
+                    showSavedFeedback(true);
                 }
 
                 return true;
             } catch (error) {
+                await savingAnimation;
+
                 if (activeDocument === state) {
                     state.saving = false;
                     state.closeAfterSave = false;
                     state.editor.readOnly = false;
 
-                    setSaveState(
+                    collapseToSaveState(
                         isDirty() ? 'save' : 'saved'
                     );
 
