@@ -297,6 +297,7 @@ body.job-document-modal-open {
 
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     min-height: 0;
     box-sizing: border-box;
     gap: var(--spacing-md);
@@ -308,7 +309,7 @@ body.job-document-modal-open {
     min-height: 0;
     max-height: var(--job-document-content-max-height);
     display: flex;
-    flex: 1 1 auto;
+    flex: 1 1 0;
     overflow: hidden;
 }
 
@@ -379,6 +380,7 @@ body.job-document-modal-open {
 
 .job-modal__input-area {
     width: 100%;
+    min-height: 0;
     flex: 0 0 auto;
 }
 
@@ -389,8 +391,6 @@ body.job-document-modal-open {
     box-sizing: border-box;
     padding:
         2px
-        4px
-        2px
         var(--spacing-sm);
     border-radius:
         var(--border-radius-pill)
@@ -398,11 +398,55 @@ body.job-document-modal-open {
     overflow: visible;
 }
 
+.job-modal__input-wrapper .tag-input-row {
+    width: 100%;
+    align-items: flex-end;
+    gap: var(--spacing-xs);
+    padding: 0;
+}
+
 .job-modal__bottom-input {
-    font-size: 16px;
+    height: calc(1.5em + 8px);
+    min-height: calc(1.5em + 8px);
+    max-height: calc(1.5em * 5 + 8px);
     padding:
         var(--spacing-xs)
         var(--spacing-sm);
+    overflow-x: hidden;
+    overflow-y: hidden;
+    resize: none;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    font-size: 16px;
+}
+
+.job-modal__input-submit {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 30px;
+    align-self: flex-end;
+    padding: 0;
+    border: none;
+    border-radius: var(--border-radius-pill);
+    color: var(--color-gray8);
+    cursor: pointer;
+    transition:
+        color 200ms ease,
+        transform 150ms ease;
+}
+
+.job-modal__input-submit svg {
+    width: 18px;
+    height: 18px;
+}
+
+.job-modal__input-submit:active {
+    transform: scale(0.92);
 }
 
 .job-modal__clipboard-helper {

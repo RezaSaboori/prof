@@ -52,6 +52,41 @@
             );
         }
 
+        function resizeBottomInput(input) {
+            if (!input) {
+                return;
+            }
+
+            input.style.height = 'auto';
+
+            const styles =
+                window.getComputedStyle(input);
+            const minHeight =
+                parseFloat(styles.minHeight) || 0;
+            const maxHeight =
+                parseFloat(styles.maxHeight) ||
+                input.scrollHeight;
+
+            const contentHeight =
+                input.scrollHeight;
+
+            const nextHeight = Math.max(
+                minHeight,
+                Math.min(
+                    contentHeight,
+                    maxHeight
+                )
+            );
+
+            input.style.height =
+                Math.ceil(nextHeight) + 'px';
+
+            input.style.overflowY =
+                contentHeight > maxHeight
+                    ? 'auto'
+                    : 'hidden';
+        }
+
         function renderDocument(source) {
             if (
                 typeof marked === 'undefined' ||
@@ -689,15 +724,8 @@
                 activeDocument.preview.getBoundingClientRect().height;
 
             if (previewHeight > 0) {
-                const editorHeight =
-                    Math.ceil(previewHeight) + 'px';
-
                 activeDocument.editor.style.height =
-                    editorHeight;
-                activeDocument.editor.style.minHeight =
-                    editorHeight;
-                activeDocument.editor.style.maxHeight =
-                    editorHeight;
+                    Math.ceil(previewHeight) + 'px';
             }
 
             activeDocument.mode = 'edit';
@@ -1164,6 +1192,15 @@
         }
 
         document.addEventListener('input', function(event) {
+            if (
+                event.target.matches(
+                    '[data-document-bottom-input]'
+                )
+            ) {
+                resizeBottomInput(event.target);
+                return;
+            }
+
             if (
                 !activeDocument ||
                 event.target !== activeDocument.editor ||
