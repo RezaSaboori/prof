@@ -483,27 +483,21 @@
                 return;
             }
 
-            const actions = activeDocument.modal.querySelector(
-                '[data-document-history-actions]'
-            );
             const buttons = activeDocument.modal.querySelectorAll(
                 '[data-document-undo], [data-document-redo]'
             );
 
-            if (!actions) {
-                return;
-            }
-
-            actions.classList.toggle(
-                'is-visible',
-                visible
-            );
-            actions.setAttribute(
-                'aria-hidden',
-                visible ? 'false' : 'true'
-            );
-
             buttons.forEach(function(button) {
+                button.classList.toggle(
+                    'is-visible',
+                    visible
+                );
+
+                button.setAttribute(
+                    'aria-hidden',
+                    visible ? 'false' : 'true'
+                );
+
                 button.tabIndex = visible ? 0 : -1;
             });
         }
@@ -1234,6 +1228,10 @@
                 redoDocumentEdit();
                 return;
             }
+
+            const copyButton = event.target.closest(
+                '[data-document-copy]'
+            );
 
             if (
                 copyButton &&
