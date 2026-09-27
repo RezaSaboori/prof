@@ -52,10 +52,40 @@
             );
         }
 
+        function renderDocument(source) {
+            if (
+                typeof marked === 'undefined' ||
+                typeof DOMPurify === 'undefined'
+            ) {
+                const span = document.createElement('span');
+                span.textContent = source || '';
+
+                return span.innerHTML.replace(/\n/g, '<br>');
+            }
+
+            return DOMPurify.sanitize(
+                marked.parse(source || '', { breaks: true })
+            );
+        }
+
+        function clearSavedFeedbackTimer(documentState) {
+            if (
+                documentState &&
+                documentState.savedFeedbackTimer
+            ) {
+                window.clearTimeout(
+                    documentState.savedFeedbackTimer
+                );
+                documentState.savedFeedbackTimer = null;
+            }
+        }
+
         function setSaveState(state) {
             if (!activeDocument) {
                 return;
             }
+
+            clearSavedFeedbackTimer(activeDocument);
 
             const button = activeDocument.modal.querySelector(
                 '[data-document-save]'
@@ -63,8 +93,19 @@
             const label = activeDocument.modal.querySelector(
                 '[data-document-save-label]'
             );
+            const editIcon = activeDocument.modal.querySelector(
+                '[data-document-edit-icon]'
+            );
+            const saveIcon = activeDocument.modal.querySelector(
+                '[data-document-save-icon]'
+            );
 
-            if (!button || !label) {
+            if (
+                !button ||
+                !label ||
+                !editIcon ||
+                !saveIcon
+            ) {
                 return;
             }
 
@@ -75,24 +116,84 @@
             );
 
             button.dataset.saveState = state;
+            button.disabled = state === 'saving';
+
+            editIcon.hidden = state !== 'edit';
+            saveIcon.hidden = state === 'edit';
+
+            label.textContent = '';
+
+            if (state === 'edit') {
+                button.classList.add('glass');
+                button.setAttribute(
+                    'aria-label',
+                    'Edit document'
+                );
+                button.title = 'Edit';
+                return;
+            }
 
             if (state === 'saving') {
                 button.classList.add('glass');
-                button.disabled = true;
+                button.setAttribute(
+                    'aria-label',
+                    'Saving'
+                );
+                button.title = 'Saving';
                 label.textContent = 'Saving...';
+                return;
+            }
+
+            if (state === 'saved-feedback') {
+                button.classList.add('green-glass');
+                button.setAttribute(
+                    'aria-label',
+                    'Saved'
+                );
+                button.title = 'Saved';
+                label.textContent = 'Saved';
                 return;
             }
 
             if (state === 'saved') {
                 button.classList.add('green-glass');
-                button.disabled = true;
-                label.textContent = 'Saved';
+                button.setAttribute(
+                    'aria-label',
+                    'Saved'
+                );
+                button.title = 'Saved';
                 return;
             }
 
             button.classList.add('blue-glass');
-            button.disabled = false;
-            label.textContent = 'Save';
+            button.setAttribute(
+                'aria-label',
+                'Save document'
+            );
+            button.title = 'Save';
+        }
+
+        function showSavedFeedback() {
+            if (!activeDocument) {
+                return;
+            }
+
+            const documentState = activeDocument;
+
+            setSaveState('saved-feedback');
+
+            documentState.savedFeedbackTimer =
+                window.setTimeout(function() {
+                    if (
+                        activeDocument !== documentState ||
+                        isDirty()
+                    ) {
+                        return;
+                    }
+
+                    documentState.savedFeedbackTimer = null;
+                    setSaveState('saved');
+                }, 1200);
         }
 
         function isDirty() {
@@ -100,6 +201,23 @@
                 activeDocument &&
                 activeDocument.editor.value !== activeDocument.savedValue
             );
+        }
+
+        function enterEditMode() {
+            if (!activeDocument) {
+                return;
+            }
+
+            activeDocument.mode = 'edit';
+            activeDocument.preview.hidden = true;
+            activeDocument.editor.hidden = false;
+            activeDocument.editor.readOnly = false;
+
+            setSaveState('save');
+
+            window.requestAnimationFrame(function() {
+                activeDocument.editor.focus();
+            });
         }
 
         function openDocument(trigger) {
@@ -129,8 +247,11 @@
             const editor = modal
                 ? modal.querySelector('[data-document-editor]')
                 : null;
+            const preview = modal
+                ? modal.querySelector('[data-document-preview]')
+                : null;
 
-            if (!modal || !editor) {
+            if (!modal || !editor || !preview) {
                 return;
             }
 
@@ -146,26 +267,39 @@
             activeDocument = {
                 modal: modal,
                 editor: editor,
+                preview: preview,
                 jobIndex: jobIndex,
                 jobId: job.id,
                 field: field,
                 savedValue: storedValue,
                 saving: false,
                 closeAfterSave: false,
+                savedFeedbackTimer: null,
+                mode: 'view',
             };
 
             editor.value = storedValue;
             editor.readOnly = false;
+            editor.hidden = true;
+
+            preview.innerHTML = renderDocument(storedValue);
+            preview.hidden = false;
 
             modal.classList.add('active');
             modal.setAttribute('aria-hidden', 'false');
 
-            setSaveState('saved');
+            setSaveState('edit');
             syncBodyLock();
 
-            window.requestAnimationFrame(function() {
-                editor.focus();
-            });
+            const actionButton = modal.querySelector(
+                '[data-document-save]'
+            );
+
+            if (actionButton) {
+                window.requestAnimationFrame(function() {
+                    actionButton.focus();
+                });
+            }
         }
 
         function closeDocumentModal() {
@@ -181,6 +315,7 @@
             modal.classList.remove('active');
             modal.setAttribute('aria-hidden', 'true');
 
+            clearSavedFeedbackTimer(activeDocument);
             activeDocument = null;
             syncBodyLock();
 
@@ -271,10 +406,10 @@
             }
 
             if (!isDirty()) {
-                setSaveState('saved');
-
                 if (closeAfterSave) {
                     closeDocumentModal();
+                } else {
+                    showSavedFeedback();
                 }
 
                 return true;
@@ -327,6 +462,9 @@
                 state.saving = false;
                 state.editor.readOnly = false;
 
+                state.preview.innerHTML =
+                    renderDocument(valueToSave);
+
                 if (jobsData[state.jobIndex]) {
                     jobsData[state.jobIndex][state.field] =
                         valueToSave;
@@ -335,10 +473,10 @@
                 const shouldClose = state.closeAfterSave;
                 state.closeAfterSave = false;
 
-                setSaveState('saved');
-
                 if (shouldClose) {
                     closeDocumentModal();
+                } else {
+                    showSavedFeedback();
                 }
 
                 return true;
@@ -469,6 +607,22 @@
                 activeDocument.modal.contains(saveButton)
             ) {
                 event.preventDefault();
+
+                const state = saveButton.dataset.saveState;
+
+                if (state === 'edit') {
+                    enterEditMode();
+                    return;
+                }
+
+                if (
+                    state === 'saved' ||
+                    state === 'saved-feedback'
+                ) {
+                    showSavedFeedback();
+                    return;
+                }
+
                 saveDocument(false);
                 return;
             }

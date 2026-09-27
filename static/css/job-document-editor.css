@@ -19,23 +19,31 @@ body.job-document-modal-open {
 }
 
 .job-modal__save {
-    min-height: calc(var(--spacing-xl) + var(--spacing-xs));
+    width: calc(var(--spacing-xl) + var(--spacing-xs));
+    min-width: calc(var(--spacing-xl) + var(--spacing-xs));
+    height: calc(var(--spacing-xl) + var(--spacing-xs));
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--spacing-sm);
+    overflow: hidden;
     border-radius: var(--border-radius-pill);
-    color: var(--color-gray1);
+    color: var(--color-gray10);
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
 }
 
-.job-modal__save svg {
-    width: var(--spacing-md);
-    height: var(--spacing-md);
-    flex-shrink: 0;
+.job-modal__save[data-save-state="save"],
+.job-modal__save[data-save-state="saved"],
+.job-modal__save[data-save-state="saved-feedback"] {
+    color: var(--color-gray1);
+}
+
+.job-modal__save[data-save-state="saving"],
+.job-modal__save[data-save-state="saved-feedback"] {
+    width: calc(var(--spacing-5xl) + var(--spacing-2xl));
 }
 
 .job-modal__save[data-save-state="saving"] {
@@ -43,8 +51,18 @@ body.job-document-modal-open {
     cursor: progress;
 }
 
-.job-modal__save[data-save-state="saved"] {
-    cursor: default;
+.job-modal__action-icon {
+    width: var(--spacing-md);
+    height: var(--spacing-md);
+    flex: 0 0 var(--spacing-md);
+}
+
+.job-modal__action-icon[hidden] {
+    display: none;
+}
+
+.job-modal__save [data-document-save-label]:empty {
+    display: none;
 }
 
 .job-modal__icon-btn {
@@ -54,14 +72,15 @@ body.job-document-modal-open {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    padding: var(--spacing-sm);
     border-radius: var(--border-radius-container-md);
     color: var(--color-gray10);
     cursor: pointer;
 }
 
 .job-modal__icon-btn svg {
-    width: var(--spacing-lg);
-    height: var(--spacing-lg);
+    width: 100%;
+    height: 100%;
 }
 
 .job-modal__icon-btn:hover {
@@ -89,8 +108,25 @@ body.job-document-modal-open {
     overflow: hidden;
 }
 
+.job-modal__preview,
 .job-modal__editor {
     width: 100%;
+    font-size: calc(
+        var(--spacing-md) -
+        (var(--spacing-xs) / 2)
+    );
+}
+
+.job-modal__preview {
+    overflow-y: auto;
+}
+
+.job-modal__preview[hidden],
+.job-modal__editor[hidden] {
+    display: none;
+}
+
+.job-modal__editor {
     min-height: 52vh;
     padding: var(--spacing-lg);
     border:
