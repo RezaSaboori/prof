@@ -391,13 +391,21 @@ body.job-document-modal-open {
     min-height: 48px;
     max-height: none;
     box-sizing: border-box;
-    padding:
-        2px
-        var(--spacing-sm);
+    padding: var(--spacing-xs);
     border-radius:
         var(--border-radius-container-xs)
         !important;
     overflow: visible;
+}
+
+.job-modal__input-wrapper:focus-within {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--color-blue) 55%,
+            transparent
+        );
+    box-shadow: var(--elevation-2);
 }
 
 .job-modal__input-wrapper .tag-input-row {
@@ -413,9 +421,10 @@ body.job-document-modal-open {
     max-height: calc(1.5em * 5 + 8px);
     padding:
         var(--spacing-xs)
-        0;
-    border-radius:
-        var(--border-radius-container-xs);
+        var(--spacing-sm);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
     overflow-x: hidden;
     overflow-y: hidden;
     resize: none;
@@ -426,8 +435,9 @@ body.job-document-modal-open {
 }
 
 .job-modal__input-wrapper .job-modal__bottom-input:focus {
-    border-radius:
-        var(--border-radius-container-xs);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
 
 .job-modal__input-submit {
