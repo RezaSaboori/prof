@@ -648,6 +648,58 @@ def get_document_state(
         revisions=revisions,
     )
 
+    saved_revision_column = (
+        DOCUMENT_FIELDS[field]
+    )
+
+    if (
+        revisions and
+        job.get(
+            saved_revision_column
+        ) is None
+    ):
+        saved_value = (
+            job.get(field) or ''
+        )
+
+        matching_saved_revision = None
+
+        for revision in revisions:
+            revision_content = (
+                revision.get('content')
+                or ''
+            )
+
+            if (
+                _revision_status(
+                    revision
+                ) == 'ready' and
+                revision_content ==
+                    saved_value
+            ):
+                matching_saved_revision = (
+                    revision
+                )
+
+                break
+
+        if (
+            matching_saved_revision
+            is not None
+        ):
+            job = _patch_job(
+                session,
+                headers,
+                job['id'],
+                owner_user_id,
+                {
+                    saved_revision_column:
+                        matching_saved_revision[
+                            'id'
+                        ],
+                },
+            )
+
     return _build_state(
         job,
         revisions,

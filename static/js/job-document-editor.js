@@ -1979,10 +1979,13 @@
                 documentState.revisions
                     .length
             ) {
-                if (
-                    !preferLatest &&
+                if (preferLatest) {
+                    targetIndex =
+                        documentState
+                            .revisions.length - 1;
+                } else if (
                     documentState
-                        .currentRevisionId !==
+                        .savedRevisionId !==
                         null
                 ) {
                     targetIndex =
@@ -1997,49 +2000,108 @@
                                         ) ===
                                         String(
                                             documentState
-                                                .currentRevisionId
+                                                .savedRevisionId
                                         )
                                     );
                                 }
                             );
                 }
 
-                if (targetIndex < 0) {
-                    targetIndex =
-                        documentState
-                            .revisions.length -
-                        1;
+                if (
+                    !preferLatest &&
+                    targetIndex < 0
+                ) {
+                    for (
+                        let index =
+                            documentState
+                                .revisions.length - 1;
+                        index >= 0;
+                        index -= 1
+                    ) {
+                        const revision =
+                            documentState
+                                .revisions[index];
+
+                        const content =
+                            typeof revision
+                                .content ===
+                                'string'
+                                ? revision.content
+                                : '';
+
+                        if (
+                            getRevisionStatus(
+                                revision
+                            ) === 'ready' &&
+                            content ===
+                                documentState
+                                    .savedValue
+                        ) {
+                            targetIndex =
+                                index;
+
+                            break;
+                        }
+                    }
                 }
 
-                const revision =
-                    documentState.revisions[
-                        targetIndex
-                    ];
-
-                documentState
-                    .revisionIndex =
-                    targetIndex;
-
-                documentState
-                    .currentRevisionId =
-                    revision.id;
-
-                documentState.editor.value =
-                    typeof revision.content ===
-                        'string'
-                        ? revision.content
-                        : '';
-
-                documentState.editBaseValue =
-                    documentState
-                        .editor.value;
-
-                documentState.preview
-                    .innerHTML =
-                    renderDocument(
+                if (targetIndex >= 0) {
+                    const revision =
                         documentState
-                            .editor.value
-                    );
+                            .revisions[
+                                targetIndex
+                            ];
+
+                    documentState
+                        .revisionIndex =
+                        targetIndex;
+
+                    documentState
+                        .currentRevisionId =
+                        revision.id;
+
+                    documentState.editor.value =
+                        typeof revision
+                            .content ===
+                            'string'
+                            ? revision.content
+                            : '';
+
+                    documentState
+                        .editBaseValue =
+                        documentState
+                            .editor.value;
+
+                    documentState.preview
+                        .innerHTML =
+                        renderDocument(
+                            documentState
+                                .editor.value
+                        );
+                } else {
+                    documentState
+                        .revisionIndex = -1;
+
+                    documentState
+                        .currentRevisionId =
+                        null;
+
+                    documentState.editor.value =
+                        documentState
+                            .savedValue;
+
+                    documentState
+                        .editBaseValue =
+                        documentState
+                            .savedValue;
+
+                    documentState.preview
+                        .innerHTML =
+                        renderDocument(
+                            documentState
+                                .savedValue
+                        );
+                }
             } else {
                 documentState
                     .revisionIndex = -1;
@@ -2688,7 +2750,7 @@
 
             refreshDocumentState(
                 activeDocument,
-                true
+                false
             );
 
             const actionButton =
