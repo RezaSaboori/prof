@@ -1114,15 +1114,34 @@ body.job-document-modal-open {
 
     .job-modal__input-wrapper
     .job-modal__bottom-input {
-        padding-top:
+        height:
             calc(
+                var(--circular-icon-button-size) -
                 var(--spacing-xs) -
-                1px
+                var(--border-width-thin)
             );
-        padding-bottom:
+        min-height:
             calc(
-                var(--spacing-xs) +
-                1px
+                var(--circular-icon-button-size) -
+                var(--spacing-xs) -
+                var(--border-width-thin)
+            );
+        max-height:
+            calc(
+                (
+                    var(--circular-icon-button-size) -
+                    (3 * var(--spacing-xs)) -
+                    var(--border-width-thin)
+                ) * 5 +
+                (2 * var(--spacing-xs))
+            );
+        padding:
+            var(--spacing-xs);
+        line-height:
+            calc(
+                var(--circular-icon-button-size) -
+                (3 * var(--spacing-xs)) -
+                var(--border-width-thin)
             );
     }
 
