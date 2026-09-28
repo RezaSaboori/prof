@@ -51,6 +51,14 @@
         const SAVE_ICON_SVG =
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>';
 
+        const SEND_ICON_SVG =
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>';
+
+        const REVISION_LOADING_ICON_SVG =
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><circle cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0s"/></circle><circle transform="rotate(45 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.125s"/></circle><circle transform="rotate(90 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.25s"/></circle><circle transform="rotate(135 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.375s"/></circle><circle transform="rotate(180 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.5s"/></circle><circle transform="rotate(225 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.625s"/></circle><circle transform="rotate(270 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.75s"/></circle><circle transform="rotate(315 16 16)" cx="16" cy="3" r="0"><animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.875s"/></circle></svg>';
+
+        const SUBMIT_ICON_SWAP_MS = 180;
+
         let activeDocument = null;
         let lastTrigger = null;
 
@@ -194,7 +202,12 @@
                 )
                 : null;
 
-            if (!submitButton) {
+            if (
+                !submitButton ||
+                submitButton.classList.contains(
+                    'is-processing'
+                )
+            ) {
                 return;
             }
 
@@ -213,6 +226,251 @@
             submitButton.classList.toggle(
                 'glass',
                 !canSubmit
+            );
+        }
+
+        function transitionSubmitIcon(
+            button,
+            iconHtml,
+            iconState
+        ) {
+            if (
+                !button ||
+                button.dataset.iconState ===
+                    iconState
+            ) {
+                return;
+            }
+
+            button.dataset.iconState =
+                iconState;
+
+            const currentIcon =
+                button.querySelector('svg');
+
+            if (!currentIcon) {
+                button.innerHTML =
+                    iconHtml;
+
+                return;
+            }
+
+            currentIcon.classList.remove(
+                'job-modal__input-submit-icon--enter'
+            );
+
+            currentIcon.classList.add(
+                'job-modal__input-submit-icon--exit'
+            );
+
+            window.setTimeout(
+                function() {
+                    if (!button.isConnected) {
+                        return;
+                    }
+
+                    button.innerHTML =
+                        iconHtml;
+
+                    const nextIcon =
+                        button.querySelector(
+                            'svg'
+                        );
+
+                    if (nextIcon) {
+                        nextIcon.classList.add(
+                            'job-modal__input-submit-icon--enter'
+                        );
+                    }
+                },
+                SUBMIT_ICON_SWAP_MS
+            );
+        }
+
+        function buildPreviewSkeleton(
+            preview
+        ) {
+            if (!preview) {
+                return;
+            }
+
+            const existing =
+                preview.querySelector(
+                    '.job-modal__preview-skeleton'
+                );
+
+            if (existing) {
+                return;
+            }
+
+            const skeleton =
+                document.createElement(
+                    'div'
+                );
+
+            skeleton.className =
+                'job-modal__preview-skeleton';
+
+            skeleton.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+            const variants = [
+                'title',
+                'medium',
+                'short',
+                'full',
+                'long',
+                'full',
+                'medium',
+                'long',
+                'short',
+                'full',
+                'long',
+                'medium',
+                'full',
+                'title',
+                'medium',
+                'short',
+            ];
+
+            variants.forEach(
+                function(variant) {
+                    const line =
+                        document.createElement(
+                            'span'
+                        );
+
+                    line.className =
+                        'job-modal__preview-skeleton-line ' +
+                        'job-modal__preview-skeleton-line--' +
+                        variant;
+
+                    skeleton.appendChild(
+                        line
+                    );
+                }
+            );
+
+            preview.appendChild(
+                skeleton
+            );
+        }
+
+        function setPreviewProcessing(
+            documentState,
+            processing
+        ) {
+            if (
+                !documentState ||
+                !documentState.preview
+            ) {
+                return;
+            }
+
+            const preview =
+                documentState.preview;
+
+            preview.classList.toggle(
+                'is-ai-processing',
+                Boolean(processing)
+            );
+
+            preview.setAttribute(
+                'aria-busy',
+                processing
+                    ? 'true'
+                    : 'false'
+            );
+
+            if (processing) {
+                preview.scrollTop = 0;
+
+                buildPreviewSkeleton(
+                    preview
+                );
+
+                return;
+            }
+
+            const skeleton =
+                preview.querySelector(
+                    '.job-modal__preview-skeleton'
+                );
+
+            if (skeleton) {
+                skeleton.remove();
+            }
+        }
+
+        function setSubmitProcessing(
+            documentState,
+            processing
+        ) {
+            if (
+                !documentState ||
+                !documentState.submitButton
+            ) {
+                return;
+            }
+
+            const button =
+                documentState.submitButton;
+
+            button.disabled =
+                Boolean(processing);
+
+            button.classList.toggle(
+                'is-processing',
+                Boolean(processing)
+            );
+
+            button.classList.remove(
+                'glass',
+                'blue-glass',
+                'indigo-glass'
+            );
+
+            if (processing) {
+                button.classList.add(
+                    'indigo-glass'
+                );
+
+                button.setAttribute(
+                    'aria-label',
+                    'Generating document'
+                );
+
+                transitionSubmitIcon(
+                    button,
+                    REVISION_LOADING_ICON_SVG,
+                    'loading'
+                );
+
+                return;
+            }
+
+            button.classList.add(
+                'glass'
+            );
+
+            button.setAttribute(
+                'aria-label',
+                documentState.field ===
+                    'resume'
+                    ? 'Submit resume instruction'
+                    : 'Submit cover letter instruction'
+            );
+
+            transitionSubmitIcon(
+                button,
+                SEND_ICON_SVG,
+                'send'
+            );
+
+            updateBottomSubmitState(
+                documentState.bottomInput
             );
         }
 
@@ -897,33 +1155,15 @@
                     documentState.processing;
             }
 
-            if (
-                documentState.submitButton
-            ) {
-                documentState.submitButton
-                    .disabled =
-                    documentState.processing;
+            setPreviewProcessing(
+                documentState,
+                documentState.processing
+            );
 
-                if (
-                    documentState.processing
-                ) {
-                    documentState
-                        .submitButton
-                        .classList.remove(
-                            'blue-glass'
-                        );
-
-                    documentState
-                        .submitButton
-                        .classList.add(
-                            'glass'
-                        );
-                } else {
-                    updateBottomSubmitState(
-                        documentState.bottomInput
-                    );
-                }
-            }
+            setSubmitProcessing(
+                documentState,
+                documentState.processing
+            );
 
             if (
                 activeDocument ===
@@ -966,16 +1206,15 @@
                     .disabled = false;
             }
 
-            if (
-                documentState.submitButton
-            ) {
-                documentState.submitButton
-                    .disabled = false;
+            setPreviewProcessing(
+                documentState,
+                false
+            );
 
-                updateBottomSubmitState(
-                    documentState.bottomInput
-                );
-            }
+            setSubmitProcessing(
+                documentState,
+                false
+            );
         }
 
         function scheduleRevisionPoll(
