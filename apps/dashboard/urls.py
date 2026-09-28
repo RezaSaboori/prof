@@ -54,7 +54,29 @@ urlpatterns = [
 
     path('api/company-logo/',     views.api_company_logo,     name='api_company_logo'),
 
-    path('api/jobs/document/save/', views.api_job_document_save, name='api_job_document_save'),
-    path('api/jobs/unlock/',        views.api_job_unlock,        name='api_job_unlock'),
-    path('api/jobs/decline/',       views.api_job_decline,       name='api_job_decline'),
+    path(
+        'api/jobs/document/state/',
+        views.api_job_document_state,
+        name='api_job_document_state',
+    ),
+    path(
+        'api/jobs/document/revision/',
+        views.api_job_document_revision_create,
+        name='api_job_document_revision_create',
+    ),
+    path(
+        'api/jobs/document/save/',
+        views.api_job_document_save,
+        name='api_job_document_save',
+    ),
+    path(
+        'api/jobs/unlock/',
+        views.api_job_unlock,
+        name='api_job_unlock',
+    ),
+    path(
+        'api/jobs/decline/',
+        views.api_job_decline,
+        name='api_job_decline',
+    ),
 ]

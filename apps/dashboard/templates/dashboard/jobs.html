@@ -37,7 +37,13 @@
             </div>
         </div>
     </div>
-    <div class="jobs-grid" data-logo-endpoint="{% url 'dashboard:api_company_logo' %}" data-unlock-endpoint="{% url 'dashboard:api_job_unlock' %}" data-decline-endpoint="{% url 'dashboard:api_job_decline' %}" data-document-save-endpoint="{% url 'dashboard:api_job_document_save' %}">
+    <div class="jobs-grid"
+     data-logo-endpoint="{% url 'dashboard:api_company_logo' %}"
+     data-unlock-endpoint="{% url 'dashboard:api_job_unlock' %}"
+     data-decline-endpoint="{% url 'dashboard:api_job_decline' %}"
+     data-document-state-endpoint="{% url 'dashboard:api_job_document_state' %}"
+     data-document-revision-endpoint="{% url 'dashboard:api_job_document_revision_create' %}"
+     data-document-save-endpoint="{% url 'dashboard:api_job_document_save' %}">
         {% for job in jobs %}
         <div class="job-card {% if job.paid == 1 %}opal-glass{% else %}glass{% endif %}{% if job.paid == 2 %} job-card--declined{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}" data-job-paid="{{ job.paid|default:0 }}">
             <div class="job-card__header">

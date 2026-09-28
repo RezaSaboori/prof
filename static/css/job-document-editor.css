@@ -379,6 +379,8 @@ body.job-document-modal-open {
 }
 
 .job-modal__input-wrapper {
+    position: relative;
+    isolation: isolate;
     width: 100%;
     min-height: 0;
     max-height: none;
@@ -388,6 +390,70 @@ body.job-document-modal-open {
         var(--border-radius-container-xs)
         !important;
     overflow: visible;
+}
+
+.job-modal__input-wrapper.is-processing::before {
+    content: "";
+    position: absolute;
+    inset:
+        calc(
+            var(--spacing-xs) * -1
+        );
+    z-index: -1;
+    border-radius: inherit;
+    background:
+        linear-gradient(
+            90deg,
+            var(--color-purple),
+            var(--color-blue),
+            var(--color-cyan),
+            var(--color-mint),
+            var(--color-orange),
+            var(--color-pink),
+            var(--color-purple)
+        );
+    background-size: 300% 300%;
+    opacity: 0.6;
+    filter: blur(var(--spacing-sm));
+    animation:
+        jobDocumentProcessingGradient
+        6s
+        linear
+        infinite;
+    pointer-events: none;
+}
+
+.job-modal__input-wrapper.is-processing {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--color-blue) 45%,
+            transparent
+        );
+}
+
+.job-modal__input-wrapper.is-processing
+.job-modal__bottom-input {
+    cursor: progress;
+}
+
+.job-modal__input-submit:disabled {
+    cursor: progress;
+    transform: none;
+}
+
+@keyframes jobDocumentProcessingGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .job-modal__input-wrapper:focus-within {
