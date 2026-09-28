@@ -1056,6 +1056,36 @@ body.job-document-modal-open {
         padding: 0 var(--spacing-sm);
     }
 
+    .job-modal__save[data-save-state="saving-expand"],
+    .job-modal__save[data-save-state="saving"],
+    .job-modal__save[data-save-state="saved-feedback-expand"],
+    .job-modal__save[data-save-state="saved-feedback"] {
+        width:
+            calc(
+                var(--circular-icon-button-size) +
+                var(--spacing-5xl) +
+                var(--spacing-lg)
+            );
+        min-width:
+            calc(
+                var(--circular-icon-button-size) +
+                var(--spacing-5xl) +
+                var(--spacing-lg)
+            );
+        max-width:
+            calc(
+                var(--circular-icon-button-size) +
+                var(--spacing-5xl) +
+                var(--spacing-lg)
+            );
+        flex-basis:
+            calc(
+                var(--circular-icon-button-size) +
+                var(--spacing-5xl) +
+                var(--spacing-lg)
+            );
+    }
+
     .job-modal__close {
         padding: 0;
     }
@@ -1080,6 +1110,20 @@ body.job-document-modal-open {
 
     .job-modal__editor {
         padding: var(--spacing-md);
+    }
+
+    .job-modal__input-wrapper
+    .job-modal__bottom-input {
+        padding-top:
+            calc(
+                var(--spacing-xs) -
+                1px
+            );
+        padding-bottom:
+            calc(
+                var(--spacing-xs) +
+                1px
+            );
     }
 
     .job-save-confirmation {
