@@ -312,3 +312,15 @@
 .job-link-submit-btn:active {
     transform: scale(0.92);
 }
+
+.job-document-support-link {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness:
+        var(--border-width-thin);
+    text-underline-offset:
+        calc(
+            var(--spacing-xs) / 2
+        );
+}

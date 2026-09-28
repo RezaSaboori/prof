@@ -1,7 +1,12 @@
+import logging
 import uuid
+from datetime import timedelta
+from datetime import timezone as datetime_timezone
 
 import requests
 from django.conf import settings
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 
 DOCUMENT_FIELDS = {
@@ -20,13 +25,27 @@ REVISION_SELECT = (
     'content,source,request_id,parent_revision_id,created_at,metadata'
 )
 
+REVISION_TIMEOUT = timedelta(minutes=20)
+
+REVISION_ERROR_GENERAL = 'revision_failed'
+REVISION_ERROR_TIMEOUT = 'revision_timeout'
+
+logger = logging.getLogger(__name__)
 
 class DocumentRevisionError(Exception):
-    def __init__(self, message, status=400, detail=None):
+    def __init__(
+        self,
+        message,
+        status=400,
+        detail=None,
+        code=REVISION_ERROR_GENERAL,
+    ):
         super().__init__(message)
+
         self.message = message
         self.status = status
         self.detail = detail
+        self.code = code
 
 
 def _request(
@@ -305,6 +324,197 @@ def _patch_revision(
 
     return rows[0]
 
+def _delete_revision(
+    session,
+    headers,
+    *,
+    job_id,
+    owner_user_id,
+    field,
+    revision_id=None,
+    request_id=None,
+):
+    if revision_id is None and not request_id:
+        return
+
+    params = {
+        'job_id': f'eq.{job_id}',
+        'user_id': f'eq.{owner_user_id}',
+        'document_type': f'eq.{field}',
+    }
+
+    if revision_id is not None:
+        params['id'] = f'eq.{revision_id}'
+
+    if request_id:
+        params['request_id'] = f'eq.{request_id}'
+
+    _request(
+        session,
+        'DELETE',
+        'job_document_revisions',
+        headers,
+        params=params,
+        prefer='return=minimal',
+    )
+
+
+def _cleanup_revision_best_effort(
+    session,
+    headers,
+    *,
+    job_id,
+    owner_user_id,
+    field,
+    revision_id=None,
+    request_id=None,
+):
+    try:
+        _delete_revision(
+            session,
+            headers,
+            job_id=job_id,
+            owner_user_id=owner_user_id,
+            field=field,
+            revision_id=revision_id,
+            request_id=request_id,
+        )
+
+        return True
+
+    except DocumentRevisionError as exc:
+        logger.error(
+            (
+                'Could not clean failed document revision. '
+                'job=%s field=%s revision=%s request=%s detail=%s'
+            ),
+            job_id,
+            field,
+            revision_id,
+            request_id,
+            exc.detail or exc.message,
+        )
+
+        return False
+
+
+def _processing_revision_timed_out(revision):
+    created_at_raw = revision.get('created_at')
+
+    if not created_at_raw:
+        return None
+
+    created_at = parse_datetime(
+        str(created_at_raw)
+    )
+
+    if created_at is None:
+        return None
+
+    if timezone.is_naive(created_at):
+        created_at = created_at.replace(
+            tzinfo=datetime_timezone.utc
+        )
+
+    return (
+        timezone.now() - created_at
+        >= REVISION_TIMEOUT
+    )
+
+
+def _revision_failure_code(revision):
+    if (
+        not revision or
+        revision.get('source') != 'llm'
+    ):
+        return None
+
+    status = _revision_status(
+        revision
+    )
+
+    if status == 'processing':
+        timed_out = (
+            _processing_revision_timed_out(
+                revision
+            )
+        )
+
+        if timed_out is True:
+            return REVISION_ERROR_TIMEOUT
+
+        if timed_out is None:
+            return REVISION_ERROR_GENERAL
+
+        return None
+
+    if status != 'ready':
+        return REVISION_ERROR_GENERAL
+
+    content = revision.get('content')
+
+    if (
+        not isinstance(content, str) or
+        not content.strip()
+    ):
+        return REVISION_ERROR_GENERAL
+
+    return None
+
+
+def _cleanup_invalid_latest_revision(
+    session,
+    headers,
+    *,
+    job_id,
+    owner_user_id,
+    field,
+    revisions,
+):
+    if not revisions:
+        return revisions, None
+
+    latest = revisions[-1]
+
+    failure_code = (
+        _revision_failure_code(
+            latest
+        )
+    )
+
+    if not failure_code:
+        return revisions, None
+
+    revision_id = latest.get('id')
+
+    if revision_id is None:
+        raise DocumentRevisionError(
+            'Invalid document revision state',
+            status=502,
+            code=REVISION_ERROR_GENERAL,
+        )
+
+    _delete_revision(
+        session,
+        headers,
+        job_id=job_id,
+        owner_user_id=owner_user_id,
+        field=field,
+        revision_id=revision_id,
+    )
+
+    clean_revisions = _list_revisions(
+        session,
+        headers,
+        job_id,
+        owner_user_id,
+        field,
+    )
+
+    return (
+        clean_revisions,
+        failure_code,
+    )
 
 def _delete_future_revisions(
     session,
@@ -352,9 +562,21 @@ def _find_revision(revisions, revision_id):
     return None
 
 
-def _build_state(job, revisions, field):
-    saved_revision_column = DOCUMENT_FIELDS[field]
-    latest = revisions[-1] if revisions else None
+def _build_state(
+    job,
+    revisions,
+    field,
+    revision_error=None,
+):
+    saved_revision_column = (
+        DOCUMENT_FIELDS[field]
+    )
+
+    latest = (
+        revisions[-1]
+        if revisions
+        else None
+    )
 
     latest_status = (
         _revision_status(latest)
@@ -365,16 +587,25 @@ def _build_state(job, revisions, field):
     return {
         'job_id': job['id'],
         'field': field,
-        'saved_value': job.get(field) or '',
-        'saved_revision_id': job.get(saved_revision_column),
+        'saved_value':
+            job.get(field) or '',
+        'saved_revision_id':
+            job.get(
+                saved_revision_column
+            ),
         'latest_revision_id': (
             latest.get('id')
             if latest
             else None
         ),
-        'latest_status': latest_status,
-        'processing': latest_status == 'processing',
-        'revisions': revisions,
+        'latest_status':
+            latest_status,
+        'processing':
+            latest_status == 'processing',
+        'revision_error':
+            revision_error,
+        'revisions':
+            revisions,
     }
 
 
@@ -405,12 +636,24 @@ def get_document_state(
         field,
     )
 
+    (
+        revisions,
+        revision_error,
+    ) = _cleanup_invalid_latest_revision(
+        session,
+        headers,
+        job_id=job['id'],
+        owner_user_id=owner_user_id,
+        field=field,
+        revisions=revisions,
+    )
+
     return _build_state(
         job,
         revisions,
         field,
+        revision_error=revision_error,
     )
-
 
 def _ensure_initial_revision(
     session,
@@ -504,7 +747,10 @@ def create_revision_request(
 ):
     _validate_field(field)
 
-    if not isinstance(instruction, str):
+    if not isinstance(
+        instruction,
+        str,
+    ):
         raise DocumentRevisionError(
             'instruction must be a string',
             status=400,
@@ -534,18 +780,43 @@ def create_revision_request(
         field,
     )
 
-    job, revisions = _ensure_initial_revision(
+    (
+        revisions,
+        previous_revision_error,
+    ) = _cleanup_invalid_latest_revision(
         session,
         headers,
-        job=job,
+        job_id=job['id'],
         owner_user_id=owner_user_id,
         field=field,
         revisions=revisions,
     )
 
+    if previous_revision_error:
+        raise DocumentRevisionError(
+            'Previous document revision was discarded',
+            status=409,
+            code=previous_revision_error,
+        )
+
+    job, revisions = (
+        _ensure_initial_revision(
+            session,
+            headers,
+            job=job,
+            owner_user_id=owner_user_id,
+            field=field,
+            revisions=revisions,
+        )
+    )
+
     latest = revisions[-1]
 
-    if _revision_status(latest) == 'processing':
+    if (
+        _revision_status(
+            latest
+        ) == 'processing'
+    ):
         raise DocumentRevisionError(
             'A document revision is already processing',
             status=409,
@@ -565,13 +836,19 @@ def create_revision_request(
                 status=409,
             )
 
-    if _revision_status(base_revision) == 'processing':
+    if (
+        _revision_status(
+            base_revision
+        ) == 'processing'
+    ):
         raise DocumentRevisionError(
             'The selected revision is still processing',
             status=409,
         )
 
-    base_version = int(base_revision['version'])
+    base_version = int(
+        base_revision['version']
+    )
 
     _delete_future_revisions(
         session,
@@ -582,87 +859,259 @@ def create_revision_request(
         version=base_version,
     )
 
-    base_content = base_revision.get('content') or ''
+    base_content = (
+        base_revision.get('content')
+        or ''
+    )
 
     if (
         isinstance(current_value, str) and
         current_value != base_content
     ):
-        manual_revision = _insert_revision(
-            session,
-            headers,
-            job_id=job['id'],
-            owner_user_id=owner_user_id,
-            field=field,
-            version=base_version + 1,
-            instruction=None,
-            content=current_value,
-            source='manual',
-            request_id=None,
-            parent_revision_id=base_revision['id'],
-            metadata={
-                'status': 'ready',
-            },
+        manual_revision = (
+            _insert_revision(
+                session,
+                headers,
+                job_id=job['id'],
+                owner_user_id=owner_user_id,
+                field=field,
+                version=base_version + 1,
+                instruction=None,
+                content=current_value,
+                source='manual',
+                request_id=None,
+                parent_revision_id=
+                    base_revision['id'],
+                metadata={
+                    'status': 'ready',
+                },
+            )
         )
 
         base_revision = manual_revision
-        base_version = int(manual_revision['version'])
+
+        base_version = int(
+            manual_revision['version']
+        )
+
         base_content = current_value
 
-    request_id = str(uuid.uuid4())
+    request_id = str(
+        uuid.uuid4()
+    )
 
-    processing_revision = _insert_revision(
+    try:
+        processing_revision = (
+            _insert_revision(
+                session,
+                headers,
+                job_id=job['id'],
+                owner_user_id=owner_user_id,
+                field=field,
+                version=base_version + 1,
+                instruction=instruction,
+                content=base_content,
+                source='llm',
+                request_id=request_id,
+                parent_revision_id=
+                    base_revision['id'],
+                metadata={
+                    'status':
+                        'processing',
+                },
+            )
+        )
+
+        temporary_content = (
+            _temporary_revision_content(
+                base_content,
+                instruction,
+            )
+        )
+
+        ready_revision = (
+            _patch_revision(
+                session,
+                headers,
+                revision_id=
+                    processing_revision[
+                        'id'
+                    ],
+                job_id=job['id'],
+                owner_user_id=
+                    owner_user_id,
+                field=field,
+                payload={
+                    'content':
+                        temporary_content,
+                    'metadata': {
+                        'status':
+                            'ready',
+                        'mock':
+                            True,
+                    },
+                },
+            )
+        )
+
+        state = get_document_state(
+            session,
+            headers,
+            django_user_id=
+                django_user_id,
+            email=email,
+            job_id=job['id'],
+            field=field,
+        )
+
+        state['request_id'] = (
+            request_id
+        )
+
+        state['revision'] = (
+            ready_revision
+        )
+
+        return state
+
+    except DocumentRevisionError as exc:
+        _cleanup_revision_best_effort(
+            session,
+            headers,
+            job_id=job['id'],
+            owner_user_id=
+                owner_user_id,
+            field=field,
+            request_id=request_id,
+        )
+
+        raise DocumentRevisionError(
+            'Document revision failed',
+            status=(
+                exc.status
+                if exc.status >= 500
+                else 502
+            ),
+            detail=(
+                exc.detail or
+                exc.message
+            ),
+            code=
+                REVISION_ERROR_GENERAL,
+        ) from exc
+
+    except Exception as exc:
+        logger.exception(
+            (
+                'Unexpected document '
+                'revision failure. '
+                'job=%s field=%s '
+                'request=%s'
+            ),
+            job['id'],
+            field,
+            request_id,
+        )
+
+        _cleanup_revision_best_effort(
+            session,
+            headers,
+            job_id=job['id'],
+            owner_user_id=
+                owner_user_id,
+            field=field,
+            request_id=request_id,
+        )
+
+        raise DocumentRevisionError(
+            'Document revision failed',
+            status=500,
+            detail=str(exc),
+            code=
+                REVISION_ERROR_GENERAL,
+        ) from exc
+
+def discard_processing_revision(
+    session,
+    headers,
+    *,
+    django_user_id,
+    email,
+    job_id,
+    field,
+):
+    _validate_field(field)
+
+    job, owner_user_id = _resolve_job(
         session,
         headers,
-        job_id=job['id'],
-        owner_user_id=owner_user_id,
-        field=field,
-        version=base_version + 1,
-        instruction=instruction,
-        content=base_content,
-        source='llm',
-        request_id=request_id,
-        parent_revision_id=base_revision['id'],
-        metadata={
-            'status': 'processing',
-        },
+        django_user_id,
+        email,
+        job_id,
     )
 
-    temporary_content = _temporary_revision_content(
-        base_content,
-        instruction,
-    )
-
-    ready_revision = _patch_revision(
+    revisions = _list_revisions(
         session,
         headers,
-        revision_id=processing_revision['id'],
-        job_id=job['id'],
-        owner_user_id=owner_user_id,
-        field=field,
-        payload={
-            'content': temporary_content,
-            'metadata': {
-                'status': 'ready',
-                'mock': True,
-            },
-        },
+        job['id'],
+        owner_user_id,
+        field,
     )
 
-    state = get_document_state(
-        session,
-        headers,
-        django_user_id=django_user_id,
-        email=email,
-        job_id=job['id'],
-        field=field,
+    if not revisions:
+        return _build_state(
+            job,
+            revisions,
+            field,
+        )
+
+    latest = revisions[-1]
+
+    latest_status = (
+        _revision_status(
+            latest
+        )
     )
 
-    state['request_id'] = request_id
-    state['revision'] = ready_revision
+    failure_code = (
+        _revision_failure_code(
+            latest
+        )
+    )
 
-    return state
+    should_delete = (
+        latest.get('source') == 'llm' and
+        (
+            latest_status == 'processing' or
+            failure_code is not None
+        )
+    )
 
+    if should_delete:
+        _delete_revision(
+            session,
+            headers,
+            job_id=job['id'],
+            owner_user_id=
+                owner_user_id,
+            field=field,
+            revision_id=
+                latest.get('id'),
+        )
+
+        revisions = _list_revisions(
+            session,
+            headers,
+            job['id'],
+            owner_user_id,
+            field,
+        )
+
+    return _build_state(
+        job,
+        revisions,
+        field,
+    )
 
 def save_document(
     session,

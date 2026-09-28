@@ -43,6 +43,7 @@
      data-decline-endpoint="{% url 'dashboard:api_job_decline' %}"
      data-document-state-endpoint="{% url 'dashboard:api_job_document_state' %}"
      data-document-revision-endpoint="{% url 'dashboard:api_job_document_revision_create' %}"
+     data-document-revision-cleanup-endpoint="{% url 'dashboard:api_job_document_revision_cleanup' %}"
      data-document-save-endpoint="{% url 'dashboard:api_job_document_save' %}">
         {% for job in jobs %}
         <div class="job-card {% if job.paid == 1 %}opal-glass{% else %}glass{% endif %}{% if job.paid == 2 %} job-card--declined{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}" data-job-paid="{{ job.paid|default:0 }}">

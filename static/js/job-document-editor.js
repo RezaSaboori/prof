@@ -34,11 +34,32 @@
             grid.dataset.documentRevisionEndpoint ||
             '/dashboard/api/jobs/document/revision/';
 
+        const revisionCleanupEndpoint =
+            grid.dataset
+                .documentRevisionCleanupEndpoint ||
+            '/dashboard/api/jobs/document/revision/cleanup/';
+
         const saveEndpoint =
             grid.dataset.documentSaveEndpoint ||
             '/dashboard/api/jobs/document/save/';
 
         const REVISION_POLL_MS = 2000;
+
+        const REVISION_ERROR_GENERAL =
+            'revision_failed';
+
+        const REVISION_ERROR_TIMEOUT =
+            'revision_timeout';
+
+        const REVISION_ERROR_MESSAGE =
+            'We encountered a problem while revising this document. ' +
+            'Please try again later. If the problem persists, contact ' +
+            'support@proflab.us.';
+
+        const REVISION_TIMEOUT_MESSAGE =
+            'This revision could not be completed within 20 minutes. ' +
+            'Please try again. If the problem persists, contact ' +
+            'support@proflab.us.';
 
         const SAVE_BUTTON_EXPAND_MS = 400;
         const SAVE_CONTENT_SWAP_MS = 210;
@@ -97,6 +118,90 @@
                 category: 'Error',
                 body: message,
             });
+        }
+
+        function notifyRevisionError(
+            code
+        ) {
+            const message =
+                code ===
+                REVISION_ERROR_TIMEOUT
+                    ? REVISION_TIMEOUT_MESSAGE
+                    : REVISION_ERROR_MESSAGE;
+
+            if (
+                typeof window.notify !==
+                'function'
+            ) {
+                return;
+            }
+
+            window.notify({
+                type: 'error',
+                category: 'Error',
+                body: message,
+            });
+
+            const body =
+                document.getElementById(
+                    'notifyModalBody'
+                );
+
+            if (!body) {
+                return;
+            }
+
+            const email =
+                'support@proflab.us';
+
+            const emailIndex =
+                message.indexOf(email);
+
+            if (emailIndex < 0) {
+                return;
+            }
+
+            const before =
+                message.slice(
+                    0,
+                    emailIndex
+                );
+
+            const after =
+                message.slice(
+                    emailIndex +
+                    email.length
+                );
+
+            body.textContent = '';
+
+            body.appendChild(
+                document.createTextNode(
+                    before
+                )
+            );
+
+            const link =
+                document.createElement(
+                    'a'
+                );
+
+            link.href =
+                'mailto:' + email;
+
+            link.textContent =
+                email;
+
+            link.className =
+                'job-document-support-link';
+
+            body.appendChild(link);
+
+            body.appendChild(
+                document.createTextNode(
+                    after
+                )
+            );
         }
 
         function syncBodyLock() {
@@ -1242,7 +1347,109 @@
                         ) {
                             return;
                         }
+        async function cleanupFailedRevision(
+            documentState
+        ) {
+            if (!documentState) {
+                return false;
+            }
 
+            try {
+                const response =
+                    await fetch(
+                        revisionCleanupEndpoint,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+                                'X-CSRFToken':
+                                    getCsrfToken(),
+                                'X-Requested-With':
+                                    'XMLHttpRequest',
+                            },
+                            credentials:
+                                'same-origin',
+                            body:
+                                JSON.stringify({
+                                    id:
+                                        documentState
+                                            .jobId,
+                                    field:
+                                        documentState
+                                            .field,
+                                }),
+                        }
+                    );
+
+                let data = {};
+
+                try {
+                    data =
+                        await response.json();
+                } catch (error) {
+                    data = {};
+                }
+
+                if (
+                    !response.ok ||
+                    !data.ok
+                ) {
+                    return false;
+                }
+
+                if (
+                    activeDocument ===
+                    documentState
+                ) {
+                    applyServerState(
+                        documentState,
+                        data,
+                        true
+                    );
+                }
+
+                return true;
+
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function handleRevisionFailure(
+            documentState,
+            code,
+            cleanup
+        ) {
+            if (!documentState) {
+                return;
+            }
+
+            clearRevisionPoll(
+                documentState
+            );
+
+            setDocumentProcessing(
+                documentState,
+                false
+            );
+
+            if (cleanup) {
+                await cleanupFailedRevision(
+                    documentState
+                );
+            }
+
+            if (
+                activeDocument ===
+                documentState
+            ) {
+                notifyRevisionError(
+                    code ||
+                    REVISION_ERROR_GENERAL
+                );
+            }
+        }
                         refreshDocumentState(
                             documentState,
                             true
@@ -1900,6 +2107,14 @@
                     documentState
                 );
             }
+
+            if (
+                data.revision_error
+            ) {
+                notifyRevisionError(
+                    data.revision_error
+                );
+            }
         }
 
         async function refreshDocumentState(
@@ -1953,10 +2168,17 @@
                     !response.ok ||
                     !data.ok
                 ) {
-                    throw new Error(
-                        data.error ||
-                        'Could not load document revisions'
-                    );
+                    const requestError =
+                        new Error(
+                            data.error ||
+                            'Could not load document revisions'
+                        );
+
+                    requestError.code =
+                        data.code ||
+                        REVISION_ERROR_GENERAL;
+
+                    throw requestError;
                 }
 
                 if (
@@ -1981,18 +2203,11 @@
                     return;
                 }
 
-                if (
+                await handleRevisionFailure(
+                    documentState,
+                    error.code ||
+                        REVISION_ERROR_GENERAL,
                     documentState.processing
-                ) {
-                    scheduleRevisionPoll(
-                        documentState
-                    );
-
-                    return;
-                }
-
-                notifyError(
-                    'Could not load the document revision history.'
                 );
             }
         }
@@ -2020,10 +2235,6 @@
 
             const currentValue =
                 documentState.editor.value;
-
-            const previousInputValue =
-                documentState.bottomInput
-                    .value;
 
             documentState.bottomInput.value =
                 '';
@@ -2123,15 +2334,32 @@
                     data = {};
                 }
 
+            } catch (error) {
                 if (
-                    !response.ok ||
-                    !data.ok
+                    activeDocument !==
+                    documentState
                 ) {
-                    throw new Error(
-                        data.error ||
-                        'Document revision failed'
-                    );
+                    return;
                 }
+
+                documentState.bottomInput.value =
+                    '';
+
+                resizeBottomInput(
+                    documentState.bottomInput
+                );
+
+                updateBottomSubmitState(
+                    documentState.bottomInput
+                );
+
+                await handleRevisionFailure(
+                    documentState,
+                    error.code ||
+                        REVISION_ERROR_GENERAL,
+                    true
+                );
+            }
 
                 if (
                     activeDocument !==

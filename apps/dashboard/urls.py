@@ -65,6 +65,11 @@ urlpatterns = [
         name='api_job_document_revision_create',
     ),
     path(
+        'api/jobs/document/revision/cleanup/',
+        views.api_job_document_revision_cleanup,
+        name='api_job_document_revision_cleanup',
+    ),
+    path(
         'api/jobs/document/save/',
         views.api_job_document_save,
         name='api_job_document_save',

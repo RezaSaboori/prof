@@ -717,9 +717,11 @@ def api_job_document_state(request):
     except (
         job_document_revision_service
         .DocumentRevisionError
+        
     ) as exc:
         payload = {
             'error': exc.message,
+            'code': exc.code,
         }
 
         if exc.detail:
@@ -729,7 +731,24 @@ def api_job_document_state(request):
             payload,
             status=exc.status,
         )
+    except Exception as exc:
+        logger.exception(
+            'Unexpected document state failure: %s',
+            exc,
+        )
 
+        return JsonResponse(
+            {
+                'error':
+                    'Document revision failed',
+                'code':
+                    (
+                        job_document_revision_service
+                        .REVISION_ERROR_GENERAL
+                    ),
+            },
+            status=500,
+        )
 
 @login_required
 @require_POST
@@ -783,6 +802,7 @@ def api_job_document_revision_create(request):
     ) as exc:
         payload = {
             'error': exc.message,
+            'code': exc.code,
         }
 
         if exc.detail:
@@ -791,6 +811,24 @@ def api_job_document_revision_create(request):
         return JsonResponse(
             payload,
             status=exc.status,
+        )
+    except Exception as exc:
+        logger.exception(
+            'Unexpected document revision failure: %s',
+            exc,
+        )
+
+        return JsonResponse(
+            {
+                'error':
+                    'Document revision failed',
+                'code':
+                    (
+                        job_document_revision_service
+                        .REVISION_ERROR_GENERAL
+                    ),
+            },
+            status=500,
         )
 
 
@@ -844,6 +882,7 @@ def api_job_document_save(request):
     ) as exc:
         payload = {
             'error': exc.message,
+            'code': exc.code,
         }
 
         if exc.detail:
@@ -852,6 +891,100 @@ def api_job_document_save(request):
         return JsonResponse(
             payload,
             status=exc.status,
+        )
+@login_required
+@require_POST
+def api_job_document_revision_cleanup(
+    request,
+):
+    try:
+        body = json.loads(
+            request.body
+        )
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {
+                'error':
+                    'Invalid JSON',
+            },
+            status=400,
+        )
+
+    job_id = body.get('id')
+    field = body.get('field')
+
+    if (
+        job_id is None or
+        str(job_id).strip() == ''
+    ):
+        return JsonResponse(
+            {
+                'error':
+                    'id is required',
+            },
+            status=400,
+        )
+
+    try:
+        state = (
+            job_document_revision_service
+            .discard_processing_revision(
+                _session,
+                _supabase_headers(),
+                django_user_id=
+                    request.user.id,
+                email=
+                    request.user.email,
+                job_id=job_id,
+                field=field,
+            )
+        )
+
+        return JsonResponse({
+            'ok': True,
+            **state,
+        })
+
+    except (
+        job_document_revision_service
+        .DocumentRevisionError
+    ) as exc:
+        payload = {
+            'error': exc.message,
+            'code': exc.code,
+        }
+
+        if exc.detail:
+            payload['detail'] = (
+                exc.detail
+            )
+
+        return JsonResponse(
+            payload,
+            status=exc.status,
+        )
+
+    except Exception as exc:
+        logger.exception(
+            (
+                'Unexpected document '
+                'revision cleanup '
+                'failure: %s'
+            ),
+            exc,
+        )
+
+        return JsonResponse(
+            {
+                'error':
+                    'Document revision failed',
+                'code':
+                    (
+                        job_document_revision_service
+                        .REVISION_ERROR_GENERAL
+                    ),
+            },
+            status=500,
         )
 
 
