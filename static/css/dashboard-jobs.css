@@ -755,13 +755,16 @@
 }
 
 .job-modal__close {
-    width: 36px;
-    height: 36px;
+    width: var(--circular-icon-button-size);
+    min-width: var(--circular-icon-button-size);
+    height: var(--circular-icon-button-size);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 0 0 var(--circular-icon-button-size);
+    padding: 0;
     border: none;
-    border-radius: var(--border-radius-container-md);
+    border-radius: var(--border-radius-pill);
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -796,8 +799,8 @@
 
 
 .job-modal__close svg {
-    width: 20px;
-    height: 20px;
+    width: var(--circular-icon-glyph-size);
+    height: var(--circular-icon-glyph-size);
     color: var(--color-gray1);
 }
 

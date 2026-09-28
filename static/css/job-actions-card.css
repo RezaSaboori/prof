@@ -151,16 +151,18 @@
 
 /* Settings button */
 .job-actions-settings-btn {
-    width: 35px;
-    height: 35px;
+    width: var(--circular-icon-button-size);
+    min-width: var(--circular-icon-button-size);
+    height: var(--circular-icon-button-size);
     border-radius: var(--border-radius-pill);
     border: none;
+    padding: 0;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: var(--color-gray4);
-    flex-shrink: 0;
+    flex: 0 0 var(--circular-icon-button-size);
     transition: transform 0.2s ease, color 0.2s ease;
 }
 
@@ -170,8 +172,8 @@
 }
 
 .job-actions-settings-btn svg {
-    width: 18px;
-    height: 18px;
+    width: var(--circular-icon-glyph-size);
+    height: var(--circular-icon-glyph-size);
 }
 
 /* Body and Panels */

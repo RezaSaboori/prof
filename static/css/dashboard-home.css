@@ -540,9 +540,10 @@ body.balance-topup-open {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--touch-target-min);
-    height: var(--touch-target-min);
-    flex-shrink: 0;
+    width: var(--circular-icon-button-size);
+    min-width: var(--circular-icon-button-size);
+    height: var(--circular-icon-button-size);
+    flex: 0 0 var(--circular-icon-button-size);
     padding: 0;
     border: var(--border-width-none);
     border-radius: var(--border-radius-pill);
@@ -550,8 +551,8 @@ body.balance-topup-open {
 }
 
 .balance-topup-modal__close svg {
-    width: var(--spacing-md);
-    height: var(--spacing-md);
+    width: var(--circular-icon-glyph-size);
+    height: var(--circular-icon-glyph-size);
     color: var(--color-gray1);
 }
 

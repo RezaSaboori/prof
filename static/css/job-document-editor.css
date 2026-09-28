@@ -27,9 +27,9 @@ body.job-document-modal-open {
 }
 
 .job-modal__save {
-    width: calc(var(--spacing-xl) + var(--spacing-xs));
-    min-width: calc(var(--spacing-xl) + var(--spacing-xs));
-    height: calc(var(--spacing-xl) + var(--spacing-xs));
+    width: var(--circular-icon-button-size);
+    min-width: var(--circular-icon-button-size);
+    height: var(--circular-icon-button-size);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -72,9 +72,9 @@ body.job-document-modal-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--spacing-md);
-    height: var(--spacing-md);
-    flex: 0 0 var(--spacing-md);
+    width: var(--circular-icon-glyph-size);
+    height: var(--circular-icon-glyph-size);
+    flex: 0 0 var(--circular-icon-glyph-size);
     transition:
         filter 280ms cubic-bezier(0.4, 0, 0.2, 1),
         transform 280ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -83,8 +83,8 @@ body.job-document-modal-open {
 
 .job-modal__action-icon svg {
     display: block;
-    width: var(--spacing-md);
-    height: var(--spacing-md);
+    width: var(--circular-icon-glyph-size);
+    height: var(--circular-icon-glyph-size);
 }
 
 .job-modal__action-icon--enter {
@@ -195,22 +195,23 @@ body.job-document-modal-open {
 }
 
 .job-modal__icon-btn {
-    width: calc(var(--spacing-xl) + var(--spacing-xs));
-    height: calc(var(--spacing-xl) + var(--spacing-xs));
+    width: var(--circular-icon-button-size);
+    min-width: var(--circular-icon-button-size);
+    height: var(--circular-icon-button-size);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    padding: var(--spacing-sm);
-    border-radius: var(--border-radius-container-md);
+    flex: 0 0 var(--circular-icon-button-size);
+    padding: 0;
+    border-radius: var(--border-radius-pill);
     color: var(--color-gray10);
     cursor: pointer;
     transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
 }
 
 .job-modal__icon-btn svg {
-    width: var(--spacing-md);
-    height: var(--spacing-md);
+    width: var(--circular-icon-glyph-size);
+    height: var(--circular-icon-glyph-size);
 }
 
 .job-modal__icon-btn:hover {
@@ -229,10 +230,7 @@ body.job-document-modal-open {
     box-sizing: border-box;
     width: 0;
     min-width: 0;
-    height: calc(
-        var(--spacing-xl) +
-        var(--spacing-xs)
-    );
+    height: var(--circular-icon-button-size);
     flex: 0 0 auto;
     margin-left: 0;
     padding: 0;
@@ -256,16 +254,10 @@ body.job-document-modal-open {
 }
 
 .job-modal__history-btn.is-visible {
-    width: calc(
-        var(--spacing-xl) +
-        var(--spacing-xs)
-    );
-    min-width: calc(
-        var(--spacing-xl) +
-        var(--spacing-xs)
-    );
+    width: var(--circular-icon-button-size);
+    min-width: var(--circular-icon-button-size);
     margin-left: var(--spacing-sm);
-    padding: var(--spacing-sm);
+    padding: 0;
     opacity: 1;
     filter: blur(0);
     transform: scale(1);
@@ -607,34 +599,19 @@ body.job-document-modal-open {
     }
 
     .job-modal__history-btn.is-visible {
-        width: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
-        min-width: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
-        max-width: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
-        flex-basis: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
+        width: var(--circular-icon-button-size);
+        min-width: var(--circular-icon-button-size);
+        max-width: var(--circular-icon-button-size);
+        flex-basis: var(--circular-icon-button-size);
         margin-left: var(--spacing-xs);
-        padding: var(--spacing-sm);
+        padding: 0;
     }
 
     .job-modal__close,
     .job-modal__icon-btn,
     .job-modal__save {
         box-sizing: border-box;
-        height: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
+        height: var(--circular-icon-button-size);
         flex-shrink: 0;
     }
 
@@ -643,22 +620,10 @@ body.job-document-modal-open {
     .job-modal__save[data-save-state="edit"],
     .job-modal__save[data-save-state="save"],
     .job-modal__save[data-save-state="saved"] {
-        width: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
-        min-width: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
-        max-width: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
-        flex-basis: calc(
-            var(--spacing-xl) +
-            var(--spacing-xs)
-        );
+        width: var(--circular-icon-button-size);
+        min-width: var(--circular-icon-button-size);
+        max-width: var(--circular-icon-button-size);
+        flex-basis: var(--circular-icon-button-size);
     }
 
     .job-modal__save {
@@ -666,19 +631,19 @@ body.job-document-modal-open {
     }
 
     .job-modal__close {
-        padding: var(--spacing-sm);
+        padding: 0;
     }
 
     .job-modal__icon-btn {
-        padding: var(--spacing-sm);
+        padding: 0;
     }
 
     .job-modal__close svg,
     .job-modal__icon-btn svg,
     .job-modal__action-icon,
     .job-modal__action-icon svg {
-        width: var(--spacing-md);
-        height: var(--spacing-md);
+        width: var(--circular-icon-glyph-size);
+        height: var(--circular-icon-glyph-size);
     }
 
     .job-modal__body {
