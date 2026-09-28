@@ -396,37 +396,43 @@ body.job-document-modal-open {
     border-color:
         color-mix(
             in srgb,
-            var(--color-blue) 45%,
+            var(--color-blue) 48%,
             transparent
         );
     box-shadow:
         0 0 0 1px
         color-mix(
             in srgb,
-            var(--color-blue) 18%,
+            var(--color-blue) 22%,
             transparent
         ),
-        0 0 12px
+        0 0 24px
         color-mix(
             in srgb,
-            var(--color-cyan) 12%,
+            var(--color-cyan) 14%,
             transparent
         ),
-        0 0 22px
+        0 0 48px
         color-mix(
             in srgb,
-            var(--color-purple) 10%,
+            var(--color-purple) 12%,
             transparent
         ),
-        0 0 30px
+        0 0 72px
         color-mix(
             in srgb,
-            var(--color-orange) 8%,
+            var(--color-orange) 10%,
+            transparent
+        ),
+        0 0 96px
+        color-mix(
+            in srgb,
+            var(--color-pink) 8%,
             transparent
         );
     animation:
         jobDocumentProcessingGlow
-        4.8s
+        5.4s
         ease-in-out
         infinite;
 }
@@ -451,25 +457,31 @@ body.job-document-modal-open {
             0 0 0 1px
             color-mix(
                 in srgb,
-                var(--color-blue) 16%,
+                var(--color-blue) 20%,
                 transparent
             ),
-            0 0 10px
+            0 0 20px
             color-mix(
                 in srgb,
-                var(--color-cyan) 10%,
+                var(--color-cyan) 12%,
                 transparent
             ),
-            0 0 18px
+            0 0 40px
             color-mix(
                 in srgb,
-                var(--color-purple) 8%,
+                var(--color-purple) 10%,
                 transparent
             ),
-            0 0 24px
+            0 0 64px
             color-mix(
                 in srgb,
-                var(--color-orange) 6%,
+                var(--color-orange) 8%,
+                transparent
+            ),
+            0 0 84px
+            color-mix(
+                in srgb,
+                var(--color-pink) 6%,
                 transparent
             );
     }
@@ -479,25 +491,31 @@ body.job-document-modal-open {
             0 0 0 1px
             color-mix(
                 in srgb,
-                var(--color-cyan) 18%,
+                var(--color-cyan) 22%,
                 transparent
             ),
-            0 0 12px
+            0 0 24px
             color-mix(
                 in srgb,
-                var(--color-blue) 12%,
+                var(--color-blue) 14%,
                 transparent
             ),
-            0 0 22px
+            0 0 48px
             color-mix(
                 in srgb,
-                var(--color-mint) 10%,
+                var(--color-mint) 12%,
                 transparent
             ),
-            0 0 30px
+            0 0 72px
             color-mix(
                 in srgb,
-                var(--color-purple) 8%,
+                var(--color-purple) 10%,
+                transparent
+            ),
+            0 0 96px
+            color-mix(
+                in srgb,
+                var(--color-cyan) 8%,
                 transparent
             );
     }
@@ -507,25 +525,31 @@ body.job-document-modal-open {
             0 0 0 1px
             color-mix(
                 in srgb,
-                var(--color-purple) 18%,
+                var(--color-purple) 22%,
                 transparent
             ),
-            0 0 12px
+            0 0 24px
             color-mix(
                 in srgb,
-                var(--color-pink) 12%,
+                var(--color-pink) 14%,
                 transparent
             ),
-            0 0 22px
+            0 0 48px
             color-mix(
                 in srgb,
-                var(--color-blue) 10%,
+                var(--color-blue) 12%,
                 transparent
             ),
-            0 0 30px
+            0 0 72px
             color-mix(
                 in srgb,
-                var(--color-orange) 8%,
+                var(--color-orange) 10%,
+                transparent
+            ),
+            0 0 96px
+            color-mix(
+                in srgb,
+                var(--color-purple) 8%,
                 transparent
             );
     }
@@ -535,25 +559,31 @@ body.job-document-modal-open {
             0 0 0 1px
             color-mix(
                 in srgb,
-                var(--color-blue) 16%,
+                var(--color-blue) 20%,
                 transparent
             ),
-            0 0 10px
+            0 0 20px
             color-mix(
                 in srgb,
-                var(--color-cyan) 10%,
+                var(--color-cyan) 12%,
                 transparent
             ),
-            0 0 18px
+            0 0 40px
             color-mix(
                 in srgb,
-                var(--color-purple) 8%,
+                var(--color-purple) 10%,
                 transparent
             ),
-            0 0 24px
+            0 0 64px
             color-mix(
                 in srgb,
-                var(--color-orange) 6%,
+                var(--color-orange) 8%,
+                transparent
+            ),
+            0 0 84px
+            color-mix(
+                in srgb,
+                var(--color-pink) 6%,
                 transparent
             );
     }
