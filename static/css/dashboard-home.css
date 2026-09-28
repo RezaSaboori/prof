@@ -506,8 +506,8 @@ body.balance-topup-open {
     z-index: 1;
     width: 100%;
     max-width: calc(var(--spacing-5xl) * 7);
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-container-lg);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-container-md);
 }
 
 .balance-topup-modal__header {
@@ -534,6 +534,7 @@ body.balance-topup-open {
 .balance-topup-modal__description {
     margin: 0;
     color: var(--color-gray7);
+    font-size: 14px;
 }
 
 .balance-topup-modal__close {
@@ -559,7 +560,7 @@ body.balance-topup-open {
 .balance-topup-modal__form {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     margin-top: var(--spacing-xl);
 }
 
@@ -630,8 +631,10 @@ body.balance-topup-open {
     border-radius: var(--border-radius-pill);
     color: var(--color-gray1);
     font-family: var(--font-family-base);
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
+    font-size: 17px;
+    margin-top: var(--spacing-md);
 }
 
 .balance-topup-modal__submit:disabled {

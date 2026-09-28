@@ -380,10 +380,10 @@ body.job-document-modal-open {
 
 .job-modal__input-wrapper {
     width: 100%;
-    min-height: 48px;
+    min-height: 0;
     max-height: none;
     box-sizing: border-box;
-    padding: var(--spacing-xs);
+    padding: var(--spacing-sm);
     border-radius:
         var(--border-radius-container-xs)
         !important;
@@ -403,17 +403,29 @@ body.job-document-modal-open {
 .job-modal__input-wrapper .tag-input-row {
     width: 100%;
     align-items: flex-end;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
     padding: 0;
 }
 
 .job-modal__input-wrapper .job-modal__bottom-input {
-    height: calc(1.5em + 8px);
-    min-height: calc(1.5em + 8px);
-    max-height: calc(1.5em * 5 + 8px);
+    height:
+        calc(
+            var(--spacing-xl) -
+            (var(--spacing-xs) / 2)
+        );
+    min-height:
+        calc(
+            var(--spacing-xl) -
+            (var(--spacing-xs) / 2)
+        );
+    max-height:
+        calc(
+            1.5em * 5 +
+            var(--spacing-sm)
+        );
     padding:
-        var(--spacing-xs)
-        var(--spacing-sm);
+        calc(var(--spacing-xs) / 2)
+        0;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
