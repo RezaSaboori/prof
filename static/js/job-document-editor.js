@@ -1347,6 +1347,16 @@
                         ) {
                             return;
                         }
+
+                        refreshDocumentState(
+                            documentState,
+                            true
+                        );
+                    },
+                    REVISION_POLL_MS
+                );
+        }
+
         async function cleanupFailedRevision(
             documentState
         ) {
@@ -1449,14 +1459,6 @@
                     REVISION_ERROR_GENERAL
                 );
             }
-        }
-                        refreshDocumentState(
-                            documentState,
-                            true
-                        );
-                    },
-                    REVISION_POLL_MS
-                );
         }
 
         function setHistoryActionsVisible(
@@ -2334,6 +2336,35 @@
                     data = {};
                 }
 
+                if (
+                    !response.ok ||
+                    !data.ok
+                ) {
+                    const requestError =
+                        new Error(
+                            data.error ||
+                            'Document revision failed'
+                        );
+
+                    requestError.code =
+                        data.code ||
+                        REVISION_ERROR_GENERAL;
+
+                    throw requestError;
+                }
+
+                if (
+                    activeDocument !==
+                    documentState
+                ) {
+                    return;
+                }
+
+                applyServerState(
+                    documentState,
+                    data,
+                    true
+                );
             } catch (error) {
                 if (
                     activeDocument !==
@@ -2358,48 +2389,6 @@
                     error.code ||
                         REVISION_ERROR_GENERAL,
                     true
-                );
-            }
-
-                if (
-                    activeDocument !==
-                    documentState
-                ) {
-                    return;
-                }
-
-                applyServerState(
-                    documentState,
-                    data,
-                    true
-                );
-            } catch (error) {
-                if (
-                    activeDocument !==
-                    documentState
-                ) {
-                    return;
-                }
-
-                documentState.bottomInput.value =
-                    previousInputValue;
-
-                resizeBottomInput(
-                    documentState.bottomInput
-                );
-
-                setDocumentProcessing(
-                    documentState,
-                    false
-                );
-
-                updateBottomSubmitState(
-                    documentState.bottomInput
-                );
-
-                notifyError(
-                    error.message ||
-                    'Could not create the document revision.'
                 );
             }
         }
