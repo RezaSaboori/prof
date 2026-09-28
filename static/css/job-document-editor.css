@@ -396,38 +396,38 @@ body.job-document-modal-open {
     border-color:
         color-mix(
             in srgb,
-            var(--color-blue) 48%,
+            var(--color-blue) 55%,
             transparent
         );
     box-shadow:
-        0 0 0 1px
+        -42px -8px 56px 8px
         color-mix(
             in srgb,
-            var(--color-blue) 22%,
+            var(--color-purple) 38%,
             transparent
         ),
-        0 0 24px
+        -18px 12px 64px 10px
         color-mix(
             in srgb,
-            var(--color-cyan) 14%,
+            var(--color-blue) 32%,
             transparent
         ),
-        0 0 48px
+        18px 14px 64px 10px
         color-mix(
             in srgb,
-            var(--color-purple) 12%,
+            var(--color-cyan) 30%,
             transparent
         ),
-        0 0 72px
+        44px 4px 58px 8px
         color-mix(
             in srgb,
-            var(--color-orange) 10%,
+            var(--color-pink) 34%,
             transparent
         ),
-        0 0 96px
+        30px -10px 62px 10px
         color-mix(
             in srgb,
-            var(--color-pink) 8%,
+            var(--color-orange) 32%,
             transparent
         );
     animation:
@@ -454,142 +454,142 @@ body.job-document-modal-open {
 @keyframes jobDocumentProcessingGlow {
     0% {
         box-shadow:
-            0 0 0 1px
+            -46px -6px 58px 8px
             color-mix(
                 in srgb,
-                var(--color-blue) 20%,
+                var(--color-purple) 38%,
                 transparent
             ),
-            0 0 20px
+            -16px 14px 68px 12px
             color-mix(
                 in srgb,
-                var(--color-cyan) 12%,
+                var(--color-blue) 32%,
                 transparent
             ),
-            0 0 40px
+            16px 12px 64px 10px
             color-mix(
                 in srgb,
-                var(--color-purple) 10%,
+                var(--color-cyan) 28%,
                 transparent
             ),
-            0 0 64px
+            46px 4px 60px 8px
             color-mix(
                 in srgb,
-                var(--color-orange) 8%,
+                var(--color-pink) 34%,
                 transparent
             ),
-            0 0 84px
+            28px -12px 64px 10px
             color-mix(
                 in srgb,
-                var(--color-pink) 6%,
+                var(--color-orange) 30%,
                 transparent
             );
     }
 
     33% {
         box-shadow:
-            0 0 0 1px
+            -38px 8px 64px 10px
             color-mix(
                 in srgb,
-                var(--color-cyan) 22%,
+                var(--color-blue) 36%,
                 transparent
             ),
-            0 0 24px
+            -10px -12px 62px 10px
             color-mix(
                 in srgb,
-                var(--color-blue) 14%,
+                var(--color-purple) 34%,
                 transparent
             ),
-            0 0 48px
+            20px 14px 70px 12px
             color-mix(
                 in srgb,
-                var(--color-mint) 12%,
+                var(--color-mint) 30%,
                 transparent
             ),
-            0 0 72px
+            42px 8px 62px 10px
             color-mix(
                 in srgb,
-                var(--color-purple) 10%,
+                var(--color-orange) 34%,
                 transparent
             ),
-            0 0 96px
+            34px -10px 66px 10px
             color-mix(
                 in srgb,
-                var(--color-cyan) 8%,
+                var(--color-pink) 36%,
                 transparent
             );
     }
 
     66% {
         box-shadow:
-            0 0 0 1px
+            -44px -8px 64px 10px
             color-mix(
                 in srgb,
-                var(--color-purple) 22%,
+                var(--color-pink) 34%,
                 transparent
             ),
-            0 0 24px
+            -20px 10px 70px 12px
             color-mix(
                 in srgb,
-                var(--color-pink) 14%,
+                var(--color-purple) 38%,
                 transparent
             ),
-            0 0 48px
+            12px 14px 68px 10px
             color-mix(
                 in srgb,
-                var(--color-blue) 12%,
+                var(--color-blue) 32%,
                 transparent
             ),
-            0 0 72px
+            40px 8px 64px 10px
             color-mix(
                 in srgb,
-                var(--color-orange) 10%,
+                var(--color-cyan) 30%,
                 transparent
             ),
-            0 0 96px
+            32px -12px 68px 12px
             color-mix(
                 in srgb,
-                var(--color-purple) 8%,
+                var(--color-orange) 34%,
                 transparent
             );
     }
 
     100% {
         box-shadow:
-            0 0 0 1px
+            -46px -6px 58px 8px
             color-mix(
                 in srgb,
-                var(--color-blue) 20%,
+                var(--color-purple) 38%,
                 transparent
             ),
-            0 0 20px
+            -16px 14px 68px 12px
             color-mix(
                 in srgb,
-                var(--color-cyan) 12%,
+                var(--color-blue) 32%,
                 transparent
             ),
-            0 0 40px
+            16px 12px 64px 10px
             color-mix(
                 in srgb,
-                var(--color-purple) 10%,
+                var(--color-cyan) 28%,
                 transparent
             ),
-            0 0 64px
+            46px 4px 60px 8px
             color-mix(
                 in srgb,
-                var(--color-orange) 8%,
+                var(--color-pink) 34%,
                 transparent
             ),
-            0 0 84px
+            28px -12px 64px 10px
             color-mix(
                 in srgb,
-                var(--color-pink) 6%,
+                var(--color-orange) 30%,
                 transparent
             );
     }
 }
 
-.job-modal__input-wrapper:focus-within {
+.job-modal__input-wrapper:focus-within:not(.is-processing) {
     border-color:
         color-mix(
             in srgb,
