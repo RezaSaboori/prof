@@ -87,6 +87,38 @@
                     : 'hidden';
         }
 
+        function updateBottomSubmitState(input) {
+            if (!input) {
+                return;
+            }
+
+            const inputArea = input.closest(
+                '[data-document-input-area]'
+            );
+
+            const submitButton = inputArea
+                ? inputArea.querySelector(
+                    '[data-document-bottom-submit]'
+                )
+                : null;
+
+            if (!submitButton) {
+                return;
+            }
+
+            const hasValue =
+                input.value.trim().length > 0;
+
+            submitButton.classList.toggle(
+                'blue-glass',
+                hasValue
+            );
+            submitButton.classList.toggle(
+                'glass',
+                !hasValue
+            );
+        }
+
         function renderDocument(source) {
             if (
                 typeof marked === 'undefined' ||
@@ -1198,6 +1230,7 @@
                 )
             ) {
                 resizeBottomInput(event.target);
+                updateBottomSubmitState(event.target);
                 return;
             }
 

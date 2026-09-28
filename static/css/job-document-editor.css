@@ -473,7 +473,13 @@ body.job-document-modal-open {
     cursor: pointer;
     transition:
         color 200ms ease,
-        transform 150ms ease;
+        transform 150ms ease,
+        background-image 400ms cubic-bezier(1, 0, 0.4, 1),
+        box-shadow 400ms cubic-bezier(1, 0, 0.4, 1);
+}
+
+.job-modal__input-submit.blue-glass {
+    color: var(--color-gray1);
 }
 
 .job-modal__input-submit svg {
