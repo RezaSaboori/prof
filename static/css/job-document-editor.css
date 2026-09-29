@@ -961,26 +961,35 @@ body.job-document-modal-open {
 }
 
 .job-save-confirmation__button {
-    min-height: calc(var(--spacing-xl) + var(--spacing-sm));
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 var(--spacing-md);
+    flex: 1;
+    padding: var(--spacing-md);
     border: none;
-    border-radius: var(--border-radius-pill);
+    border-radius: var(--border-radius-container-sm);
     appearance: none;
     -webkit-appearance: none;
-    font: inherit;
+    font-family: inherit;
+    font-size: 13px;
     font-weight: 600;
+    line-height: normal;
     color: var(--color-gray10);
     cursor: pointer;
     white-space: nowrap;
     transition: all 400ms cubic-bezier(1, 0, 0.4, 1);
 }
 
-.job-save-confirmation__button--primary,
-.job-save-confirmation__button--danger {
+.job-save-confirmation__button--primary {
     color: var(--color-gray1);
+}
+
+.job-save-confirmation__button--danger {
+    color: var(--color-red);
+}
+
+.job-save-confirmation__button--danger:hover {
+    color: var(--color-red);
 }
 
 @media (max-width: 980px) {
@@ -1154,11 +1163,33 @@ body.job-document-modal-open {
     }
 
     .job-save-confirmation__actions {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
         align-items: stretch;
+        gap: var(--spacing-sm);
     }
 
     .job-save-confirmation__button {
         width: 100%;
+        min-width: 0;
+    }
+
+    .job-save-confirmation__button--primary {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .job-save-confirmation__button[data-confirm-cancel] {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .job-save-confirmation__button--danger {
+        grid-column: 2;
+        grid-row: 2;
     }
 }
