@@ -219,8 +219,8 @@
 }
 
 .job-card__info-btn svg {
-    width: var(--circular-icon-glyph-size);
-    height: var(--circular-icon-glyph-size);
+    width: 15px;
+    height: 15px;
 }
 
 .job-card__info-btn:hover {
@@ -503,6 +503,31 @@
     -webkit-line-clamp: unset;
 }
 
+.job-card__prof-consultant {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-container-sm);
+}
+
+.job-card__prof-consultant[hidden] {
+    display: none;
+}
+
+.job-card__prof-consultant-title {
+    margin: 0 0 var(--spacing-xs);
+    font-family: var(--font-family-variable);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-gray10);
+}
+
+.job-card__prof-consultant-text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-gray9);
+    overflow-wrap: anywhere;
+}
+
 .job-card__more-btn {
     display: inline-flex;
     align-items: center;
@@ -528,18 +553,22 @@
 
 /* Markdown content */
 .job-card__qualifications-text > *,
+.job-card__prof-consultant-text > *,
 .job-modal__content-text > * {
     margin-top: 0;
     margin-bottom: var(--spacing-sm);
 }
 
 .job-card__qualifications-text > *:last-child,
+.job-card__prof-consultant-text > *:last-child,
 .job-modal__content-text > *:last-child {
     margin-bottom: 0;
 }
 
 .job-card__qualifications-text ul,
 .job-card__qualifications-text ol,
+.job-card__prof-consultant-text ul,
+.job-card__prof-consultant-text ol,
 .job-modal__content-text ul,
 .job-modal__content-text ol {
     padding-inline-start: var(--spacing-lg);
@@ -550,7 +579,13 @@
 .job-card__qualifications-text h3,
 .job-card__qualifications-text h4,
 .job-card__qualifications-text h5,
-.job-card__qualifications-text h6 {
+.job-card__qualifications-text h6,
+.job-card__prof-consultant-text h1,
+.job-card__prof-consultant-text h2,
+.job-card__prof-consultant-text h3,
+.job-card__prof-consultant-text h4,
+.job-card__prof-consultant-text h5,
+.job-card__prof-consultant-text h6 {
     font-size: 13px;
     font-weight: 700;
     color: var(--color-gray9);
@@ -568,6 +603,7 @@
 }
 
 .job-card__qualifications-text a,
+.job-card__prof-consultant-text a,
 .job-modal__content-text a {
     color: var(--color-blue);
     text-decoration: none;

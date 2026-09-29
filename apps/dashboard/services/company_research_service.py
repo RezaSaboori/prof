@@ -46,6 +46,18 @@ _KEY_ALIASES = {
         "companyfocus",
         "newsorfocus",
     },
+    "strategic_angle": {
+        "strategicangle",
+        "strategicangles",
+        "strategyangle",
+        "companystrategicangle",
+        "recommendedstrategicangle",
+        "strategicrecommendation",
+        "strategicfocus",
+        "strategicpositioning",
+        "strategyfocus",
+        "positioningangle",
+    },
 }
 
 

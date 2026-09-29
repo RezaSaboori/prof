@@ -105,9 +105,11 @@
             });
     }
 
-    // Render the qualifications markdown inside each job card.
+    // Render the qualifications and Prof Consultant markdown.
     function initJobCardMarkdown() {
-        document.querySelectorAll('.job-card__qualifications-text').forEach(function(text) {
+        document.querySelectorAll(
+            '.job-card__qualifications-text, .job-card__prof-consultant-text'
+        ).forEach(function(text) {
             const markdown = normalizeQualificationsMarkdown(
                 text.textContent
             );
@@ -612,11 +614,21 @@
         }
 
         grid.querySelectorAll('.job-card__qualifications-text').forEach(function(text) {
-            const btn = text.parentElement.querySelector('[data-toggle-more]');
+            const qualifications = text.parentElement;
+            const btn = qualifications.querySelector('[data-toggle-more]');
+            const card = qualifications.closest('.job-card');
+            const consultant = card
+                ? card.querySelector('[data-prof-consultant]')
+                : null;
+
             if (!btn) {
                 return;
             }
-            btn.hidden = text.scrollHeight - text.clientHeight <= 1;
+
+            const textOverflows =
+                text.scrollHeight - text.clientHeight > 1;
+
+            btn.hidden = !textOverflows && !consultant;
         });
 
         grid.addEventListener('click', function(e) {
@@ -624,12 +636,25 @@
             if (!btn) {
                 return;
             }
-            const text = btn.parentElement.querySelector('.job-card__qualifications-text');
+
+            const qualifications = btn.parentElement;
+            const text = qualifications.querySelector(
+                '.job-card__qualifications-text'
+            );
+            const card = qualifications.closest('.job-card');
+            const consultant = card
+                ? card.querySelector('[data-prof-consultant]')
+                : null;
+
             if (!text) {
                 return;
             }
 
             if (text.classList.contains('job-card__qualifications-text--expanded')) {
+                if (consultant) {
+                    consultant.hidden = true;
+                }
+
                 // Collapse: keep the clamp off during the animation — re-applying
                 // it now would snap the box to 3 lines instantly. Animate max-height
                 // down to the exact clamped height, then restore the clamp.
@@ -655,6 +680,11 @@
                 void text.offsetHeight;
                 text.classList.add('job-card__qualifications-text--expanded');
                 text.style.maxHeight = text.scrollHeight + 'px';
+
+                if (consultant) {
+                    consultant.hidden = false;
+                }
+
                 btn.textContent = 'Less';
                 btn.setAttribute('aria-expanded', 'true');
             }
