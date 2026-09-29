@@ -460,7 +460,8 @@
 }
 
 .job-card__location,
-.job-card__salary {
+.job-card__salary,
+.job-card__applicants {
     font-size: 13px;
     color: var(--color-gray8);
     font-weight: 400;

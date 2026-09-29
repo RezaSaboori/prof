@@ -17,6 +17,7 @@ import pymupdf4llm
 
 from apps.dashboard.services import (
     company_research_service,
+    job_applicants_service,
     job_document_revision_service,
     job_qualification_service,
     logo_service,
@@ -368,6 +369,7 @@ def jobs(request):
         'id', 'created_at', 'link', 'title', 'company', 'location',
         'qualifications', 'score', 'salary', 'cover_letter', 'resume',
         'paid', 'score_rationale', 'company_research',
+        'applicants_number',
     )
     user_id = request.user.id
     email = request.user.email
@@ -447,6 +449,12 @@ def jobs(request):
         job['company_research_content'] = (
             company_research_service.extract_company_research(
                 job.pop('company_research', None)
+            )
+        )
+
+        job['applicants_display'] = (
+            job_applicants_service.extract_latest_applicants(
+                job.pop('applicants_number', None)
             )
         )
     
