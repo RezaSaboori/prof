@@ -48,7 +48,7 @@
      data-document-revision-notice-ack-endpoint="{% url 'dashboard:api_job_document_revision_notice_ack' %}"
      data-document-save-endpoint="{% url 'dashboard:api_job_document_save' %}">
         {% for job in jobs %}
-        <div class="job-card {% if job.paid == 1 %}opal-glass{% else %}glass{% endif %}{% if job.paid == 2 %} job-card--declined{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}" data-job-paid="{{ job.paid|default:0 }}">
+        <div class="job-card {% if job.paid == 1 %}opal-glass{% else %}glass{% endif %}{% if job.paid == 2 %} job-card--declined{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.date_posted_sort|default:'' }}" data-job-paid="{{ job.paid|default:0 }}">
             <div class="job-card__header">
                 {% if job.link %}
                 <a href="{{ job.link }}"
@@ -96,7 +96,9 @@
                     <h2 class="job-card__company">{{ job.company }}</h2>
                     {% endif %}
 
-                    <p class="job-card__date">{{ job.created_at|relative_date }}</p>
+                    {% if job.date_posted_display %}
+                    <p class="job-card__date">{{ job.date_posted_display }}</p>
+                    {% endif %}
                 </div>
 
                 <button type="button"

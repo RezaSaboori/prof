@@ -18,6 +18,7 @@ import pymupdf4llm
 from apps.dashboard.services import (
     company_research_service,
     job_applicants_service,
+    job_date_posted_service,
     job_document_revision_service,
     job_qualification_service,
     logo_service,
@@ -369,7 +370,7 @@ def jobs(request):
         'id', 'created_at', 'link', 'title', 'company', 'location',
         'qualifications', 'score', 'salary', 'cover_letter', 'resume',
         'paid', 'score_rationale', 'company_research',
-        'applicants_number',
+        'applicants_number', 'date_posted',
     )
     user_id = request.user.id
     email = request.user.email
@@ -457,6 +458,14 @@ def jobs(request):
                 job.pop('applicants_number', None)
             )
         )
+
+        date_posted = (
+            job_date_posted_service.extract_latest_date_posted(
+                job.pop('date_posted', None)
+            )
+        )
+        job['date_posted_display'] = date_posted['display']
+        job['date_posted_sort'] = date_posted['sort']
     
     return render(request, 'dashboard/jobs.html', {
         'display_name': request.user.first_name or request.user.username,
