@@ -494,6 +494,40 @@ def _cleanup_invalid_latest_revision(
             code=REVISION_ERROR_GENERAL,
         )
 
+    fallback_revision = (
+        _find_revision(
+            revisions,
+            latest.get(
+                'parent_revision_id'
+            ),
+        )
+    )
+
+    if (
+        fallback_revision is None and
+        len(revisions) > 1
+    ):
+        fallback_revision = (
+            revisions[-2]
+        )
+
+    if fallback_revision is not None:
+        _set_revision_notice(
+            session,
+            headers,
+            revision=
+                fallback_revision,
+            job_id=job_id,
+            owner_user_id=
+                owner_user_id,
+            field=field,
+            code=failure_code,
+            request_id=
+                latest.get(
+                    'request_id'
+                ),
+        )
+
     _delete_revision(
         session,
         headers,
@@ -540,13 +574,57 @@ def _delete_future_revisions(
     )
 
 
-def _revision_status(revision):
+def _revision_metadata(revision):
     metadata = revision.get('metadata')
 
     if not isinstance(metadata, dict):
-        return 'ready'
+        return {}
 
-    return metadata.get('status') or 'ready'
+    return dict(metadata)
+
+
+def _revision_status(revision):
+    metadata = _revision_metadata(
+        revision
+    )
+
+    return (
+        metadata.get('status')
+        or 'ready'
+    )
+
+
+def _revision_is_dismissed(revision):
+    metadata = _revision_metadata(
+        revision
+    )
+
+    return bool(
+        metadata.get('dismissed')
+    )
+
+
+def _revision_notice(revision):
+    metadata = _revision_metadata(
+        revision
+    )
+
+    notice = metadata.get(
+        'revision_notice'
+    )
+
+    if not isinstance(notice, dict):
+        return None
+
+    code = notice.get('code')
+
+    if code not in {
+        REVISION_ERROR_GENERAL,
+        REVISION_ERROR_TIMEOUT,
+    }:
+        return None
+
+    return notice
 
 
 def _find_revision(revisions, revision_id):
@@ -562,6 +640,154 @@ def _find_revision(revisions, revision_id):
     return None
 
 
+def _patch_revision_metadata(
+    session,
+    headers,
+    *,
+    revision,
+    job_id,
+    owner_user_id,
+    field,
+    metadata,
+):
+    return _patch_revision(
+        session,
+        headers,
+        revision_id=revision['id'],
+        job_id=job_id,
+        owner_user_id=owner_user_id,
+        field=field,
+        payload={
+            'metadata': metadata,
+        },
+    )
+
+
+def _set_revision_notice(
+    session,
+    headers,
+    *,
+    revision,
+    job_id,
+    owner_user_id,
+    field,
+    code,
+    request_id=None,
+):
+    metadata = _revision_metadata(
+        revision
+    )
+
+    metadata['revision_notice'] = {
+        'code': code,
+        'request_id': request_id,
+        'created_at':
+            timezone.now().isoformat(),
+    }
+
+    return _patch_revision_metadata(
+        session,
+        headers,
+        revision=revision,
+        job_id=job_id,
+        owner_user_id=owner_user_id,
+        field=field,
+        metadata=metadata,
+    )
+
+
+def _clear_revision_notice(
+    session,
+    headers,
+    *,
+    revision,
+    job_id,
+    owner_user_id,
+    field,
+):
+    metadata = _revision_metadata(
+        revision
+    )
+
+    metadata.pop(
+        'revision_notice',
+        None,
+    )
+
+    return _patch_revision_metadata(
+        session,
+        headers,
+        revision=revision,
+        job_id=job_id,
+        owner_user_id=owner_user_id,
+        field=field,
+        metadata=metadata,
+    )
+
+
+def _mark_revision_dismissed(
+    session,
+    headers,
+    *,
+    revision,
+    job_id,
+    owner_user_id,
+    field,
+):
+    metadata = _revision_metadata(
+        revision
+    )
+
+    metadata['dismissed'] = True
+    metadata['dismissed_at'] = (
+        timezone.now().isoformat()
+    )
+
+    return _patch_revision_metadata(
+        session,
+        headers,
+        revision=revision,
+        job_id=job_id,
+        owner_user_id=owner_user_id,
+        field=field,
+        metadata=metadata,
+    )
+
+
+def _clear_revision_dismissed(
+    session,
+    headers,
+    *,
+    revision,
+    job_id,
+    owner_user_id,
+    field,
+):
+    metadata = _revision_metadata(
+        revision
+    )
+
+    metadata.pop(
+        'dismissed',
+        None,
+    )
+
+    metadata.pop(
+        'dismissed_at',
+        None,
+    )
+
+    return _patch_revision_metadata(
+        session,
+        headers,
+        revision=revision,
+        job_id=job_id,
+        owner_user_id=owner_user_id,
+        field=field,
+        metadata=metadata,
+    )
+
+
 def _build_state(
     job,
     revisions,
@@ -570,6 +796,12 @@ def _build_state(
 ):
     saved_revision_column = (
         DOCUMENT_FIELDS[field]
+    )
+
+    saved_revision_id = (
+        job.get(
+            saved_revision_column
+        )
     )
 
     latest = (
@@ -584,15 +816,86 @@ def _build_state(
         else 'ready'
     )
 
+    latest_dismissed = (
+        _revision_is_dismissed(
+            latest
+        )
+        if latest
+        else False
+    )
+
+    notice = (
+        _revision_notice(
+            latest
+        )
+        if latest
+        else None
+    )
+
+    revision_error_revision_id = (
+        latest.get('id')
+        if notice
+        else None
+    )
+
+    if (
+        revision_error is None and
+        notice
+    ):
+        revision_error = (
+            notice.get('code')
+        )
+
+    open_revision_id = (
+        saved_revision_id
+    )
+
+    if latest:
+        latest_revision_id = (
+            latest.get('id')
+        )
+
+        latest_is_saved = (
+            saved_revision_id is not None and
+            str(latest_revision_id) ==
+            str(saved_revision_id)
+        )
+
+        if (
+            latest_status ==
+            'processing'
+        ):
+            open_revision_id = (
+                latest_revision_id
+            )
+
+        elif (
+            revision_error and
+            revision_error_revision_id
+            is not None
+        ):
+            open_revision_id = (
+                revision_error_revision_id
+            )
+
+        elif (
+            latest_status == 'ready' and
+            not latest_is_saved and
+            not latest_dismissed
+        ):
+            open_revision_id = (
+                latest_revision_id
+            )
+
     return {
-        'job_id': job['id'],
-        'field': field,
+        'job_id':
+            job['id'],
+        'field':
+            field,
         'saved_value':
             job.get(field) or '',
         'saved_revision_id':
-            job.get(
-                saved_revision_column
-            ),
+            saved_revision_id,
         'latest_revision_id': (
             latest.get('id')
             if latest
@@ -600,10 +903,17 @@ def _build_state(
         ),
         'latest_status':
             latest_status,
+        'latest_dismissed':
+            latest_dismissed,
+        'open_revision_id':
+            open_revision_id,
         'processing':
-            latest_status == 'processing',
+            latest_status ==
+            'processing',
         'revision_error':
             revision_error,
+        'revision_error_revision_id':
+            revision_error_revision_id,
         'revisions':
             revisions,
     }
@@ -664,7 +974,9 @@ def get_document_state(
 
         matching_saved_revision = None
 
-        for revision in revisions:
+        for revision in reversed(
+            revisions
+        ):
             revision_content = (
                 revision.get('content')
                 or ''
@@ -1139,7 +1451,54 @@ def discard_processing_revision(
         )
     )
 
+    notice_code = (
+        failure_code
+        or (
+            REVISION_ERROR_GENERAL
+            if latest_status ==
+            'processing'
+            else None
+        )
+    )
+
     if should_delete:
+        fallback_revision = (
+            _find_revision(
+                revisions,
+                latest.get(
+                    'parent_revision_id'
+                ),
+            )
+        )
+
+        if (
+            fallback_revision is None and
+            len(revisions) > 1
+        ):
+            fallback_revision = (
+                revisions[-2]
+            )
+
+        if (
+            fallback_revision is not None and
+            notice_code
+        ):
+            _set_revision_notice(
+                session,
+                headers,
+                revision=
+                    fallback_revision,
+                job_id=job['id'],
+                owner_user_id=
+                    owner_user_id,
+                field=field,
+                code=notice_code,
+                request_id=
+                    latest.get(
+                        'request_id'
+                    ),
+            )
+
         _delete_revision(
             session,
             headers,
@@ -1158,6 +1517,161 @@ def discard_processing_revision(
             owner_user_id,
             field,
         )
+
+    return _build_state(
+        job,
+        revisions,
+        field,
+        revision_error=
+            notice_code
+            if should_delete
+            else None,
+    )
+
+
+def dismiss_unsaved_revision(
+    session,
+    headers,
+    *,
+    django_user_id,
+    email,
+    job_id,
+    field,
+):
+    _validate_field(field)
+
+    job, owner_user_id = _resolve_job(
+        session,
+        headers,
+        django_user_id,
+        email,
+        job_id,
+    )
+
+    revisions = _list_revisions(
+        session,
+        headers,
+        job['id'],
+        owner_user_id,
+        field,
+    )
+
+    if not revisions:
+        return _build_state(
+            job,
+            revisions,
+            field,
+        )
+
+    saved_revision_id = (
+        job.get(
+            DOCUMENT_FIELDS[field]
+        )
+    )
+
+    latest = revisions[-1]
+
+    latest_is_saved = (
+        saved_revision_id is not None and
+        str(latest.get('id')) ==
+        str(saved_revision_id)
+    )
+
+    if (
+        _revision_status(
+            latest
+        ) == 'ready' and
+        not latest_is_saved
+    ):
+        latest = (
+            _mark_revision_dismissed(
+                session,
+                headers,
+                revision=latest,
+                job_id=job['id'],
+                owner_user_id=
+                    owner_user_id,
+                field=field,
+            )
+        )
+
+        revisions[-1] = latest
+
+    return _build_state(
+        job,
+        revisions,
+        field,
+    )
+
+
+def acknowledge_revision_notice(
+    session,
+    headers,
+    *,
+    django_user_id,
+    email,
+    job_id,
+    field,
+    revision_id,
+):
+    _validate_field(field)
+
+    job, owner_user_id = _resolve_job(
+        session,
+        headers,
+        django_user_id,
+        email,
+        job_id,
+    )
+
+    revisions = _list_revisions(
+        session,
+        headers,
+        job['id'],
+        owner_user_id,
+        field,
+    )
+
+    revision = _find_revision(
+        revisions,
+        revision_id,
+    )
+
+    if revision is None:
+        return _build_state(
+            job,
+            revisions,
+            field,
+        )
+
+    if _revision_notice(
+        revision
+    ):
+        updated_revision = (
+            _clear_revision_notice(
+                session,
+                headers,
+                revision=revision,
+                job_id=job['id'],
+                owner_user_id=
+                    owner_user_id,
+                field=field,
+            )
+        )
+
+        for index, item in enumerate(
+            revisions
+        ):
+            if str(
+                item.get('id')
+            ) == str(
+                revision.get('id')
+            ):
+                revisions[index] = (
+                    updated_revision
+                )
+
+                break
 
     return _build_state(
         job,
@@ -1273,9 +1787,11 @@ def save_document(
             },
         )
 
-    saved_revision_column = DOCUMENT_FIELDS[field]
+    saved_revision_column = (
+        DOCUMENT_FIELDS[field]
+    )
 
-    _patch_job(
+    job = _patch_job(
         session,
         headers,
         job['id'],
@@ -1286,6 +1802,60 @@ def save_document(
                 selected_revision['id'],
         },
     )
+
+    if _revision_is_dismissed(
+        selected_revision
+    ):
+        selected_revision = (
+            _clear_revision_dismissed(
+                session,
+                headers,
+                revision=
+                    selected_revision,
+                job_id=job['id'],
+                owner_user_id=
+                    owner_user_id,
+                field=field,
+            )
+        )
+
+    revisions = _list_revisions(
+        session,
+        headers,
+        job['id'],
+        owner_user_id,
+        field,
+    )
+
+    if revisions:
+        latest = revisions[-1]
+
+        latest_is_selected = (
+            str(
+                latest.get('id')
+            ) ==
+            str(
+                selected_revision.get(
+                    'id'
+                )
+            )
+        )
+
+        if (
+            not latest_is_selected and
+            _revision_status(
+                latest
+            ) == 'ready'
+        ):
+            _mark_revision_dismissed(
+                session,
+                headers,
+                revision=latest,
+                job_id=job['id'],
+                owner_user_id=
+                    owner_user_id,
+                field=field,
+            )
 
     return get_document_state(
         session,

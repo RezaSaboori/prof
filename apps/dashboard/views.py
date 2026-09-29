@@ -990,6 +990,169 @@ def api_job_document_revision_cleanup(
 
 @login_required
 @require_POST
+def api_job_document_revision_dismiss(
+    request,
+):
+    try:
+        body = json.loads(
+            request.body
+        )
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {
+                'error':
+                    'Invalid JSON',
+            },
+            status=400,
+        )
+
+    job_id = body.get('id')
+    field = body.get('field')
+
+    if (
+        job_id is None or
+        str(job_id).strip() == ''
+    ):
+        return JsonResponse(
+            {
+                'error':
+                    'id is required',
+            },
+            status=400,
+        )
+
+    try:
+        state = (
+            job_document_revision_service
+            .dismiss_unsaved_revision(
+                _session,
+                _supabase_headers(),
+                django_user_id=
+                    request.user.id,
+                email=
+                    request.user.email,
+                job_id=job_id,
+                field=field,
+            )
+        )
+
+        return JsonResponse({
+            'ok': True,
+            **state,
+        })
+
+    except (
+        job_document_revision_service
+        .DocumentRevisionError
+    ) as exc:
+        payload = {
+            'error': exc.message,
+            'code': exc.code,
+        }
+
+        if exc.detail:
+            payload['detail'] = (
+                exc.detail
+            )
+
+        return JsonResponse(
+            payload,
+            status=exc.status,
+        )
+
+
+@login_required
+@require_POST
+def api_job_document_revision_notice_ack(
+    request,
+):
+    try:
+        body = json.loads(
+            request.body
+        )
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {
+                'error':
+                    'Invalid JSON',
+            },
+            status=400,
+        )
+
+    job_id = body.get('id')
+    field = body.get('field')
+    revision_id = body.get(
+        'revision_id'
+    )
+
+    if (
+        job_id is None or
+        str(job_id).strip() == ''
+    ):
+        return JsonResponse(
+            {
+                'error':
+                    'id is required',
+            },
+            status=400,
+        )
+
+    if (
+        revision_id is None or
+        str(revision_id).strip() == ''
+    ):
+        return JsonResponse(
+            {
+                'error':
+                    'revision_id is required',
+            },
+            status=400,
+        )
+
+    try:
+        state = (
+            job_document_revision_service
+            .acknowledge_revision_notice(
+                _session,
+                _supabase_headers(),
+                django_user_id=
+                    request.user.id,
+                email=
+                    request.user.email,
+                job_id=job_id,
+                field=field,
+                revision_id=
+                    revision_id,
+            )
+        )
+
+        return JsonResponse({
+            'ok': True,
+            **state,
+        })
+
+    except (
+        job_document_revision_service
+        .DocumentRevisionError
+    ) as exc:
+        payload = {
+            'error': exc.message,
+            'code': exc.code,
+        }
+
+        if exc.detail:
+            payload['detail'] = (
+                exc.detail
+            )
+
+        return JsonResponse(
+            payload,
+            status=exc.status,
+        )
+
+
+@login_required
+@require_POST
 def api_job_unlock(request):
     """
     Unlock a processed job — sets paid = 1 on the user's jobs_processed row.

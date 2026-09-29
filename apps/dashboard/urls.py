@@ -70,6 +70,16 @@ urlpatterns = [
         name='api_job_document_revision_cleanup',
     ),
     path(
+        'api/jobs/document/revision/dismiss/',
+        views.api_job_document_revision_dismiss,
+        name='api_job_document_revision_dismiss',
+    ),
+    path(
+        'api/jobs/document/revision/notice/ack/',
+        views.api_job_document_revision_notice_ack,
+        name='api_job_document_revision_notice_ack',
+    ),
+    path(
         'api/jobs/document/save/',
         views.api_job_document_save,
         name='api_job_document_save',

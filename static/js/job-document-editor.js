@@ -39,6 +39,16 @@
                 .documentRevisionCleanupEndpoint ||
             '/dashboard/api/jobs/document/revision/cleanup/';
 
+        const revisionDismissEndpoint =
+            grid.dataset
+                .documentRevisionDismissEndpoint ||
+            '/dashboard/api/jobs/document/revision/dismiss/';
+
+        const revisionNoticeAckEndpoint =
+            grid.dataset
+                .documentRevisionNoticeAckEndpoint ||
+            '/dashboard/api/jobs/document/revision/notice/ack/';
+
         const saveEndpoint =
             grid.dataset.documentSaveEndpoint ||
             '/dashboard/api/jobs/document/save/';
@@ -1361,7 +1371,7 @@
             documentState
         ) {
             if (!documentState) {
-                return false;
+                return null;
             }
 
             try {
@@ -1405,24 +1415,116 @@
                     !response.ok ||
                     !data.ok
                 ) {
-                    return false;
+                    return null;
                 }
 
+                return data;
+
+            } catch (error) {
+                return null;
+            }
+        }
+
+        async function dismissDocumentSelection(
+            documentState
+        ) {
+            if (!documentState) {
+                return false;
+            }
+
+            try {
+                const response =
+                    await fetch(
+                        revisionDismissEndpoint,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+                                'X-CSRFToken':
+                                    getCsrfToken(),
+                                'X-Requested-With':
+                                    'XMLHttpRequest',
+                            },
+                            credentials:
+                                'same-origin',
+                            body:
+                                JSON.stringify({
+                                    id:
+                                        documentState
+                                            .jobId,
+                                    field:
+                                        documentState
+                                            .field,
+                                }),
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
                 if (
-                    activeDocument ===
-                    documentState
+                    !response.ok ||
+                    !data.ok
                 ) {
-                    applyServerState(
-                        documentState,
-                        data,
-                        true
+                    throw new Error(
+                        data.error ||
+                        'Could not discard document changes'
                     );
                 }
 
                 return true;
 
             } catch (error) {
+                notifyError(
+                    'Could not discard the document changes. Please try again.'
+                );
+
                 return false;
+            }
+        }
+
+        async function acknowledgeRevisionNotice(
+            documentState,
+            revisionId
+        ) {
+            if (
+                !documentState ||
+                revisionId === null ||
+                revisionId === undefined
+            ) {
+                return;
+            }
+
+            try {
+                await fetch(
+                    revisionNoticeAckEndpoint,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type':
+                                'application/json',
+                            'X-CSRFToken':
+                                getCsrfToken(),
+                            'X-Requested-With':
+                                'XMLHttpRequest',
+                        },
+                        credentials:
+                            'same-origin',
+                        body:
+                            JSON.stringify({
+                                id:
+                                    documentState
+                                        .jobId,
+                                field:
+                                    documentState
+                                        .field,
+                                revision_id:
+                                    revisionId,
+                            }),
+                    }
+                );
+            } catch (error) {
             }
         }
 
@@ -1444,21 +1546,40 @@
                 false
             );
 
+            let cleanupData = null;
+
             if (cleanup) {
-                await cleanupFailedRevision(
-                    documentState
-                );
+                cleanupData =
+                    await cleanupFailedRevision(
+                        documentState
+                    );
             }
 
             if (
-                activeDocument ===
+                activeDocument !==
                 documentState
             ) {
-                notifyRevisionError(
-                    code ||
-                    REVISION_ERROR_GENERAL
-                );
+                return;
             }
+
+            if (cleanupData) {
+                applyServerState(
+                    documentState,
+                    cleanupData,
+                    false
+                );
+
+                if (
+                    cleanupData.revision_error
+                ) {
+                    return;
+                }
+            }
+
+            notifyRevisionError(
+                code ||
+                REVISION_ERROR_GENERAL
+            );
         }
 
         function setHistoryActionsVisible(
@@ -1973,17 +2094,49 @@
                     documentState.savedValue;
             }
 
+            const openRevisionId =
+                data.open_revision_id ??
+                null;
+
             let targetIndex = -1;
 
             if (
                 documentState.revisions
                     .length
             ) {
-                if (preferLatest) {
+                if (
+                    openRevisionId !==
+                    null
+                ) {
+                    targetIndex =
+                        documentState.revisions
+                            .findIndex(
+                                function(
+                                    revision
+                                ) {
+                                    return (
+                                        String(
+                                            revision.id
+                                        ) ===
+                                        String(
+                                            openRevisionId
+                                        )
+                                    );
+                                }
+                            );
+                }
+
+                if (
+                    targetIndex < 0 &&
+                    preferLatest
+                ) {
                     targetIndex =
                         documentState
                             .revisions.length - 1;
-                } else if (
+                }
+
+                if (
+                    targetIndex < 0 &&
                     documentState
                         .savedRevisionId !==
                         null
@@ -2005,44 +2158,6 @@
                                     );
                                 }
                             );
-                }
-
-                if (
-                    !preferLatest &&
-                    targetIndex < 0
-                ) {
-                    for (
-                        let index =
-                            documentState
-                                .revisions.length - 1;
-                        index >= 0;
-                        index -= 1
-                    ) {
-                        const revision =
-                            documentState
-                                .revisions[index];
-
-                        const content =
-                            typeof revision
-                                .content ===
-                                'string'
-                                ? revision.content
-                                : '';
-
-                        if (
-                            getRevisionStatus(
-                                revision
-                            ) === 'ready' &&
-                            content ===
-                                documentState
-                                    .savedValue
-                        ) {
-                            targetIndex =
-                                index;
-
-                            break;
-                        }
-                    }
                 }
 
                 if (targetIndex >= 0) {
@@ -2178,6 +2293,21 @@
                 notifyRevisionError(
                     data.revision_error
                 );
+
+                if (
+                    data
+                        .revision_error_revision_id
+                    !== null &&
+                    data
+                        .revision_error_revision_id
+                    !== undefined
+                ) {
+                    acknowledgeRevisionNotice(
+                        documentState,
+                        data
+                            .revision_error_revision_id
+                    );
+                }
             }
         }
 
@@ -2267,11 +2397,19 @@
                     return;
                 }
 
-                await handleRevisionFailure(
-                    documentState,
-                    error.code ||
-                        REVISION_ERROR_GENERAL,
+                if (
                     documentState.processing
+                ) {
+                    scheduleRevisionPoll(
+                        documentState
+                    );
+
+                    return;
+                }
+
+                notifyRevisionError(
+                    error.code ||
+                    REVISION_ERROR_GENERAL
                 );
             }
         }
@@ -3707,35 +3845,57 @@
                 ) {
                     event.preventDefault();
 
+                    const documentState =
+                        activeDocument;
+
                     const action =
-                        activeDocument
-                            ? activeDocument
+                        documentState
+                            ? documentState
                                 .confirmationAction
                             : null;
 
                     if (
-                        activeDocument &&
+                        documentState &&
                         action ===
                             'close-editor'
                     ) {
-                        activeDocument
+                        documentState
                             .editor.value =
-                            activeDocument
+                            documentState
                                 .editBaseValue;
+
+                        closeConfirmation(
+                            false
+                        );
+
+                        exitEditMode();
+
+                        return;
                     }
 
                     closeConfirmation(
                         false
                     );
 
-                    if (
-                        action ===
-                        'close-editor'
-                    ) {
-                        exitEditMode();
-                    } else {
-                        closeDocumentModal();
+                    if (!documentState) {
+                        return;
                     }
+
+                    dismissDocumentSelection(
+                        documentState
+                    ).then(
+                        function(success) {
+                            if (
+                                !success ||
+                                activeDocument !==
+                                    documentState
+                            ) {
+                                return;
+                            }
+
+                            closeDocumentModal();
+                        }
+                    );
 
                     return;
                 }
