@@ -652,6 +652,114 @@
         });
     }
 
+    function initJobAnalysisModal() {
+        const modal = document.getElementById('job-analysis-modal');
+        const jobsDataElement = document.getElementById('jobs-data');
+
+        if (!modal || !jobsDataElement) {
+            return;
+        }
+
+        const content = modal.querySelector('[data-job-analysis-content]');
+        const closeButton = modal.querySelector(
+            '[data-job-analysis-close-button]'
+        );
+
+        if (!content || !closeButton) {
+            return;
+        }
+
+        let jobsData = [];
+
+        try {
+            jobsData = JSON.parse(jobsDataElement.textContent || '[]');
+        } catch (error) {
+            return;
+        }
+
+        let activeTrigger = null;
+
+        function openModal(trigger) {
+            const jobIndex = parseInt(
+                trigger.dataset.jobAnalysisIndex,
+                10
+            );
+
+            if (
+                Number.isNaN(jobIndex) ||
+                !jobsData[jobIndex]
+            ) {
+                return;
+            }
+
+            content.textContent =
+                jobsData[jobIndex].score_analysis || '';
+
+            activeTrigger = trigger;
+
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add(
+                'job-analysis-modal-open'
+            );
+
+            closeButton.focus();
+        }
+
+        function closeModal() {
+            if (!modal.classList.contains('active')) {
+                return;
+            }
+
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove(
+                'job-analysis-modal-open'
+            );
+
+            content.textContent = '';
+
+            if (activeTrigger) {
+                activeTrigger.focus();
+            }
+
+            activeTrigger = null;
+        }
+
+        document.addEventListener('click', function(event) {
+            const trigger = event.target.closest(
+                '[data-job-analysis-index]'
+            );
+
+            if (trigger) {
+                event.preventDefault();
+                openModal(trigger);
+                return;
+            }
+
+            const closeTarget = event.target.closest(
+                '[data-job-analysis-close]'
+            );
+
+            if (
+                closeTarget &&
+                modal.contains(closeTarget)
+            ) {
+                event.preventDefault();
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (
+                event.key === 'Escape' &&
+                modal.classList.contains('active')
+            ) {
+                closeModal();
+            }
+        });
+    }
+
     // Initialize on DOM ready
     function init() {
         initJobCardMarkdown();
@@ -662,6 +770,7 @@
         initJobUnlock();
         initJobDecline();
         initJobCardExpand();
+        initJobAnalysisModal();
     }
 
     if (document.readyState === 'loading') {

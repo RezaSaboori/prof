@@ -169,7 +169,7 @@
     grid-area: logo;
 }
 
-.job-card__header .job-card__source-btn {
+.job-card__header .job-card__info-btn {
     grid-area: source;
 }
 
@@ -179,11 +179,13 @@
 }
 
 .job-card__company {
+    display: block;
     font-size: 16px;
     font-weight: 500;
     color: var(--color-gray11);
     line-height: 1.3;
     overflow-wrap: break-word;
+    text-decoration: none;
 }
 
 .job-card__date {
@@ -192,42 +194,28 @@
     color: var(--color-gray9);
 }
 
-.job-card__source-btn {
+.job-card__info-btn {
+    width: 48px;
+    height: 48px;
     display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    height: fit-content;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-sm);
+    justify-content: center;
+    flex: 0 0 var(--circular-icon-button-size);
+    padding: 0;
+    border: none;
     border-radius: var(--border-radius-pill);
     color: var(--color-gray10);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    flex-shrink: 0;
+    cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.job-card__source-btn span{
-    padding: 0 var(--spacing-sm) 2px var(--spacing-sm) !important;
+.job-card__info-btn svg {
+    width: var(--circular-icon-glyph-size);
+    height: var(--circular-icon-glyph-size);
 }
 
-.job-card__source-btn svg{
-    width:24px;
-    height:24px;
-}
-
-.job-card__source-btn:hover {
+.job-card__info-btn:hover {
     color: var(--color-blue);
-    stroke: var(--color-blue);
-}
-
-.job-card__source-btn--disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
 }
 
 /* Transparent glass buttons — same treatment as .header-container */
@@ -290,7 +278,7 @@
 }
 
 
-.jobs-grid .job-card__source-btn.glass {
+.jobs-grid .job-card__info-btn.glass {
     -webkit-appearance: none;
     appearance: none;
     background-color: transparent;
@@ -324,6 +312,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    text-decoration: none;
 }
 
 .job-card__logo-img {
@@ -402,6 +391,7 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    text-decoration: none;
 }
 
 .job-card__info-row {
@@ -599,7 +589,7 @@
     opacity: var(--state-declined-opacity);
 }
 
-.job-card--declined .job-card__source-btn,
+.job-card--declined .job-card__info-btn,
 .job-card--declined .job-card__btn--unlock {
     opacity: 1;
 }
@@ -664,6 +654,10 @@
     font-size: 15px;
     color: var(--color-gray7);
     max-width: 400px;
+}
+
+body.job-analysis-modal-open {
+    overflow: hidden;
 }
 
 /* Modal */
@@ -816,6 +810,11 @@
     color: var(--color-gray9);
     white-space: normal;
     font-family: var(--font-family-base);
+}
+
+.job-analysis-modal__text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 /* Responsive */

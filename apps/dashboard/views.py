@@ -18,6 +18,7 @@ import pymupdf4llm
 from apps.dashboard.services import (
     job_document_revision_service,
     logo_service,
+    score_rationale_service,
 )
 
 logger = logging.getLogger(__name__)
@@ -364,7 +365,7 @@ def jobs(request):
     SELECT_COLS = (
         'id', 'created_at', 'link', 'title', 'company', 'location',
         'qualifications', 'score', 'salary', 'cover_letter', 'resume',
-        'paid',
+        'paid', 'score_rationale',
     )
     user_id = request.user.id
     email = request.user.email
@@ -429,6 +430,11 @@ def jobs(request):
         logger.error('Supabase jobs GET connection error for user %s: %s', user_id, e)
     except requests.RequestException as e:
         logger.error('jobs GET failed for user %s: %s', user_id, e)
+
+    for job in jobs_data:
+        job['score_analysis'] = score_rationale_service.extract_analysis(
+            job.pop('score_rationale', None)
+        )
     
     return render(request, 'dashboard/jobs.html', {
         'display_name': request.user.first_name or request.user.username,

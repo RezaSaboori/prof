@@ -50,25 +50,63 @@
         {% for job in jobs %}
         <div class="job-card {% if job.paid == 1 %}opal-glass{% else %}glass{% endif %}{% if job.paid == 2 %} job-card--declined{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.created_at }}" data-job-paid="{{ job.paid|default:0 }}">
             <div class="job-card__header">
-                <div class="job-card__logo glass" data-logo-link="{{ job.link }}">
+                {% if job.link %}
+                <a href="{{ job.link }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="job-card__logo glass"
+                   data-logo-link="{{ job.link }}"
+                   aria-label="Open source for {{ job.company }}">
+                    <span class="job-card__logo-fallback">{{ job.company|default_if_none:""|first|upper }}</span>
+                </a>
+                {% else %}
+                <div class="job-card__logo glass">
                     <span class="job-card__logo-fallback">{{ job.company|default_if_none:""|first|upper }}</span>
                 </div>
+                {% endif %}
+
                 <div class="job-card__info">
+                    {% if job.link %}
+                    <a href="{{ job.link }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="job-card__company">
+                        {{ job.company }}
+                    </a>
+                    {% else %}
                     <h2 class="job-card__company">{{ job.company }}</h2>
+                    {% endif %}
+
                     <p class="job-card__date">{{ job.created_at|relative_date }}</p>
                 </div>
-                {% if job.link %}
-                <a href="{{ job.link }}" target="_blank" rel="noopener noreferrer" class="job-card__source-btn glass">
-                    <span>Source</span>
-                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15 13.5V9M15 9H10.5M15 9L9.00019 14.9999M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </a>
-                {% endif %}
+
+                <button type="button"
+                        class="job-card__info-btn glass"
+                        data-job-analysis-index="{{ forloop.counter0 }}"
+                        aria-controls="job-analysis-modal"
+                        aria-haspopup="dialog"
+                        aria-label="View job analysis"
+                        title="View job analysis">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="256" height="256" viewBox="0 0 256 256" xml:space="preserve">
+                            <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+                                <path d="M 49.083 71.489 l 5.776 -21.96 l 4.186 -15.247 c 3.497 -16.18 -32.704 -2.439 -38.002 1.695 l 0.425 4.853 c 4.824 -3.395 23.091 -7.744 19.449 4.275 l -1.634 6.135 l 0 0 l -8.329 31.071 c -3.497 16.18 32.704 2.439 38.002 -1.695 l -0.425 -4.853 C 63.708 79.159 45.441 83.508 49.083 71.489 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(27,27,27); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round"/>
+                                <circle cx="53.871" cy="11.201" r="11.201" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(27,27,27); fill-rule: nonzero; opacity: 1;" transform="  matrix(1 0 0 1 0 0) "/>
+                            </g>
+                        </svg>
+                </button>
             </div>
             
             <div class="job-card__body">
+                {% if job.link %}
+                <a href="{{ job.link }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="job-card__title">
+                    {{ job.title }}
+                </a>
+                {% else %}
                 <h2 class="job-card__title">{{ job.title }}</h2>
+                {% endif %}
 
                 <div class="job-card__info-row">
                     <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -173,6 +211,45 @@
 </div>
 
 <!-- Modals -->
+<div class="job-modal"
+     id="job-analysis-modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="job-analysis-modal-title"
+     aria-hidden="true">
+    <div class="job-modal__overlay"
+         data-job-analysis-close></div>
+
+    <div class="job-modal__content">
+        <div class="job-modal__header">
+            <h2 class="job-modal__title"
+                id="job-analysis-modal-title">
+                Analysis
+            </h2>
+
+            <button type="button"
+                    class="job-modal__close red-glass"
+                    data-job-analysis-close
+                    data-job-analysis-close-button
+                    aria-label="Close">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="job-modal__body">
+            <div class="job-modal__content-text job-analysis-modal__text"
+                 data-job-analysis-content></div>
+        </div>
+    </div>
+</div>
+
 <div class="job-modal"
      id="cover-letter-modal"
      role="dialog"
