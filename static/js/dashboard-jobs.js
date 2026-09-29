@@ -703,24 +703,145 @@
             return;
         }
 
-        const content = modal.querySelector('[data-job-analysis-content]');
+        const content = modal.querySelector(
+            '[data-job-analysis-content]'
+        );
+        const companySection = modal.querySelector(
+            '[data-job-analysis-company]'
+        );
+        const companyContent = modal.querySelector(
+            '[data-job-analysis-company-content]'
+        );
+        const consultantSection = modal.querySelector(
+            '[data-job-analysis-consultant]'
+        );
+        const consultantContent = modal.querySelector(
+            '[data-job-analysis-consultant-content]'
+        );
         const closeButton = modal.querySelector(
             '[data-job-analysis-close-button]'
         );
 
-        if (!content || !closeButton) {
+        if (
+            !content ||
+            !companySection ||
+            !companyContent ||
+            !consultantSection ||
+            !consultantContent ||
+            !closeButton
+        ) {
             return;
         }
 
         let jobsData = [];
 
         try {
-            jobsData = JSON.parse(jobsDataElement.textContent || '[]');
+            jobsData = JSON.parse(
+                jobsDataElement.textContent || '[]'
+            );
         } catch (error) {
             return;
         }
 
+        const companyFields = [
+            {
+                key: 'core_values',
+                label: 'Company Core Values',
+            },
+            {
+                key: 'core_mission',
+                label: 'Company Core Mission',
+            },
+            {
+                key: 'culture_tone',
+                label: 'Company Culture Tone',
+            },
+            {
+                key: 'recent_news_or_focus',
+                label: 'Recent News or Focus',
+            },
+        ];
+
         let activeTrigger = null;
+
+        function renderCompanyInfo(info) {
+            companyContent.replaceChildren();
+
+            if (!info || typeof info !== 'object') {
+                companySection.hidden = true;
+                return;
+            }
+
+            let hasContent = false;
+
+            companyFields.forEach(function(field) {
+                const value = info[field.key];
+
+                if (
+                    typeof value !== 'string' ||
+                    !value.trim()
+                ) {
+                    return;
+                }
+
+                hasContent = true;
+
+                const section = document.createElement(
+                    'section'
+                );
+                section.className =
+                    'job-company-modal__section';
+
+                const title = document.createElement(
+                    'h3'
+                );
+                title.className =
+                    'job-company-modal__section-title';
+                title.textContent = field.label;
+
+                const body = document.createElement(
+                    'div'
+                );
+                body.className =
+                    'job-company-modal__section-body';
+
+                body.innerHTML = renderMarkdown(
+                    normalizeQualificationsMarkdown(
+                        value
+                    )
+                );
+
+                section.appendChild(title);
+                section.appendChild(body);
+                companyContent.appendChild(section);
+            });
+
+            companySection.hidden = !hasContent;
+        }
+
+        function renderConsultant(info) {
+            const value =
+                info &&
+                typeof info === 'object' &&
+                typeof info.strategic_angle === 'string'
+                    ? info.strategic_angle.trim()
+                    : '';
+
+            consultantContent.replaceChildren();
+
+            if (!value) {
+                consultantSection.hidden = true;
+                return;
+            }
+
+            consultantContent.innerHTML = renderMarkdown(
+                normalizeQualificationsMarkdown(
+                    value
+                )
+            );
+
+            consultantSection.hidden = false;
+        }
 
         function openModal(trigger) {
             const jobIndex = parseInt(
@@ -735,13 +856,29 @@
                 return;
             }
 
+            const job = jobsData[jobIndex];
+            const companyInfo =
+                job.company_research_content;
+
             content.textContent =
-                jobsData[jobIndex].score_analysis || '';
+                job.score_analysis || '';
+
+            renderCompanyInfo(
+                companyInfo
+            );
+
+            renderConsultant(
+                companyInfo
+            );
 
             activeTrigger = trigger;
 
             modal.classList.add('active');
-            modal.setAttribute('aria-hidden', 'false');
+            modal.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
             document.body.classList.add(
                 'job-analysis-modal-open'
             );
@@ -755,12 +892,21 @@
             }
 
             modal.classList.remove('active');
-            modal.setAttribute('aria-hidden', 'true');
+            modal.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
             document.body.classList.remove(
                 'job-analysis-modal-open'
             );
 
             content.textContent = '';
+            companyContent.replaceChildren();
+            consultantContent.replaceChildren();
+
+            companySection.hidden = true;
+            consultantSection.hidden = true;
 
             if (activeTrigger) {
                 activeTrigger.focus();
@@ -769,38 +915,47 @@
             activeTrigger = null;
         }
 
-        document.addEventListener('click', function(event) {
-            const trigger = event.target.closest(
-                '[data-job-analysis-index]'
-            );
+        document.addEventListener(
+            'click',
+            function(event) {
+                const trigger = event.target.closest(
+                    '[data-job-analysis-index]'
+                );
 
-            if (trigger) {
-                event.preventDefault();
-                openModal(trigger);
-                return;
+                if (trigger) {
+                    event.preventDefault();
+                    openModal(trigger);
+                    return;
+                }
+
+                const closeTarget =
+                    event.target.closest(
+                        '[data-job-analysis-close]'
+                    );
+
+                if (
+                    closeTarget &&
+                    modal.contains(closeTarget)
+                ) {
+                    event.preventDefault();
+                    closeModal();
+                }
             }
+        );
 
-            const closeTarget = event.target.closest(
-                '[data-job-analysis-close]'
-            );
-
-            if (
-                closeTarget &&
-                modal.contains(closeTarget)
-            ) {
-                event.preventDefault();
-                closeModal();
+        document.addEventListener(
+            'keydown',
+            function(event) {
+                if (
+                    event.key === 'Escape' &&
+                    modal.classList.contains(
+                        'active'
+                    )
+                ) {
+                    closeModal();
+                }
             }
-        });
-
-        document.addEventListener('keydown', function(event) {
-            if (
-                event.key === 'Escape' &&
-                modal.classList.contains('active')
-            ) {
-                closeModal();
-            }
-        });
+        );
     }
 
     function initCompanyInfoModal() {

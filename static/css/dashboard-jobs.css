@@ -902,8 +902,36 @@ body.job-company-modal-open {
     font-family: var(--font-family-base);
 }
 
+.job-analysis-modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
 .job-analysis-modal__text {
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.job-analysis-modal__company[hidden],
+.job-analysis-modal__consultant[hidden] {
+    display: none;
+}
+
+.job-analysis-modal__section-title {
+    margin: 0 0 var(--spacing-md);
+    font-family: var(--font-family-variable);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-gray10);
+}
+
+.job-analysis-modal__consultant {
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-container-sm);
+}
+
+.job-analysis-modal__consultant-text {
     overflow-wrap: anywhere;
 }
 
