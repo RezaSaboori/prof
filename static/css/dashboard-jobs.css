@@ -924,8 +924,14 @@ body.job-company-modal-open {
 }
 
 .job-analysis-modal__text {
+    flex: 0 0 auto;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+}
+
+.job-analysis-modal__company {
+    flex: 0 0 auto;
+    width: 100%;
 }
 
 .job-analysis-modal__company[hidden],
@@ -942,9 +948,12 @@ body.job-company-modal-open {
 }
 
 .job-analysis-modal__consultant {
+    flex: 0 0 auto;
+    width: 100%;
     max-height: calc(var(--spacing-5xl) * 3);
     padding: var(--spacing-lg);
     border-radius: var(--border-radius-container-sm);
+    overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
 }
