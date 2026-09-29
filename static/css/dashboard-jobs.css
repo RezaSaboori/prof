@@ -396,14 +396,15 @@
 }
 
 .job-card__title-row {
-    display: flex;
+    display: inline-flex;
     align-items: flex-start;
-    gap: var(--spacing-sm);
+    max-width: 100%;
+    gap: var(--spacing-xs);
     margin-bottom: var(--spacing-xl);
 }
 
 .job-card__title {
-    flex: 1;
+    flex: 0 1 auto;
     min-width: 0;
     margin: 0;
     font-family: var(--font-family-variable);
@@ -426,9 +427,9 @@
     align-items: center;
     justify-content: center;
     flex: 0 0 calc(var(--circular-icon-button-size) * 0.65);
-    padding: 0;
+    padding: 0 0 2px 0;
     border-radius: var(--border-radius-pill);
-    color: var(--color-gray10);
+    color: var(--color-blue);
     text-decoration: none;
     transition:
         color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
