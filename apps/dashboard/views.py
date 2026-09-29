@@ -17,6 +17,7 @@ import pymupdf4llm
 
 from apps.dashboard.services import (
     job_document_revision_service,
+    job_qualification_service,
     logo_service,
     score_rationale_service,
 )
@@ -435,6 +436,12 @@ def jobs(request):
         job['score_analysis'] = score_rationale_service.extract_analysis(
             job.pop('score_rationale', None)
         )
+
+        qualifications = job_qualification_service.parse_qualifications(
+            job.get('qualifications')
+        )
+        job['qualifications_title'] = qualifications['title']
+        job['qualifications_text'] = qualifications['text']
     
     return render(request, 'dashboard/jobs.html', {
         'display_name': request.user.first_name or request.user.username,

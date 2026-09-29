@@ -96,10 +96,23 @@
         return DOMPurify.sanitize(marked.parse(source || '', { breaks: true }));
     }
 
+    function normalizeQualificationsMarkdown(source) {
+        return (source || '')
+            .replace(/\r\n?/g, '\n')
+            .trim()
+            .replace(/(^|[ \t]+)\*(?=[ \t]+\S)/gm, function(match, prefix) {
+                return prefix ? '\n*' : '*';
+            });
+    }
+
     // Render the qualifications markdown inside each job card.
     function initJobCardMarkdown() {
-        document.querySelectorAll('.job-card__text').forEach(function(text) {
-            text.innerHTML = renderMarkdown(text.textContent);
+        document.querySelectorAll('.job-card__qualifications-text').forEach(function(text) {
+            const markdown = normalizeQualificationsMarkdown(
+                text.textContent
+            );
+
+            text.innerHTML = renderMarkdown(markdown);
         });
     }
 
@@ -598,7 +611,7 @@
             return;
         }
 
-        grid.querySelectorAll('.job-card__text').forEach(function(text) {
+        grid.querySelectorAll('.job-card__qualifications-text').forEach(function(text) {
             const btn = text.parentElement.querySelector('[data-toggle-more]');
             if (!btn) {
                 return;
@@ -611,12 +624,12 @@
             if (!btn) {
                 return;
             }
-            const text = btn.parentElement.querySelector('.job-card__text');
+            const text = btn.parentElement.querySelector('.job-card__qualifications-text');
             if (!text) {
                 return;
             }
 
-            if (text.classList.contains('job-card__text--expanded')) {
+            if (text.classList.contains('job-card__qualifications-text--expanded')) {
                 // Collapse: keep the clamp off during the animation — re-applying
                 // it now would snap the box to 3 lines instantly. Animate max-height
                 // down to the exact clamped height, then restore the clamp.
@@ -632,7 +645,7 @@
                         return;
                     }
                     text.removeEventListener('transitionend', onCollapseEnd);
-                    text.classList.remove('job-card__text--expanded');
+                    text.classList.remove('job-card__qualifications-text--expanded');
                     text.style.maxHeight = '';
                 };
                 text.addEventListener('transitionend', onCollapseEnd);
@@ -640,7 +653,7 @@
                 // Expand: freeze clamped height, drop the clamp, grow to full height
                 text.style.maxHeight = text.clientHeight + 'px';
                 void text.offsetHeight;
-                text.classList.add('job-card__text--expanded');
+                text.classList.add('job-card__qualifications-text--expanded');
                 text.style.maxHeight = text.scrollHeight + 'px';
                 btn.textContent = 'Less';
                 btn.setAttribute('aria-expanded', 'true');
