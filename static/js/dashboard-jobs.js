@@ -773,6 +773,228 @@
         });
     }
 
+    function initCompanyInfoModal() {
+        const modal = document.getElementById(
+            'company-info-modal'
+        );
+        const jobsDataElement = document.getElementById(
+            'jobs-data'
+        );
+
+        if (!modal || !jobsDataElement) {
+            return;
+        }
+
+        const content = modal.querySelector(
+            '[data-company-info-content]'
+        );
+        const closeButton = modal.querySelector(
+            '[data-company-info-close-button]'
+        );
+
+        if (!content || !closeButton) {
+            return;
+        }
+
+        let jobsData = [];
+
+        try {
+            jobsData = JSON.parse(
+                jobsDataElement.textContent || '[]'
+            );
+        } catch (error) {
+            return;
+        }
+
+        const fields = [
+            {
+                key: 'core_values',
+                label: 'Company Core Values',
+            },
+            {
+                key: 'core_mission',
+                label: 'Company Core Mission',
+            },
+            {
+                key: 'culture_tone',
+                label: 'Company Culture Tone',
+            },
+            {
+                key: 'recent_news_or_focus',
+                label: 'Recent News or Focus',
+            },
+        ];
+
+        let activeTrigger = null;
+
+        function hasCompanyInfo(info) {
+            if (!info || typeof info !== 'object') {
+                return false;
+            }
+
+            return fields.some(function(field) {
+                const value = info[field.key];
+
+                return (
+                    typeof value === 'string' &&
+                    value.trim().length > 0
+                );
+            });
+        }
+
+        function renderCompanyInfo(info) {
+            content.replaceChildren();
+
+            fields.forEach(function(field) {
+                const value = info[field.key];
+
+                if (
+                    typeof value !== 'string' ||
+                    !value.trim()
+                ) {
+                    return;
+                }
+
+                const section = document.createElement(
+                    'section'
+                );
+                section.className =
+                    'job-company-modal__section';
+
+                const title = document.createElement(
+                    'h3'
+                );
+                title.className =
+                    'job-company-modal__section-title';
+                title.textContent = field.label;
+
+                const body = document.createElement(
+                    'div'
+                );
+                body.className =
+                    'job-company-modal__section-body';
+
+                body.innerHTML = renderMarkdown(
+                    normalizeQualificationsMarkdown(
+                        value
+                    )
+                );
+
+                section.appendChild(title);
+                section.appendChild(body);
+                content.appendChild(section);
+            });
+        }
+
+        function openModal(trigger) {
+            const jobIndex = parseInt(
+                trigger.dataset.companyInfoIndex,
+                10
+            );
+
+            if (
+                Number.isNaN(jobIndex) ||
+                !jobsData[jobIndex]
+            ) {
+                return false;
+            }
+
+            const info =
+                jobsData[jobIndex]
+                    .company_research_content;
+
+            if (!hasCompanyInfo(info)) {
+                return false;
+            }
+
+            renderCompanyInfo(info);
+
+            activeTrigger = trigger;
+
+            modal.classList.add('active');
+            modal.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+            document.body.classList.add(
+                'job-company-modal-open'
+            );
+
+            closeButton.focus();
+
+            return true;
+        }
+
+        function closeModal() {
+            if (!modal.classList.contains('active')) {
+                return;
+            }
+
+            modal.classList.remove('active');
+            modal.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+            document.body.classList.remove(
+                'job-company-modal-open'
+            );
+
+            content.replaceChildren();
+
+            if (activeTrigger) {
+                activeTrigger.focus();
+            }
+
+            activeTrigger = null;
+        }
+
+        document.addEventListener(
+            'click',
+            function(event) {
+                const trigger = event.target.closest(
+                    '[data-company-info-index]'
+                );
+
+                if (trigger) {
+                    if (openModal(trigger)) {
+                        event.preventDefault();
+                    }
+
+                    return;
+                }
+
+                const closeTarget =
+                    event.target.closest(
+                        '[data-company-info-close]'
+                    );
+
+                if (
+                    closeTarget &&
+                    modal.contains(closeTarget)
+                ) {
+                    event.preventDefault();
+                    closeModal();
+                }
+            }
+        );
+
+        document.addEventListener(
+            'keydown',
+            function(event) {
+                if (
+                    event.key === 'Escape' &&
+                    modal.classList.contains(
+                        'active'
+                    )
+                ) {
+                    closeModal();
+                }
+            }
+        );
+    }
+
     // Initialize on DOM ready
     function init() {
         initJobCardMarkdown();
@@ -784,6 +1006,7 @@
         initJobDecline();
         initJobCardExpand();
         initJobAnalysisModal();
+        initCompanyInfoModal();
     }
 
     if (document.readyState === 'loading') {

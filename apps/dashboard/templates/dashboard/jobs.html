@@ -56,9 +56,19 @@
                    rel="noopener noreferrer"
                    class="job-card__logo glass"
                    data-logo-link="{{ job.link }}"
-                   aria-label="Open source for {{ job.company }}">
+                   data-company-info-index="{{ forloop.counter0 }}"
+                   aria-label="View company information for {{ job.company }}">
                     <span class="job-card__logo-fallback">{{ job.company|default_if_none:""|first|upper }}</span>
                 </a>
+                {% elif job.company_research_content %}
+                <button type="button"
+                        class="job-card__logo job-card__logo--button glass"
+                        data-company-info-index="{{ forloop.counter0 }}"
+                        aria-controls="company-info-modal"
+                        aria-haspopup="dialog"
+                        aria-label="View company information for {{ job.company }}">
+                    <span class="job-card__logo-fallback">{{ job.company|default_if_none:""|first|upper }}</span>
+                </button>
                 {% else %}
                 <div class="job-card__logo glass">
                     <span class="job-card__logo-fallback">{{ job.company|default_if_none:""|first|upper }}</span>
@@ -70,9 +80,18 @@
                     <a href="{{ job.link }}"
                        target="_blank"
                        rel="noopener noreferrer"
-                       class="job-card__company">
+                       class="job-card__company"
+                       data-company-info-index="{{ forloop.counter0 }}">
                         {{ job.company }}
                     </a>
+                    {% elif job.company_research_content %}
+                    <button type="button"
+                            class="job-card__company job-card__company--button"
+                            data-company-info-index="{{ forloop.counter0 }}"
+                            aria-controls="company-info-modal"
+                            aria-haspopup="dialog">
+                        {{ job.company }}
+                    </button>
                     {% else %}
                     <h2 class="job-card__company">{{ job.company }}</h2>
                     {% endif %}
@@ -97,16 +116,24 @@
             </div>
             
             <div class="job-card__body">
-                {% if job.link %}
-                <a href="{{ job.link }}"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="job-card__title">
-                    {{ job.title }}
-                </a>
-                {% else %}
-                <h2 class="job-card__title">{{ job.title }}</h2>
-                {% endif %}
+                <div class="job-card__title-row">
+                    <h2 class="job-card__title">{{ job.title }}</h2>
+
+                    {% if job.link %}
+                    <a href="{{ job.link }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="job-card__source-link glass"
+                       aria-label="Open job source"
+                       title="Open source">
+                        <svg viewBox="0 0 24 24"
+                             fill="currentColor"
+                             aria-hidden="true">
+                            <path d="M14 9V5L21 12L14 19V14.9C9 14.9 5.5 16.5 3 20C4 15 7 10 14 9Z"/>
+                        </svg>
+                    </a>
+                    {% endif %}
+                </div>
 
                 <div class="job-card__info-row">
                     <svg class="job-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -246,6 +273,45 @@
         <div class="job-modal__body">
             <div class="job-modal__content-text job-analysis-modal__text"
                  data-job-analysis-content></div>
+        </div>
+    </div>
+</div>
+
+<div class="job-modal"
+     id="company-info-modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="company-info-modal-title"
+     aria-hidden="true">
+    <div class="job-modal__overlay"
+         data-company-info-close></div>
+
+    <div class="job-modal__content">
+        <div class="job-modal__header">
+            <h2 class="job-modal__title"
+                id="company-info-modal-title">
+                Company Info
+            </h2>
+
+            <button type="button"
+                    class="job-modal__close red-glass"
+                    data-company-info-close
+                    data-company-info-close-button
+                    aria-label="Close">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="job-modal__body">
+            <div class="job-modal__content-text job-company-modal__content"
+                 data-company-info-content></div>
         </div>
     </div>
 </div>

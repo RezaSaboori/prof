@@ -16,6 +16,7 @@ import tempfile
 import pymupdf4llm
 
 from apps.dashboard.services import (
+    company_research_service,
     job_document_revision_service,
     job_qualification_service,
     logo_service,
@@ -366,7 +367,7 @@ def jobs(request):
     SELECT_COLS = (
         'id', 'created_at', 'link', 'title', 'company', 'location',
         'qualifications', 'score', 'salary', 'cover_letter', 'resume',
-        'paid', 'score_rationale',
+        'paid', 'score_rationale', 'company_research',
     )
     user_id = request.user.id
     email = request.user.email
@@ -442,6 +443,12 @@ def jobs(request):
         )
         job['qualifications_title'] = qualifications['title']
         job['qualifications_text'] = qualifications['text']
+
+        job['company_research_content'] = (
+            company_research_service.extract_company_research(
+                job.pop('company_research', None)
+            )
+        )
     
     return render(request, 'dashboard/jobs.html', {
         'display_name': request.user.first_name or request.user.username,
