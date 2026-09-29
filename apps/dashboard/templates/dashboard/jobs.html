@@ -154,17 +154,18 @@
                 <div class="job-card__qualifications">
                     <h3 class="job-card__qualifications-title">{{ job.qualifications_title }}</h3>
                     <div class="job-card__qualifications-text">{{ job.qualifications_text }}</div>
+
+                    {% if job.company_research_content.strategic_angle %}
+                    <div class="job-card__prof-consultant frost-glass"
+                         data-prof-consultant
+                         hidden>
+                        <h3 class="job-card__prof-consultant-title">Prof Consultant</h3>
+                        <div class="job-card__prof-consultant-text">{{ job.company_research_content.strategic_angle }}</div>
+                    </div>
+                    {% endif %}
+
                     <button type="button" class="job-card__more-btn glass" data-toggle-more aria-expanded="false" hidden>More</button>
                 </div>
-
-                {% if job.company_research_content.strategic_angle %}
-                <div class="job-card__prof-consultant frost-glass"
-                     data-prof-consultant
-                     hidden>
-                    <h3 class="job-card__prof-consultant-title">Prof Consultant</h3>
-                    <div class="job-card__prof-consultant-text">{{ job.company_research_content.strategic_angle }}</div>
-                </div>
-                {% endif %}
 
             </div>
             

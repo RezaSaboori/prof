@@ -506,6 +506,7 @@
 .job-card__prof-consultant {
     margin-top: var(--spacing-md);
     padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
     border-radius: var(--border-radius-container-sm);
 }
 
