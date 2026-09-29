@@ -48,7 +48,11 @@
      data-document-revision-notice-ack-endpoint="{% url 'dashboard:api_job_document_revision_notice_ack' %}"
      data-document-save-endpoint="{% url 'dashboard:api_job_document_save' %}">
         {% for job in jobs %}
-        <div class="job-card {% if job.paid == 1 %}opal-glass{% else %}glass{% endif %}{% if job.paid == 2 %} job-card--declined{% endif %}" data-sort-score="{{ job.score|default:0 }}" data-sort-date="{{ job.date_posted_sort|default:'' }}" data-job-paid="{{ job.paid|default:0 }}">
+        <div class="job-card {% if job.paid == 1 %}opal-glass{% else %}glass{% endif %}{% if job.paid == 2 and job.is_available %} job-card--declined{% endif %}{% if not job.is_available %} job-card--expired{% endif %}"
+             data-sort-score="{{ job.score|default:0 }}"
+             data-sort-date="{{ job.date_posted_sort|default:'' }}"
+             data-job-paid="{{ job.paid|default:0 }}"
+             data-job-availability="{% if job.is_available %}true{% else %}false{% endif %}">
             <div class="job-card__header">
                 {% if job.link %}
                 <a href="{{ job.link }}"
@@ -103,9 +107,14 @@
 
                 <button type="button"
                         class="job-card__info-btn glass"
+                        {% if job.is_available %}
                         data-job-analysis-index="{{ forloop.counter0 }}"
                         aria-controls="job-analysis-modal"
                         aria-haspopup="dialog"
+                        {% else %}
+                        disabled
+                        aria-disabled="true"
+                        {% endif %}
                         aria-label="View job analysis"
                         title="View job analysis">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="256" height="256" viewBox="0 0 256 256" xml:space="preserve">
@@ -192,7 +201,9 @@
             
             <div class="job-card__footer">
                 {% if job.paid == 1 %}
-                <button class="job-card__btn job-card__btn--secondary glass" data-modal="cover-letter" data-job-id="{{ forloop.counter }}">
+                <button class="job-card__btn job-card__btn--secondary glass"
+                        data-modal="cover-letter"
+                        data-job-id="{{ forloop.counter }}">
                     <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
@@ -203,7 +214,9 @@
                     Cover Letter
                 </button>
                 
-                <button class="job-card__btn job-card__btn--secondary glass" data-modal="resume" data-job-id="{{ forloop.counter }}">
+                <button class="job-card__btn job-card__btn--secondary glass"
+                        data-modal="resume"
+                        data-job-id="{{ forloop.counter }}">
                     <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
@@ -211,23 +224,48 @@
                     Resume
                 </button>
                 {% else %}
-                <button type="button" class="job-card__btn job-card__btn--unlock opal-glass" data-unlock-job="{{ job.id }}">
-                    <svg class="job-card__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button"
+                        class="job-card__btn job-card__btn--unlock opal-glass"
+                        {% if job.is_available %}
+                        data-unlock-job="{{ job.id }}"
+                        {% else %}
+                        disabled
+                        aria-disabled="true"
+                        {% endif %}>
+                    <svg class="job-card__btn-icon"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2"/>
                         <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
                     </svg>
                     <span>Unlock</span>
                 </button>
-
-                {% if job.paid == 2 %}
-                <button type="button" class="job-card__btn job-card__btn--decline glass" disabled>
-                    <span>Declined</span>
-                </button>
-                {% else %}
-                <button type="button" class="job-card__btn job-card__btn--decline glass" data-decline-job="{{ job.id }}">
-                    <span>Decline</span>
-                </button>
                 {% endif %}
+
+                {% if not job.is_available %}
+                <button type="button"
+                        class="job-card__btn job-card__btn--decline glass"
+                        disabled>
+                    <span>Not Available Anymore</span>
+                </button>
+                {% elif job.paid != 1 %}
+                    {% if job.paid == 2 %}
+                    <button type="button"
+                            class="job-card__btn job-card__btn--decline glass"
+                            disabled>
+                        <span>Declined</span>
+                    </button>
+                    {% else %}
+                    <button type="button"
+                            class="job-card__btn job-card__btn--decline glass"
+                            data-decline-job="{{ job.id }}">
+                        <span>Decline</span>
+                    </button>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -239,7 +277,7 @@
                 aria-expanded="false"
                 hidden>
             <span class="jobs-declined-toggle__label" data-declined-toggle-label>
-                Show declined jobs
+                Show declined/expired jobs
             </span>
 
             <svg class="jobs-declined-toggle__chevron"

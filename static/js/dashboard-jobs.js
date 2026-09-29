@@ -168,12 +168,26 @@
                 columns;
 
             const activeCards = cards.filter(function(card) {
-                return card.dataset.jobPaid !== '2';
+                return (
+                    card.dataset.jobAvailability === 'true' &&
+                    card.dataset.jobPaid !== '2'
+                );
             });
 
             const declinedCards = cards.filter(function(card) {
-                return card.dataset.jobPaid === '2';
+                return (
+                    card.dataset.jobAvailability === 'true' &&
+                    card.dataset.jobPaid === '2'
+                );
             });
+
+            const expiredCards = cards.filter(function(card) {
+                return card.dataset.jobAvailability !== 'true';
+            });
+
+            const inactiveCardCount =
+                declinedCards.length +
+                expiredCards.length;
 
             function positionCards(cardGroup, startY) {
                 const columnHeights = [];
@@ -209,7 +223,7 @@
                 ? Math.max.apply(null, activeHeights) - gap
                 : 0;
 
-            if (!declinedCards.length || !declinedToggle) {
+            if (!inactiveCardCount || !declinedToggle) {
                 if (declinedToggle) {
                     declinedToggle.hidden = true;
                 }
@@ -238,10 +252,30 @@
             const declinedStart =
                 toggleBottom + gap;
 
-            const declinedHeights = positionCards(
-                declinedCards,
-                declinedStart
-            );
+            const declinedHeights = declinedCards.length
+                ? positionCards(
+                    declinedCards,
+                    declinedStart
+                )
+                : [];
+
+            const declinedBottom = declinedCards.length
+                ? Math.max.apply(
+                    null,
+                    declinedHeights
+                ) - gap
+                : toggleBottom;
+
+            const expiredStart = declinedCards.length
+                ? declinedBottom + gap
+                : declinedStart;
+
+            const expiredHeights = expiredCards.length
+                ? positionCards(
+                    expiredCards,
+                    expiredStart
+                )
+                : [];
 
             const expanded =
                 grid.dataset.declinedExpanded === '1';
@@ -257,23 +291,37 @@
 
             if (label) {
                 label.textContent = expanded
-                    ? 'Hide declined jobs (' + declinedCards.length + ')'
-                    : 'Show declined jobs (' + declinedCards.length + ')';
+                    ? (
+                        'Hide declined/expired jobs (' +
+                        inactiveCardCount +
+                        ')'
+                    )
+                    : (
+                        'Show declined/expired jobs (' +
+                        inactiveCardCount +
+                        ')'
+                    );
             }
 
-            declinedCards.forEach(function(card) {
-                card.classList.toggle(
-                    'job-card--declined-hidden',
-                    !expanded
-                );
-            });
+            declinedCards
+                .concat(expiredCards)
+                .forEach(function(card) {
+                    card.classList.toggle(
+                        'job-card--declined-hidden',
+                        !expanded
+                    );
+                });
 
             if (expanded) {
+                const finalHeights = expiredCards.length
+                    ? expiredHeights
+                    : declinedHeights;
+
                 grid.style.height =
                     (
                         Math.max.apply(
                             null,
-                            declinedHeights
+                            finalHeights
                         ) - gap
                     ) +
                     'px';
@@ -423,12 +471,24 @@
 
         function sortGrid(key) {
             const cards = Array.prototype.slice.call(grid.querySelectorAll('.job-card'));
-            cards.sort(function(a, b) {
-                const aDeclined = a.dataset.jobPaid === '2';
-                const bDeclined = b.dataset.jobPaid === '2';
+            function cardStateRank(card) {
+                if (card.dataset.jobAvailability !== 'true') {
+                    return 2;
+                }
 
-                if (aDeclined !== bDeclined) {
-                    return aDeclined ? 1 : -1;
+                if (card.dataset.jobPaid === '2') {
+                    return 1;
+                }
+
+                return 0;
+            }
+
+            cards.sort(function(a, b) {
+                const aState = cardStateRank(a);
+                const bState = cardStateRank(b);
+
+                if (aState !== bState) {
+                    return aState - bState;
                 }
 
                 return cardValue(b, key) - cardValue(a, key);

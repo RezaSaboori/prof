@@ -370,7 +370,7 @@ def jobs(request):
         'id', 'created_at', 'link', 'title', 'company', 'location',
         'qualifications', 'score', 'salary', 'cover_letter', 'resume',
         'paid', 'score_rationale', 'company_research',
-        'applicants_number', 'date_posted',
+        'applicants_number', 'date_posted', 'availability',
     )
     user_id = request.user.id
     email = request.user.email
@@ -466,6 +466,10 @@ def jobs(request):
         )
         job['date_posted_display'] = date_posted['display']
         job['date_posted_sort'] = date_posted['sort']
+
+        job['is_available'] = (
+            job.pop('availability', None) is True
+        )
     
     return render(request, 'dashboard/jobs.html', {
         'display_name': request.user.first_name or request.user.username,

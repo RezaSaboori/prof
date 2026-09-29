@@ -677,7 +677,13 @@
 .job-card--declined .job-card__logo,
 .job-card--declined .job-card__info,
 .job-card--declined .job-card__body,
-.job-card--declined .job-card__btn--decline {
+.job-card--declined .job-card__btn--decline,
+.job-card--expired .job-card__logo,
+.job-card--expired .job-card__info,
+.job-card--expired .job-card__body,
+.job-card--expired .job-card__btn--decline,
+.job-card--expired .job-card__info-btn,
+.job-card--expired .job-card__btn--unlock {
     opacity: var(--state-declined-opacity);
 }
 
@@ -686,7 +692,14 @@
     opacity: 1;
 }
 
-.jobs-grid--masonry .job-card--declined {
+.job-card--expired .job-card__info-btn,
+.job-card--expired .job-card__btn--unlock {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.jobs-grid--masonry .job-card--declined,
+.jobs-grid--masonry .job-card--expired {
     transition:
         transform 0.45s
         cubic-bezier(0.22, 1, 0.36, 1),
