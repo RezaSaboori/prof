@@ -505,10 +505,13 @@
 }
 
 .job-card__prof-consultant {
+    max-height: calc(var(--spacing-5xl) * 3);
     margin-top: var(--spacing-md);
     padding: var(--spacing-md);
     margin-bottom: var(--spacing-md);
     border-radius: var(--border-radius-container-sm);
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .job-card__prof-consultant[hidden] {
@@ -894,6 +897,18 @@ body.job-company-modal-open {
     padding: var(--spacing-xl);
 }
 
+#job-analysis-modal .job-modal__body,
+#company-info-modal .job-modal__body {
+    min-height: 0;
+    max-height: calc(
+        85vh -
+        var(--spacing-5xl) -
+        var(--spacing-lg)
+    );
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
 .job-modal__content-text {
     font-size: 14px;
     line-height: 1.7;
@@ -927,8 +942,11 @@ body.job-company-modal-open {
 }
 
 .job-analysis-modal__consultant {
+    max-height: calc(var(--spacing-5xl) * 3);
     padding: var(--spacing-lg);
     border-radius: var(--border-radius-container-sm);
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .job-analysis-modal__consultant-text {
