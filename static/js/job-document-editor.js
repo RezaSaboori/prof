@@ -1530,8 +1530,7 @@
 
         async function handleRevisionFailure(
             documentState,
-            code,
-            cleanup
+            code
         ) {
             if (!documentState) {
                 return;
@@ -1541,18 +1540,19 @@
                 documentState
             );
 
-            setDocumentProcessing(
-                documentState,
-                false
-            );
+            if (
+                activeDocument !==
+                documentState
+            ) {
+                return;
+            }
 
-            let cleanupData = null;
-
-            if (cleanup) {
-                cleanupData =
-                    await cleanupFailedRevision(
-                        documentState
-                    );
+            try {
+                await refreshDocumentState(
+                    documentState,
+                    true
+                );
+            } catch (error) {
             }
 
             if (
@@ -1562,18 +1562,14 @@
                 return;
             }
 
-            if (cleanupData) {
-                applyServerState(
-                    documentState,
-                    cleanupData,
-                    false
+            if (
+                documentState.processing
+            ) {
+                scheduleRevisionPoll(
+                    documentState
                 );
 
-                if (
-                    cleanupData.revision_error
-                ) {
-                    return;
-                }
+                return;
             }
 
             notifyRevisionError(
@@ -2587,8 +2583,7 @@
                 await handleRevisionFailure(
                     documentState,
                     error.code ||
-                        REVISION_ERROR_GENERAL,
-                    true
+                        REVISION_ERROR_GENERAL
                 );
             }
         }

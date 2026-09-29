@@ -1445,20 +1445,11 @@ def discard_processing_revision(
 
     should_delete = (
         latest.get('source') == 'llm' and
-        (
-            latest_status == 'processing' or
-            failure_code is not None
-        )
+        failure_code is not None
     )
 
     notice_code = (
         failure_code
-        or (
-            REVISION_ERROR_GENERAL
-            if latest_status ==
-            'processing'
-            else None
-        )
     )
 
     if should_delete:
